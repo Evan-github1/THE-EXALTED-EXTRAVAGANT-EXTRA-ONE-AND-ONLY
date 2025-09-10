@@ -1,19 +1,20 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Archive;
 
 // TODO: OLD AND OUTDATED
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Macro;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LinearSlide;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
-
-@TeleOp
+@Disabled
 public class Evan_Polymorphism_Code extends Movable {
 
     private static Servo LPushServo, RPushServo;

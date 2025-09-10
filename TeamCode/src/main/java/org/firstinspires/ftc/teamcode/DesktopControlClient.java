@@ -1,4 +1,4 @@
-/*
+package org.firstinspires.ftc.teamcode;/*
     this is not supposed to be in org.firstinspires.ftc.teamcode. DON'T MOVE IT
     it's a regular java class with a regular main method, not an opmode
     read my doc for more info: https://docs.google.com/document/d/1bxNabZWSuYS4XG__-KeR-mj_PQDcAdDYHsHEZVNLnCc/edit?tab=t.0
