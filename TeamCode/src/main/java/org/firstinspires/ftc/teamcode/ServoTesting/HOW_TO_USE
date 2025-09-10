@@ -1,0 +1,34 @@
+TODO: Preferably, don't use this anymore. Use DesktopControlClient and PhoneControlServer instead. It's better and faster, and supports motors.
+
+HOW TO USE THE SERVO TESTING CLASSES!
+
+*The TestServoPos class is used for one servo, the TestTwoServoPos is used for two servos.*
+
+Basics:
+As the class name implies, these servo testing classes are used to find servo positions directly from
+these two opModes. There are no edits required! No more going back and changing servo positions bit by bit
+and uploading repeatedly.
+
+Both of these classes need you to enter the name of the servo using the gamepad. Follow the instructions
+below.
+
+I will be discussing the TestServoPos class first:
+    1. Use the right and left DPad (arrow keys) to search through the letters of the alphabet
+    (you are able to see in the telemetry)
+    2. Press B to confirm the letter you're hovering. Use the up and down DPad to turn on/off caps lock.
+    A to delete your character.
+    3. Continue until you spelt out the entire servo name that's listed in the config. Press OPTION to confirm
+    4. Switch to gamepad two. Here, you will be able to actually test the servo
+    5. Use right and left DPad to increase/decrease the servo position (shown in the telemetry).
+    6. Use the up and down DPad to increase/decrease the increment value (shown in the telemetry).
+    7. Once you find the servo position you want, you're done! :D
+
+For the second class, you're able to control 2 servos at the same time. The controls are mostly the same.
+    1. Instead of filling in the name for one servo, you need to do it with two. Use Y to
+    switch the current servo.
+    2. Once you successfully put in the names, switch to gamepad two to find the servo positions.
+    3. The buttons A and B are now available to you. Press it to move both servos at the same
+    time forwards/backwards.
+
+That's it! Thanks for reading.
+    - Evan
