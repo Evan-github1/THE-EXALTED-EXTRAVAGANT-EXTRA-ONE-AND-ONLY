@@ -15,6 +15,18 @@ public class AnimosityAndMortification extends LinearOpMode implements Limelight
     private static Limelight3A limelight;
     private static int timer = 0;
     private static int pipeline = 0; //0 = AprilTag, 1 = Green, 2 = Purple
+    private Thread cyclePipelines = new Thread (() -> {
+        try {
+            tagDetection(limelight, telemetry);
+            Thread.sleep(1000);
+            colorDetectionGreen(limelight, telemetry);
+            Thread.sleep(1000);
+            colorDetectionPurple(limelight, telemetry);
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    });
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,10 +36,24 @@ public class AnimosityAndMortification extends LinearOpMode implements Limelight
         waitForStart();
 
         while (opModeIsActive()) {
-
             telemetry.addData("Status", "Running");
-//`            tagDetection(limelight, telemetry);
-            colorDetectionGreen(limelight, telemetry);
+
+            if (!cyclePipelines.isAlive()) {
+                cyclePipelines = new Thread (() -> {
+                    try {
+                        tagDetection(limelight, telemetry);
+                        Thread.sleep(1000);
+                        colorDetectionGreen(limelight, telemetry);
+                        Thread.sleep(1000);
+                        colorDetectionPurple(limelight, telemetry);
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+                cyclePipelines.start();
+            } 
+
             telemetry.update();
         }
     }
