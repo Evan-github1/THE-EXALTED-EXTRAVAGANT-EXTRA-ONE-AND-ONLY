@@ -13,19 +13,20 @@ import java.net.InetAddress;
 public class AnimosityAndMortification extends LinearOpMode implements LimelightTag, LimelightColor {
 
     private static Limelight3A limelight;
-    private static int timer = 0;
     private static int pipeline = 0; //0 = AprilTag, 1 = Green, 2 = Purple
     private Runnable cyclePipelines = () -> {
             try {
-                telemetry.addData("Thread is running", true);
-                tagDetection(limelight, telemetry);
-                Thread.sleep(1000);
-                colorDetectionGreen(limelight, telemetry);
-                Thread.sleep(1000);
-                colorDetectionPurple(limelight, telemetry);
-                Thread.sleep(1000);
+                while(!Thread.currentThread().isInterrupted()) {
+                    System.out.println("Thread is running");
+                    pipeline = 0;
+                    Thread.sleep(1000);
+                    pipeline = 1;
+                    Thread.sleep(1000);
+                    pipeline = 2;
+                    Thread.sleep(1000);
+                }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
             }
     };
 
@@ -37,13 +38,22 @@ public class AnimosityAndMortification extends LinearOpMode implements Limelight
         limelight.start();
         waitForStart();
 
+        Thread pipelineThread = new Thread(cyclePipelines);
+        pipelineThread.start();
+
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
-
-            new Thread(cyclePipelines).start();
-
+            if(pipeline == 0){
+                tagDetection(limelight,telemetry);
+            }else if(pipeline == 1){
+                colorDetectionGreen(limelight,telemetry);
+            }else if(pipeline == 2){
+                colorDetectionPurple(limelight,telemetry);
+            }
             telemetry.update();
         }
+        pipelineThread.interrupt();
+
     }
 
     public void updatePhoneConsole() {
