@@ -15,18 +15,20 @@ public class AnimosityAndMortification extends LinearOpMode implements Limelight
     private static Limelight3A limelight;
     private static int timer = 0;
     private static int pipeline = 0; //0 = AprilTag, 1 = Green, 2 = Purple
-    private Thread cyclePipelines = new Thread (() -> {
-        try {
-            tagDetection(limelight, telemetry);
-            Thread.sleep(1000);
-            colorDetectionGreen(limelight, telemetry);
-            Thread.sleep(1000);
-            colorDetectionPurple(limelight, telemetry);
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    });
+    private Runnable cyclePipelines = () -> {
+            try {
+                telemetry.addData("Thread is running", true);
+                tagDetection(limelight, telemetry);
+                Thread.sleep(1000);
+                colorDetectionGreen(limelight, telemetry);
+                Thread.sleep(1000);
+                colorDetectionPurple(limelight, telemetry);
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+    };
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,21 +40,7 @@ public class AnimosityAndMortification extends LinearOpMode implements Limelight
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            if (!cyclePipelines.isAlive()) {
-                cyclePipelines = new Thread (() -> {
-                    try {
-                        tagDetection(limelight, telemetry);
-                        Thread.sleep(1000);
-                        colorDetectionGreen(limelight, telemetry);
-                        Thread.sleep(1000);
-                        colorDetectionPurple(limelight, telemetry);
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-                cyclePipelines.start();
-            } 
+            new Thread(cyclePipelines).start();
 
             telemetry.update();
         }
