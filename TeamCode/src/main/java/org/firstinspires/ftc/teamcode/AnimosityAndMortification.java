@@ -7,38 +7,38 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTag;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
-import java.net.InetAddress;
-
 @TeleOp
-public class AnimosityAndMortification extends LinearOpMode implements LimelightTag, LimelightColor {
+public class AnimosityAndMortification extends Movable implements LimelightTag, LimelightColor {
 
     private static Limelight3A limelight;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        super.runOpMode();
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
         waitForStart();
 
-        new Thread(() -> {
-            while (opModeIsActive()) {
-                try {
-                    tagDetection(limelight,telemetry);
-                    Thread.sleep(1000);
-                    colorDetectionGreen(limelight,telemetry);
-                    Thread.sleep(1000);
-                    colorDetectionPurple(limelight,telemetry);
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
+//        new Thread(() -> {
+//            while (opModeIsActive()) {
+//                try {
+//                    tagDetection(limelight,telemetry);
+//                    Thread.sleep(1000);
+//                    colorDetectionGreen(limelight,telemetry);
+//                    Thread.sleep(1000);
+//                    colorDetectionPurple(limelight,telemetry);
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        }).start();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
-            telemetry.update();
+            tagDetection(limelight, telemetry);
+            updatePhoneConsole();
         }
     }
 
@@ -48,7 +48,10 @@ public class AnimosityAndMortification extends LinearOpMode implements Limelight
 
     @Override
     public void tag21() {
-
+        FLW.setPower(1);
+        BLW.setPower(-1);
+        FRW.setPower(1);
+        BRW.setPower(-1);
     }
 
     @Override
