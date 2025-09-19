@@ -14,15 +14,15 @@ public interface LimelightTag {
     void tag22();
     void tag23();
 
-    default void tagDetection(Limelight3A limelight, Telemetry telemetry) {
+    default boolean tagDetection(Limelight3A limelight, Telemetry telemetry) {
 
-        limelight.pipelineSwitch(0); // the index is the mode of the limelight (tags, color, etc.)
+        limelight.pipelineSwitch(0);
 
         LLResult result = limelight.getLatestResult();
 
         if (result != null) {
             if (result.isValid()) {
-//                  Pose3D botpose = result.getBotpose();
+//                Pose3D botpose = result.getBotpose();
 //                telemetry.addData("tx", result.getTx());
 //                telemetry.addData("ty", result.getTy());
 //                telemetry.addData("Botpose", botpose.toString());
@@ -34,14 +34,13 @@ public interface LimelightTag {
                     switch (id) {
                         case 21: // GPP
                             tag21();
-                            break;
+                            return true;
                         case 22: // PGP
                             tag22();
-                            break;
+                            return true;
                         case 23: // PPG
                             tag23();
-                            break;
-                        default: break;
+                            return true;
                     }
                 }
             }
@@ -49,7 +48,7 @@ public interface LimelightTag {
             telemetry.addData("Status", "Nothing detected (womp womp)!");
         }
         telemetry.update();
-
+        return false;
     }
 
 }

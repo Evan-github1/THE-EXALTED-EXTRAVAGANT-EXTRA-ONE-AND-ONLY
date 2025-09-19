@@ -9,8 +9,7 @@ public interface LimelightColor {
     void green();
     void purple();
 
-    default void colorDetectionGreen(Limelight3A limelight, Telemetry telemetry) {
-
+    default boolean colorDetectionGreen(Limelight3A limelight, Telemetry telemetry) {
         limelight.pipelineSwitch(1); // green
         LLResult resultGreen = limelight.getLatestResult();
         if (resultGreen != null) {
@@ -18,14 +17,15 @@ public interface LimelightColor {
                 if (!resultGreen.getColorResults().isEmpty()) {
                     green();
                     telemetry.addData("Green Detected", true);
+                    return true;
                 }
             }
         }
         telemetry.update();
-
+        return false;
     }
 
-    default void colorDetectionPurple(Limelight3A limelight, Telemetry telemetry) {
+    default boolean colorDetectionPurple(Limelight3A limelight, Telemetry telemetry) {
         limelight.pipelineSwitch(2); // purple
         LLResult resultPurple = limelight.getLatestResult();
         if (resultPurple != null) {
@@ -33,11 +33,12 @@ public interface LimelightColor {
                 if (!resultPurple.getColorResults().isEmpty()) {
                     purple();
                     telemetry.addData("Purple Detected", true);
+                    return true;
                 }
             }
         }
 
         telemetry.update();
-
+        return false;
     }
 }
