@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.List;
 
@@ -20,28 +21,25 @@ public interface LimelightTag {
 
         LLResult result = limelight.getLatestResult();
 
-        if (result != null) {
-            if (result.isValid()) {
-//                Pose3D botpose = result.getBotpose();
-//                telemetry.addData("tx", result.getTx());
-//                telemetry.addData("ty", result.getTy());
-//                telemetry.addData("Botpose", botpose.toString());
-
-                List<LLResultTypes.FiducialResult> results = result.getFiducialResults();
-                for (LLResultTypes.FiducialResult r : results) {
-                    int id = r.getFiducialId();
-                    telemetry.addData("AprilTag ID", id);
-                    switch (id) {
-                        case 21: // GPP
-                            tag21();
-                            return true;
-                        case 22: // PGP
-                            tag22();
-                            return true;
-                        case 23: // PPG
-                            tag23();
-                            return true;
-                    }
+        if (result != null && result.isValid()) {
+//            Pose3D botpose = result.getBotpose();
+//            telemetry.addData("tx", result.getTx());
+//            telemetry.addData("ty", result.getTy());
+//            telemetry.addData("Botpose", botpose.toString());
+            List<LLResultTypes.FiducialResult> results = result.getFiducialResults();
+            for (LLResultTypes.FiducialResult r : results) {
+                int id = r.getFiducialId();
+                telemetry.addData("AprilTag ID", id);
+                switch (id) {
+                    case 21: // GPP
+                        tag21();
+                        return true;
+                    case 22: // PGP
+                        tag22();
+                        return true;
+                    case 23: // PPG
+                        tag23();
+                        return true;
                 }
             }
         } else {

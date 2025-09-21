@@ -55,4 +55,11 @@ public abstract class Movable extends LinearOpMode {
     }
 
     protected abstract void updatePhoneConsole();
+
+    protected void disablePower() {
+        FLW.setPower(0);
+        FRW.setPower(0);
+        BLW.setPower(0);
+        BRW.setPower(0);
+    }
 }

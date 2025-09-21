@@ -37,11 +37,9 @@ public class MaliceAndCondescension extends Movable implements LimelightTag, Lim
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
             if (!tagDetection(limelight, telemetry)) {
-                FLW.setPower(0);
-                BLW.setPower(0);
-                FRW.setPower(0);
-                BRW.setPower(0);
+                disablePower();
             }
+
             updatePhoneConsole();
         }
     }

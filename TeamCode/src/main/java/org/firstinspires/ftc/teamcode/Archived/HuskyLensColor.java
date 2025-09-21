@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.Archived;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.Arrays;
 import java.util.List;
 
 // TODO: implement this interface to be able to access color detection (HUSKYLENS, NOT LIMELIGHT)
-public interface ColorDetection {
+public interface HuskyLensColor {
 
     void redDetected();
     void blueDetected();
     void yellowDetected();
 
-    default void colorDetection(HuskyLens huskyLens) {
+    default void colorDetection(HuskyLens huskyLens, Telemetry telemetry) {
         List<HuskyLens.Block> blocks = Arrays.asList(huskyLens.blocks());
 
         if (!blocks.isEmpty()) {
