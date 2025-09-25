@@ -62,4 +62,8 @@ public abstract class Movable extends LinearOpMode {
         BLW.setPower(0);
         BRW.setPower(0);
     }
+    protected boolean delay() {
+        return System.currentTimeMillis() - time >= 250;
+    }
+
 }

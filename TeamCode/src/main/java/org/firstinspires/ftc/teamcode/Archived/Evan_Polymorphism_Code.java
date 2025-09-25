@@ -124,9 +124,6 @@ public class Evan_Polymorphism_Code extends Movable {
         }
     }
 
-    private boolean delay() {
-        return System.currentTimeMillis() - time >= 250;
-    }
     public void updatePhoneConsole() {
         telemetry.update();
     }

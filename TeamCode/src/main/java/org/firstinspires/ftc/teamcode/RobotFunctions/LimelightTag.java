@@ -15,7 +15,7 @@ public interface LimelightTag {
     void tag22();
     void tag23();
 
-    default boolean tagDetection(Limelight3A limelight, Telemetry telemetry) {
+    default int tagDetection(Limelight3A limelight, Telemetry telemetry) {
 
         limelight.pipelineSwitch(0);
 
@@ -33,20 +33,20 @@ public interface LimelightTag {
                 switch (id) {
                     case 21: // GPP
                         tag21();
-                        return true;
+                        return 21;
                     case 22: // PGP
                         tag22();
-                        return true;
+                        return 22;
                     case 23: // PPG
                         tag23();
-                        return true;
+                        return 23;
                 }
             }
         } else {
             telemetry.addData("Status", "Nothing detected (womp womp)!");
         }
         telemetry.update();
-        return false;
+        return -1;
     }
 
 }
