@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 public class BallLauncher extends LinearOpMode {
 
     private static DcMotor launcherMotorL, launcherMotorR;
-    private static boolean onSwitch = false;
-    private static double speed = .5;
-    private static long time = System.currentTimeMillis();
+    private static boolean onSwitch;
+    private static double speed;
+    private static long time;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,6 +31,10 @@ public class BallLauncher extends LinearOpMode {
 
         launcherMotorL.setDirection(DcMotorSimple.Direction.FORWARD);
         launcherMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        onSwitch = false;
+        speed = .5;
+        time = System.currentTimeMillis();
 
         waitForStart();
 
