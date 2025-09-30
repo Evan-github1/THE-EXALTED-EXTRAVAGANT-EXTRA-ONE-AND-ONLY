@@ -2,19 +2,22 @@ package org.firstinspires.ftc.teamcode.RobotFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.time.Duration;
+import java.time.Instant;
+
 // TODO: inherit this class to be able to drive
 public abstract class Movable extends LinearOpMode {
     static protected DcMotor FLW;
     static protected DcMotor BLW;
     static protected DcMotor FRW;
     static protected DcMotor BRW;
-    static protected long time;
+    static protected Instant time;
 
     static protected double angle, desVol, vx, vy, v1, v2, max;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        time = System.currentTimeMillis();
+        time = Instant.now();
         FLW = hardwareMap.get(DcMotor.class, "FLW");
         BLW = hardwareMap.get(DcMotor.class, "BLW");
         FRW = hardwareMap.get(DcMotor.class, "FRW");
@@ -54,16 +57,17 @@ public abstract class Movable extends LinearOpMode {
         BLW.setPower(v2);
     }
 
-    protected abstract void updatePhoneConsole();
-
     protected void disablePower() {
         FLW.setPower(0);
         FRW.setPower(0);
         BLW.setPower(0);
         BRW.setPower(0);
     }
-    protected boolean delay() {
-        return System.currentTimeMillis() - time >= 250;
+    public boolean delay() {
+        return Duration.between(time, Instant.now()).toMillis() >= 250;
     }
 
+    protected boolean delay(long cooldown) {
+        return Duration.between(time, Instant.now()).toMillis() >= cooldown;
+    }
 }

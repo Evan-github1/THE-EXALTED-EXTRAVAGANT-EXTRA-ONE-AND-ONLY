@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.RobotFunctions;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.time.Instant;
+
 /*
 TODO: Same thing as DoubleSwitchedServo class but for 3 positions instead of 2
  No clear examples but can be used in special cases (like Team #2's swing)
@@ -43,6 +45,6 @@ public class TripleSwitchedServo extends DoubleSwitchedServo {
             servoSwitch = 0;
         }
 
-        Movable.time = System.currentTimeMillis();
+        Movable.time = Instant.now();
     }
 }

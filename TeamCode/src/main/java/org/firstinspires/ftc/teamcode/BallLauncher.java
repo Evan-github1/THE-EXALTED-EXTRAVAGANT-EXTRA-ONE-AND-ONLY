@@ -68,5 +68,7 @@ public class BallLauncher extends LinearOpMode {
     private boolean delay() {
         return System.currentTimeMillis() - time >= 250;
     }
-
+    private boolean delay(long cooldown) {
+        return System.currentTimeMillis() - time >= cooldown;
+    }
 }

@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.RobotFunctions;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.time.Instant;
+
 /*
 TODO: this class is useful for servos that utilize two positions
  For example, a claw (open and closed position)
@@ -48,7 +50,7 @@ public class DoubleSwitchedServo {
             secondaryPos();
         }
         servoSwitch = !servoSwitch;
-        Movable.time = System.currentTimeMillis();
+        Movable.time = Instant.now();
     }
 
     // use anonymous classes to change, these are default
