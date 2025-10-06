@@ -1,20 +1,21 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTag;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
-import java.time.Instant;
+import java.util.List;
 
 @TeleOp
-public class MaliceAndCondescension extends Movable implements LimelightTag, LimelightColor {
+public class MaliceAndCondescension extends Movable implements LimelightColor {
 
     private static Limelight3A limelight;
     private static Servo swivelServo;
-    private int detectedTagID;
+    private static List<LLResultTypes.FiducialResult> results;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -22,24 +23,39 @@ public class MaliceAndCondescension extends Movable implements LimelightTag, Lim
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         swivelServo = hardwareMap.get(Servo.class, "swivelServo");
-        detectedTagID = -1;
+        limelight.pipelineSwitch(0); // april tags
         limelight.start();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("Apple", true);
-            telemetry.addData("Banana", true);
             telemetry.addData("Status", "Running");
             if (gamepad1.a) {
-                tagDetection(limelight, telemetry);
-                if (detectedTagID == -1 && swivelServo.getPosition() < 1.0) {
-                    double nextPos = swivelServo.getPosition() + 0.02;
+                LLResult result = limelight.getLatestResult();
+                if (result.isValid()) {
+                    results = result.getFiducialResults();
+                    for (LLResultTypes.FiducialResult r : results) {
+                        int id = r.getFiducialId();
+                        switch (id) {
+                            case 21:
+                                tag21();
+                                break; // GPP
+                            case 22:
+                                tag22();
+                                break; // PGP
+                            case 23:
+                                tag23();
+                                break; // PPG
+                        }
+                        telemetry.addData("AprilTag ID", id);
+                    }
+                } else if (swivelServo.getPosition() < 1.0) {
+                    double nextPos = swivelServo.getPosition() + 0.0005;
                     swivelServo.setPosition(nextPos);
                 }
 
-                telemetry.addData("Tag detected", detectedTagID);
-                telemetry.addData("Servo pos", swivelServo.getPosition());
+                telemetry.addData("Servo Position", swivelServo.getPosition());
+
             } else if (gamepad1.b) { // reset swivel servo position
                 swivelServo.setPosition(0);
                 swivelServo.setDirection(Servo.Direction.FORWARD);
@@ -47,39 +63,21 @@ public class MaliceAndCondescension extends Movable implements LimelightTag, Lim
             else if (gamepad1.x) { // reset swivel servo position
                 swivelServo.setPosition(1);
             }
-            telemetry.addData("Carrot", true);
-            telemetry.addData("Date",true);
-
-
-
-
-
-
-
-
-
+            
             telemetry.update();
         }
     }
 
-    @Override
     public void tag21() {
-        detectedTagID = 21;
+
     }
 
-    @Override
     public void tag22() {
-        detectedTagID = 22;
+
     }
 
-    @Override
     public void tag23() {
-        detectedTagID = 23;
-    }
 
-    @Override
-    public void nothingDetected() {
-        detectedTagID = -1;
     }
 
     @Override
