@@ -15,9 +15,10 @@ public class BallLauncher extends LinearOpMode {
     private static long time;
     public static final int TICKS_PER_REV = 28;
     public static int targetRPM = 3000;
-    public static int localStartPos,globalStartPos;
-    public static long localTimeMillis,globalTimeMillis;
+    public static int localStartPos,lastPos;
+    public static long localTimeMillis,lastTime;
     public static double RPM;
+    public static boolean started = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,12 +32,11 @@ public class BallLauncher extends LinearOpMode {
         motorConfigurationType2.setAchieveableMaxRPMFraction(1.0);
         launcherMotorR.setMotorType(motorConfigurationType2);
 
-        launcherMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        launcherMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         launcherMotorL.setDirection(DcMotorSimple.Direction.FORWARD);
         launcherMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        launcherMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        launcherMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         onSwitch = false;
         speed = .1;
         time = System.currentTimeMillis();
@@ -46,12 +46,20 @@ public class BallLauncher extends LinearOpMode {
 
 
         while (opModeIsActive()) {
+            if (!started) {
+                launcherMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                launcherMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                started = true;
+            }
+            localStartPos = launcherMotorL.getCurrentPosition() - lastPos;
+            localTimeMillis = System.currentTimeMillis()-lastTime;
             if (gamepad1.y && delay()) {
                 onSwitch = !onSwitch;
                 time = System.currentTimeMillis();
-                if(!onSwitch){
-                    globalStartPos = launcherMotorL.getCurrentPosition();
-                    globalTimeMillis = System.currentTimeMillis();
+                if(onSwitch){
+                    //globalStartPos = launcherMotorL.getCurrentPosition();
+                    //globalTimeMillis = System.currentTimeMillis();
+
                 }
             } else if (gamepad1.dpad_up && delay()) {
                 speed += .05;
@@ -63,28 +71,26 @@ public class BallLauncher extends LinearOpMode {
                 time = System.currentTimeMillis();
             }
 
-            try {
-                RPM = (localStartPos / TICKS_PER_REV) * 60000 / localTimeMillis;
-            }catch(Exception ignored){
+            if (localTimeMillis != 0) RPM = ((double) localStartPos / TICKS_PER_REV) * 60000 / (localTimeMillis);
 
-            }
 
             if (onSwitch) {
                 launcherMotorL.setPower(speed);
                 launcherMotorR.setPower(speed);
-                localStartPos = launcherMotorL.getCurrentPosition() - globalStartPos;
-                localTimeMillis = System.currentTimeMillis()-globalTimeMillis;
+
             } else {
                 launcherMotorL.setPower(0);
                 launcherMotorR.setPower(0);
-
             }
 
+            lastTime = System.currentTimeMillis();
+            lastPos = launcherMotorL.getCurrentPosition();
+
             telemetry.addData("Local pos",localStartPos);
+            telemetry.addData("localTimeMillis",localTimeMillis);
+            telemetry.addData("Current position",launcherMotorR.getCurrentPosition());
             telemetry.addData("Speed", speed);
-            telemetry.addData("RPM", launcherMotorR.getPower());
             telemetry.addData("Actual RPM",RPM);
-            telemetry.addData("On?", onSwitch);
             telemetry.update();
         }
 
