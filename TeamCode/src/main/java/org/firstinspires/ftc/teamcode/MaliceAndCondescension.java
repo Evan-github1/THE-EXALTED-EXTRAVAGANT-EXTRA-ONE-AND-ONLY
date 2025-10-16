@@ -3,6 +3,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
@@ -16,6 +17,7 @@ public class MaliceAndCondescension extends Movable implements LimelightColor {
     private static Limelight3A limelight;
     private static Servo swivelServo;
     private static List<LLResultTypes.FiducialResult> results;
+    private static DcMotor intake;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,6 +27,7 @@ public class MaliceAndCondescension extends Movable implements LimelightColor {
         swivelServo = hardwareMap.get(Servo.class, "swivelServo");
         limelight.pipelineSwitch(0); // april tags
         limelight.start();
+        intake = hardwareMap.get(DcMotor.class, "intake"); // placeholder
 
         waitForStart();
 
@@ -62,6 +65,12 @@ public class MaliceAndCondescension extends Movable implements LimelightColor {
             }
             else if (gamepad1.x) { // reset swivel servo position
                 swivelServo.setPosition(1);
+            }
+
+            if (gamepad2.a) {
+                intake.setPower(1);
+            } else {
+                intake.setPower(0);
             }
             
             telemetry.update();
