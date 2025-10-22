@@ -19,7 +19,7 @@ public class DesktopControlClient {
     private static DataOutputStream out;
     private static DataInputStream in;
 
-    private static final String IP = "192.168.43.49";
+    private static final String IP = "192.168.43.1";
 
     public static void main(String[] args) throws IOException, UnknownHostException {
         // connect to the phone

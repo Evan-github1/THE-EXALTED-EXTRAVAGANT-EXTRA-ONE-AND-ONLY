@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.ServoTesting;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
@@ -46,11 +47,18 @@ public class TestServoPos extends LinearOpMode {
                         // dec inc value
                         incValue -= .02;
                         delay = System.currentTimeMillis();
+                    } else if (gamepad2.b) {
+                        if (servo.getDirection().equals(Servo.Direction.FORWARD)) {
+                            servo.setDirection(Servo.Direction.REVERSE);
+                        } else {
+                            servo.setDirection(Servo.Direction.FORWARD);
+                        }
                     } else if (gamepad2.right_bumper && gamepad2.left_bumper) {
                         reset();
                     }
                 }
                 servo.setPosition(servoPos);
+                telemetry.addData("Servo Direction", servo.getDirection());
                 telemetry.addData("Servo position", servoPos);
                 telemetry.addData("Increment value", incValue);
             } else {
@@ -109,10 +117,9 @@ public class TestServoPos extends LinearOpMode {
     }
 
     private void reset() {
-        servoName = "";
+        servoName = "gateway";
         currentLetterNum = 0;
         capsLock = false;
-
         servoPos = 0;
         incValue = .05;
         servoConfirmed = false;
@@ -120,6 +127,6 @@ public class TestServoPos extends LinearOpMode {
     }
 
     private boolean addButtonDelay() {
-        return System.currentTimeMillis() - delay > 300;
+        return System.currentTimeMillis() - delay > 100;
     }
 }

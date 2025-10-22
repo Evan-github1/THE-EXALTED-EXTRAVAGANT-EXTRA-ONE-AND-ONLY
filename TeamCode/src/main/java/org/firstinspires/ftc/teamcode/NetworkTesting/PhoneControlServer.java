@@ -30,15 +30,28 @@ public class PhoneControlServer extends LinearOpMode {
         waitForStart();
 
         try {
-            // creates the server
+            telemetry.addData("Server", "Creating ServerSocket...");
+            telemetry.update();
+
             serverSocket = new ServerSocket(1234);
 
-            socket = serverSocket.accept();
+            telemetry.addData("Server", "Waiting for client to connect...");
+            telemetry.update();
+
+            socket = serverSocket.accept(); // this blocks
+
+            telemetry.addData("Server", "Client connected from " + socket.getInetAddress());
+            telemetry.update();
 
             out = new DataOutputStream(socket.getOutputStream());
             in = new DataInputStream(socket.getInputStream());
 
-        } catch (IOException e) { throw new RuntimeException(e); }
+        } catch (IOException e) {
+            telemetry.addData("Exception", e.getMessage());
+            telemetry.update();
+            throw new RuntimeException(e);
+        }
+
 
         while (opModeIsActive()) {
             telemetry.addData("Connection is running. Client IP is", socket.getInetAddress());

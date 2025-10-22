@@ -6,18 +6,21 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 import java.util.List;
 
 @TeleOp
-public class MaliceAndCondescension extends Movable implements LimelightColor {
+public class MaliceAndCondescension extends Movable implements LimelightColor { // robot #22335
 
     private static Limelight3A limelight;
     private static Servo swivelServo;
     private static List<LLResultTypes.FiducialResult> results;
-    private static DcMotor intake;
+    private static DcMotor intakeMotor;
+    private static Servo gatewayServo;
+    private static DoubleSwitchedServo gateways = new DoubleSwitchedServo(gatewayServo, .23, .76);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,7 +30,8 @@ public class MaliceAndCondescension extends Movable implements LimelightColor {
         swivelServo = hardwareMap.get(Servo.class, "swivelServo");
         limelight.pipelineSwitch(0); // april tags
         limelight.start();
-        intake = hardwareMap.get(DcMotor.class, "intake"); // placeholder
+        intakeMotor = hardwareMap.get(DcMotor.class, "intake"); // placeholder
+        gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
         waitForStart();
 
@@ -68,10 +72,13 @@ public class MaliceAndCondescension extends Movable implements LimelightColor {
             }
 
             if (gamepad2.a) {
-                intake.setPower(1);
+                intakeMotor.setPower(1);
+            } else if (gamepad2.b && delay()) {
+                gateways.quickSwitch();
             } else {
-                intake.setPower(0);
+                intakeMotor.setPower(0);
             }
+
             
             telemetry.update();
         }
