@@ -11,13 +11,13 @@ public abstract class Movable extends LinearOpMode {
     static protected DcMotor BLW;
     static protected DcMotor FRW;
     static protected DcMotor BRW;
-    static protected Instant time;
+    static protected long time;
 
     static protected double angle, desVol, vx, vy, v1, v2, max;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        time = Instant.now();
+        time = System.currentTimeMillis();
         FLW = hardwareMap.get(DcMotor.class, "FLW");
         BLW = hardwareMap.get(DcMotor.class, "BLW");
         FRW = hardwareMap.get(DcMotor.class, "FRW");
@@ -63,11 +63,12 @@ public abstract class Movable extends LinearOpMode {
         BLW.setPower(0);
         BRW.setPower(0);
     }
+
     public boolean delay() {
-        return Duration.between(time, Instant.now()).toMillis() >= 250;
+        return System.currentTimeMillis() >= time + 250;
     }
 
-    protected boolean delay(long cooldown) {
-        return Duration.between(time, Instant.now()).toMillis() >= cooldown;
+    public boolean delay(long duration) {
+        return System.currentTimeMillis() >= time + duration;
     }
 }

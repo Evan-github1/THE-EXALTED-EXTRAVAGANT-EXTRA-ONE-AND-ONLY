@@ -45,6 +45,6 @@ public class TripleSwitchedServo extends DoubleSwitchedServo {
             servoSwitch = 0;
         }
 
-        Movable.time = Instant.now();
+        Movable.time = System.currentTimeMillis();
     }
 }

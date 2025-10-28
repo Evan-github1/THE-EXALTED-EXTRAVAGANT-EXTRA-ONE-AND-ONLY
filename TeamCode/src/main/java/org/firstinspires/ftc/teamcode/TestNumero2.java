@@ -19,18 +19,32 @@ import java.util.List;
 public class TestNumero2 extends LinearOpMode {
 
     private static Servo gatewayServo;
+    private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo gateways;
+    private static DoubleSwitchedServo wipersL, wipersR;
     private static long time;
     @Override
     public void runOpMode() throws InterruptedException {
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
+        wiperL = hardwareMap.get(Servo.class, "wiperL");
+        wiperR = hardwareMap.get(Servo.class, "wiperR");
+
         gateways = new DoubleSwitchedServo(gatewayServo, .23, .76);
+        wipersL = new DoubleSwitchedServo(wiperL, 1, .42);
+        wipersR = new DoubleSwitchedServo(wiperR, 0, .62);
+
         time = System.currentTimeMillis();
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad2.b && delay()) {
+            if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
+                time = System.currentTimeMillis();
+            } else if (gamepad1.a && delay()) {
+                wipersL.quickSwitch();
+                time = System.currentTimeMillis();
+            } else if (gamepad1.y && delay()) {
+                wipersR.quickSwitch();
                 time = System.currentTimeMillis();
             }
 
@@ -40,6 +54,10 @@ public class TestNumero2 extends LinearOpMode {
 
     public boolean delay() {
         return System.currentTimeMillis() >= time + 250;
+    }
+
+    public boolean delay(long duration) {
+        return System.currentTimeMillis() >= time + duration;
     }
 
 

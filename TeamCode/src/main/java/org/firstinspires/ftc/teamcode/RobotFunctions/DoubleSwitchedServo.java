@@ -50,7 +50,7 @@ public class DoubleSwitchedServo {
             secondaryPos();
         }
         servoSwitch = !servoSwitch;
-        Movable.time = Instant.now();
+        Movable.time = System.currentTimeMillis();
     }
 
     // use anonymous classes to change, these are default
