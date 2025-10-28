@@ -5,33 +5,19 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-
 public interface LimelightColor {
     void green();
     void purple();
 
-    default void colorDetectionGreen(Limelight3A limelight, Telemetry telemetry) {
-
-        limelight.pipelineSwitch(1); // green
+    default void colorDetectionGreen(Limelight3A limelight, Telemetry telemetry) { // pipeline = 1
         LLResult resultGreen = limelight.getLatestResult();
-        if (resultGreen != null) {
-            if (resultGreen.isValid()) {
-                if (!resultGreen.getColorResults().isEmpty()) {
-                    Pose3D botpose = resultGreen.getBotpose();
-                    telemetry.addData("tx", resultGreen.getTx());
-                    telemetry.addData("ty", resultGreen.getTy());
-                    telemetry.addData("Botpose", botpose.toString());
-
-                    green();
-                    telemetry.addData("Green Detected", true);
-                }
-            }
+        if (resultGreen != null && resultGreen.isValid()) {
+            green();
+            telemetry.addData("Green",
+                    "Detected: %s | tx: %.2f | ty: %.2f",
+                    resultGreen.isValid(), resultGreen.getTx(), resultGreen.getTy());
         }
+
     }
 
     default void colorDetectionPurple(Limelight3A limelight, Telemetry telemetry) {

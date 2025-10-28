@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.RobotFunctions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import java.time.Duration;
-import java.time.Instant;
-
 // TODO: inherit this class to be able to drive
 public abstract class Movable extends LinearOpMode {
     static protected DcMotor FLW;
@@ -46,15 +43,10 @@ public abstract class Movable extends LinearOpMode {
             v2 /= max;
         }
 
-        FLW.setDirection(DcMotor.Direction.FORWARD);
-        BLW.setDirection(DcMotor.Direction.FORWARD);
-        FRW.setDirection(DcMotor.Direction.REVERSE);
-        BRW.setDirection(DcMotor.Direction.REVERSE);
-
-        FLW.setPower(v1);
-        FRW.setPower(v2);
-        BRW.setPower(v1);
-        BLW.setPower(v2);
+        FLW.setPower(-v1);
+        FRW.setPower(-v2);
+        BRW.setPower(-v1);
+        BLW.setPower(-v2);
     }
 
     protected void disablePower() {

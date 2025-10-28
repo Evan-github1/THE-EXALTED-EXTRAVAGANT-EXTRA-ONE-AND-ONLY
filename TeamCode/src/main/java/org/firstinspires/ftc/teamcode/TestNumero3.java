@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
 
 import java.util.List;
 
-@TeleOp
+@TeleOp(name = "hello world!")
 public class TestNumero3 extends LinearOpMode implements LimelightColor {
 
     private static Limelight3A limelight;
@@ -29,6 +29,7 @@ public class TestNumero3 extends LinearOpMode implements LimelightColor {
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
+            // is able to get x position, just rotate until it's [-5, 5]
             colorDetectionGreen(limelight, telemetry);
 
             telemetry.update();
