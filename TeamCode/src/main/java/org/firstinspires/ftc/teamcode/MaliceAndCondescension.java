@@ -37,17 +37,22 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
         //intakeMotor = hardwareMap.get(DcMotor.class, "intake"); // placeholder
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
-        wiperL = hardwareMap.get(Servo.class, "wiperL");
         wiperR = hardwareMap.get(Servo.class, "wiperR");
+        wiperL = hardwareMap.get(Servo.class, "wiperL");
 
         gateways = new DoubleSwitchedServo(gatewayServo, .23, .76);
-        wipersL = new DoubleSwitchedServo(wiperL, 1, .5);
-        wipersR = new DoubleSwitchedServo(wiperR, 0, .5);
+        wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
+        wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
+
+        FLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
 
@@ -62,10 +67,8 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
             } else if (gamepad1.left_trigger >= .5 && delay(600)) { // swap names of wiper variables, reversed
                 new Thread(() -> {
                     try {
-                        wipersL.primaryPos();
-                        Thread.sleep(250);
                         wipersL.secondaryPos();
-                        Thread.sleep(250);
+                        Thread.sleep(500);
                         wipersL.primaryPos();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -75,10 +78,8 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
             } else if (gamepad1.right_trigger >= .5 && delay(600)) {
                 new Thread(() -> {
                     try {
-                        wipersR.primaryPos();
-                        Thread.sleep(250);
                         wipersR.secondaryPos();
-                        Thread.sleep(250);
+                        Thread.sleep(500);
                         wipersR.primaryPos();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -107,7 +108,7 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
             } else {
                 intakeMotor.setPower(0);
             }*/
-            
+
             telemetry.update();
         }
     }

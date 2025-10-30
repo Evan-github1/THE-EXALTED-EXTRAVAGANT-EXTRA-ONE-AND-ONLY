@@ -16,37 +16,15 @@ import java.time.Instant;
 import java.util.List;
 
 @TeleOp
-public class TestNumero2 extends LinearOpMode {
+public class TestNumero2 extends Movable {
 
-    private static Servo gatewayServo;
-    private static Servo wiperL, wiperR;
-    private static DoubleSwitchedServo gateways;
-    private static DoubleSwitchedServo wipersL, wipersR;
-    private static long time;
     @Override
     public void runOpMode() throws InterruptedException {
-        gatewayServo = hardwareMap.get(Servo.class, "gateway");
-        wiperL = hardwareMap.get(Servo.class, "wiperL");
-        wiperR = hardwareMap.get(Servo.class, "wiperR");
+        super.runOpMode();
 
-        gateways = new DoubleSwitchedServo(gatewayServo, .23, .76);
-        wipersL = new DoubleSwitchedServo(wiperL, 1, .42);
-        wipersR = new DoubleSwitchedServo(wiperR, 0, .62);
-
-        time = System.currentTimeMillis();
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad1.b && delay()) {
-                gateways.quickSwitch();
-                time = System.currentTimeMillis();
-            } else if (gamepad1.a && delay()) {
-                wipersL.quickSwitch();
-                time = System.currentTimeMillis();
-            } else if (gamepad1.y && delay()) {
-                wipersR.quickSwitch();
-                time = System.currentTimeMillis();
-            }
 
             telemetry.update();
         }

@@ -25,33 +25,32 @@ public class DynamiteTestingClass extends Movable {
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
+
+        FLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
-
-            /*
-        BR - 1 (0)
-        FR - 3 (1)
-        FL = 2 (3)
-        BL - 0 (2)
-         */
-            //What should be spinning front left is spinning front right.
-            //What should be spinning back left is spinning back left.
-            //BR no FL yes
-            //FR is BR
-            //What should be spinning
-            if (gamepad1.a) {
+            if (gamepad1.a) { // bottom
                 FLW.setPower(1);
-            } else if (gamepad1.b) {
+            } else if (gamepad1.b) { //right
                 FRW.setPower(1);
-            } else if (gamepad1.x) {
+            } else if (gamepad1.x) { // left
                 BLW.setPower(1);
-            } else if (gamepad1.y) {
+            } else if (gamepad1.y) { // top
                 BRW.setPower(1);
             } else {
                 disablePower();
             }
+
+            telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
+            telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
+            telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
+            telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
 
             telemetry.update();
         }
