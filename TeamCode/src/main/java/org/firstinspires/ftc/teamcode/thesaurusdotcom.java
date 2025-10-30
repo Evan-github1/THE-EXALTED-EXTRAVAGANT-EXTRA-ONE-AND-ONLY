@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 import java.util.List;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-
+@TeleOp
 public class thesaurusdotcom extends Movable {
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -17,13 +17,19 @@ public class thesaurusdotcom extends Movable {
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
-
+        FLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            FLW.setPower(gamepad1.left_stick_y);
+            FRW.setPower(gamepad1.left_stick_y);
+            BLW.setPower(gamepad1.left_stick_y);
+            BRW.setPower(gamepad1.left_stick_y);
 
 
 
@@ -40,6 +46,12 @@ public class thesaurusdotcom extends Movable {
             } else {
                 disablePower();
             }
+
+            telemetry.addData("FLW",FLW.getPower());
+            telemetry.addData("FRW",FRW.getPower());
+            telemetry.addData("BLW",BLW.getPower());
+            telemetry.addData("BRW",BRW.getPower());
+
 
             telemetry.update();
         }

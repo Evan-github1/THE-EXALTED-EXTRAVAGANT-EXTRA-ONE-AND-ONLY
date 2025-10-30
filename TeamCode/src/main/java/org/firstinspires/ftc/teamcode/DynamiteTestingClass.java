@@ -36,8 +36,10 @@ public class DynamiteTestingClass extends Movable {
         FL = 2 (3)
         BL - 0 (2)
          */
-            //What should be spinning back right is spinning front left.
-            //What should be spinning back left is spinning front right.
+            //What should be spinning front left is spinning front right.
+            //What should be spinning back left is spinning back left.
+            //BR no FL yes
+            //FR is BR
             //What should be spinning
             if (gamepad1.a) {
                 FLW.setPower(1);
