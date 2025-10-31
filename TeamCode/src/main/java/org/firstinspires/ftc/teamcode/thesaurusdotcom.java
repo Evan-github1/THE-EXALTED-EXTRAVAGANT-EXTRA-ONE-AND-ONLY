@@ -21,17 +21,13 @@ public class thesaurusdotcom extends Movable {
         BLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            FLW.setPower(gamepad1.left_stick_y);
-            FRW.setPower(gamepad1.left_stick_y);
-            BLW.setPower(gamepad1.left_stick_y);
-            BRW.setPower(gamepad1.left_stick_y);
-
-
+            moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
             if (gamepad1.left_bumper) {
                 FLW.setPower(-1);
@@ -47,10 +43,10 @@ public class thesaurusdotcom extends Movable {
                 disablePower();
             }
 
-            telemetry.addData("FLW",FLW.getPower());
-            telemetry.addData("FRW",FRW.getPower());
-            telemetry.addData("BLW",BLW.getPower());
-            telemetry.addData("BRW",BRW.getPower());
+            telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
+            telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
+            telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
+            telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
 
 
             telemetry.update();
