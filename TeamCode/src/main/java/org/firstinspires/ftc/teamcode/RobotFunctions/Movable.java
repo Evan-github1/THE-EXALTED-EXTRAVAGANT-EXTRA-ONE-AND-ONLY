@@ -22,9 +22,9 @@ public abstract class Movable extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        waitForStart();
     }
+
+
 
     // all robots have wheels so this method is a must
     protected void moveWheels(float x, float y) {
