@@ -35,6 +35,7 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
         //limelight.start();
 
         //intakeMotor = hardwareMap.get(DcMotor.class, "intake"); // placeholder
+
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
         wiperR = hardwareMap.get(Servo.class, "wiperR");
@@ -48,18 +49,13 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
-
-        FLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
             moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            strafe();
 
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
@@ -88,19 +84,7 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.left_bumper) {
-                FLW.setPower(-1);
-                FRW.setPower(1);
-                BLW.setPower(-1);
-                BRW.setPower(1);
-            } else if (gamepad1.right_bumper) {
-                FLW.setPower(1);
-                FRW.setPower(-1);
-                BLW.setPower(1);
-                BRW.setPower(-1);
-            } else {
-                disablePower();
-            }
+
 
             /*else if (gamepad1.options && delay()) {
                 intakeMotor.setPower(1);
@@ -108,6 +92,11 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
             } else {
                 intakeMotor.setPower(0);
             }*/
+
+//            telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
+//            telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
+//            telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
+//            telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
 
             telemetry.update();
         }
