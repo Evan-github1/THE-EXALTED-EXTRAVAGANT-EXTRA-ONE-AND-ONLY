@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,15 +9,13 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
-import java.util.List;
-
 @TeleOp
-public class MaliceAndCondescension extends Movable implements LimelightColor, LimelightTags { // robot #22335
+public class MaliceAndCondescension extends Movable implements LimelightTags { // robot #22335
 
     private static Limelight3A limelight;
-    private static Servo swivelServo;
-    private static List<LLResultTypes.FiducialResult> results;
-    private static DcMotor intakeMotor;
+    private static Servo swivelTurretServo;
+    private static DcMotor intakeMotor, outtakeMotor;
+    private static boolean intakeToggle, outtakeToggle;
     private static Servo gatewayServo;
     private static DoubleSwitchedServo gateways;
     private static Servo wiperL, wiperR;
@@ -28,20 +25,24 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
 
-        //limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        //swivelServo = hardwareMap.get(Servo.class, "swivelServo");
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0); // april tags
+        limelight.start();
 
-        //limelight.pipelineSwitch(0); // april tags
-        //limelight.start();
+        swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
 
-        //intakeMotor = hardwareMap.get(DcMotor.class, "intake"); // placeholder
+
+        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        outtakeMotor = hardwareMap.get(DcMotor.class, "outtake");
+        intakeToggle = false;
+        outtakeToggle = false;
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
         wiperR = hardwareMap.get(Servo.class, "wiperR");
         wiperL = hardwareMap.get(Servo.class, "wiperL");
 
-        gateways = new DoubleSwitchedServo(gatewayServo, .23, .76);
+        gateways = new DoubleSwitchedServo(gatewayServo, .26, .73);
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
 
@@ -52,30 +53,31 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Running");
+            telemetry.addData("Status", "Running.");
 
             moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
             strafe();
+            turretTracking();
 
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
                 time = System.currentTimeMillis();
-            } else if (gamepad1.left_trigger >= .5 && delay(600)) { // swap names of wiper variables, reversed
+            } else if (gamepad1.left_trigger >= .5 && delay(1001)) {
                 new Thread(() -> {
                     try {
                         wipersL.secondaryPos();
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                         wipersL.primaryPos();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }).start();
                 time = System.currentTimeMillis();
-            } else if (gamepad1.right_trigger >= .5 && delay(600)) {
+            } else if (gamepad1.right_trigger >= .5 && delay(1001)) {
                 new Thread(() -> {
                     try {
                         wipersR.secondaryPos();
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                         wipersR.primaryPos();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
@@ -84,21 +86,55 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
                 time = System.currentTimeMillis();
             }
 
-
-
-            /*else if (gamepad1.options && delay()) {
-                intakeMotor.setPower(1);
+            if (gamepad1.y && delay()) {
+                intakeToggle = !intakeToggle;
                 time = System.currentTimeMillis();
+            } else if (gamepad1.a && delay()) {
+                outtakeToggle = !outtakeToggle;
+                time = System.currentTimeMillis();
+            }
+
+            if (gamepad1.x) {
+                intakeMotor.setPower(-1);
             } else {
                 intakeMotor.setPower(0);
-            }*/
+            }
 
-//            telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
-//            telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
-//            telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
-//            telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
+            if (intakeToggle) {
+                intakeMotor.setPower(1);
+            } else {
+                intakeMotor.setPower(0);
+            }
+
+            if (outtakeToggle) {
+                outtakeMotor.setPower(1);
+            } else {
+                outtakeMotor.setPower(0);
+            }
 
             telemetry.update();
+        }
+    }
+
+    private void turretTracking() {
+        if (getTX(limelight) >= 3 || getTX(limelight) <= -3) {  // should rotate
+            if (getTX(limelight) >= 3) {
+                // turn the turret left
+//                double nextPos = swivelTurretServo.getPosition() - 0.0005;
+//                swivelTurretServo.setPosition(nextPos);
+            } else if (getTX(limelight) <= -3) {
+                // turn the turret right
+//                double nextPos = swivelTurretServo.getPosition() + 0.0005;
+//                swivelTurretServo.setPosition(nextPos);
+            }
+            telemetry.addData("boom", "shakalaka");
+            telemetry.addData("I see the tag at", getTX(limelight));
+            telemetry.addData("The tag I see is", detectTag(limelight, telemetry));
+            telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
+        } else { // getTX is in a domain of [-3, 3]
+            telemetry.addData("I see the tag at", getTX(limelight));
+            telemetry.addData("The tag I see is", detectTag(limelight, telemetry));
+            telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
         }
     }
 
@@ -116,42 +152,4 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
     public void tag23() {
 
     }
-
-    @Override
-    public void green() {
-
-    }
-
-    @Override
-    public void purple() {
-
-    }
-
-    /* code for limelight
-
-    if (gamepad1.x) { // reset swivel servo position
-                swivelServo.setPosition(1);
-            }
-
-    if (gamepad1.a) {
-
-        telemetry.addData("Servo Position", swivelServo.getPosition());
-
-        int tag = detectTag(limelight, telemetry);
-        if (tag == -1
-            //&& swivelServo.getPosition() < 1.0
-        ) {
-            //double nextPos = swivelServo.getPosition() + 0.0005;
-            //swivelServo.setPosition(nextPos);
-            telemetry.addData("Hello", "It should be rotating");
-        } else {
-            telemetry.addData("Tag detected", tag);
-        }
-        //telemetry.addData("Servo Position", swivelServo.getPosition());
-
-    } else if (gamepad1.b) { // reset swivel servo position
-        swivelServo.setPosition(0);
-        swivelServo.setDirection(Servo.Direction.FORWARD);
-    }
-    */
 }
