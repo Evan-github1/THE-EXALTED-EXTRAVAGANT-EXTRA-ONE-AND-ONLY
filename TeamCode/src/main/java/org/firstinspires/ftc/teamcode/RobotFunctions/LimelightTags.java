@@ -41,15 +41,22 @@ public interface LimelightTags {
         if (result.isValid()) {
             return result.getTa();
         }
-        return -1;
+        return Double.NaN;
     }
 
+    default double getTX(Limelight3A limelight) {
+        LLResult result = limelight.getLatestResult();
+        if (result.isValid()) {
+            return result.getTx();
+        }
+        return Double.NaN;
+    }
 
     default double getDistanceFromTag(double ta) { // ta = target area
         double scale = 30665.95;
         double distance = (scale/ ta);
         return distance;
-    }
+    } // doesn't work btw
 
     void tag21();
     void tag22();
