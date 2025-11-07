@@ -58,27 +58,17 @@ public class AutoDotEdu extends Movable implements LimelightColor, LimelightTags
     }
 
     @Override
-    public void tag21() {
-
-    }
+    public void tag21() {}
 
     @Override
-    public void tag22() {
-
-    }
+    public void tag22() {}
 
     @Override
-    public void tag23() {
-
-    }
+    public void tag23() {}
 
     @Override
-    public void green() {
-
-    }
+    public void green() {}
 
     @Override
-    public void purple() {
-
-    }
+    public void purple() {}
 }
