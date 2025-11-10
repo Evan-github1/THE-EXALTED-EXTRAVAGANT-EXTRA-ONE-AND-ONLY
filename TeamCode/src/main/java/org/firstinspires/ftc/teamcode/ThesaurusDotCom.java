@@ -5,9 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import com.qualcomm.robotcore.hardware.ServoImpl;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
+=======
+import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
+>>>>>>> Stashed changes
 =======
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 >>>>>>> Stashed changes
@@ -16,6 +20,7 @@ import java.util.List;
 
 @TeleOp
 public class ThesaurusDotCom extends Movable {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 
     private static DcMotor intakeMotor;
@@ -28,6 +33,15 @@ public class ThesaurusDotCom extends Movable {
         intakeMotor = hardwareMap.get(DcMotor.class,"INT");
         lt1 = hardwareMap.get(Servo.class,"lt1");
         lt2 = hardwareMap.get(Servo.class,"lt2");
+=======
+    private static Servo artifactHServo;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        super.runOpMode();
+
+        artifactHServo = hardwareMap.get(Servo.class, "artifact handler");
+>>>>>>> Stashed changes
 =======
     private static Servo artifactHServo;
 
