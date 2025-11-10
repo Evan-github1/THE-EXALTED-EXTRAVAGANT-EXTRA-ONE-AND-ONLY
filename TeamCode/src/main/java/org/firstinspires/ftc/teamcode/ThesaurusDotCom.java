@@ -7,22 +7,30 @@ import com.qualcomm.robotcore.hardware.ServoImpl;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-
+import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 import java.util.List;
-import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 @TeleOp
 public class ThesaurusDotCom extends Movable {
 
-    private static DcMotor intakeMotor;
+    private static DcMotor intakeMotor, launcherMotor1, launcherMotor2;
     private static Servo lt1;
     private static Servo lt2;
+    private static Servo fire;
+    private static TripleSwitchedServo fires;
+
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
 
         intakeMotor = hardwareMap.get(DcMotor.class,"INT");
-        lt1 = hardwareMap.get(Servo.class,"lt1");
-        lt2 = hardwareMap.get(Servo.class,"lt2");
+        lt1 = hardwareMap.get(Servo.class,"LT1");
+        lt2 = hardwareMap.get(Servo.class,"LT2");
+        fire = hardwareMap.get(Servo.class, "FIRE");
+        fires = new TripleSwitchedServo(fire,.58,.43,.3);
+        launcherMotor1 = hardwareMap.get(DcMotor.class,"LAU1");
+        launcherMotor2 = hardwareMap.get(DcMotor.class,"LAU2");
+
+        long moveOutEndTime = 0;
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -30,9 +38,10 @@ public class ThesaurusDotCom extends Movable {
         BRW.setDirection(DcMotor.Direction.FORWARD);
         //TODO: Make sure direction for intakeMotor is correct
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         enableEncoders();
-        
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -54,22 +63,25 @@ public class ThesaurusDotCom extends Movable {
                 disablePower();
             }
 
-            if (gamepad1.b) {
-                intakeMotor.setPower(1);
-            }
-            Thread name = new Thread(() -> {
+            if (gamepad1.a && delay(1002)) {
+                moveOutEndTime = System.currentTimeMillis() + 1000;
                 intakeMotor.setPower(-1);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                intakeMotor.setPower(0);
-            });
-            if (gamepad1.a && delay(1001)) {
-                name.start();
                 setTime();
-            } else if (!(name.isAlive())) {
+            } else if (gamepad1.b) {
+                intakeMotor.setPower(1);
+            }else if (System.currentTimeMillis() <= moveOutEndTime) {
+                intakeMotor.setPower(-1);
+            }else if(gamepad1.x && delay()) {
+                fires.quickSwitch();
+            }else if(gamepad1.y){
+                if(launcherMotor1.getPower() != 0){
+                    launcherMotor1.setPower(0);
+                    launcherMotor2.setPower(0);
+                }else{
+                    launcherMotor1.setPower(1);
+                    launcherMotor2.setPower(1);
+                }
+            }else{
                 intakeMotor.setPower(0);
             }
 
