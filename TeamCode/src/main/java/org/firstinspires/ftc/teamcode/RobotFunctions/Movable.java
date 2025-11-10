@@ -91,4 +91,8 @@ public abstract class Movable extends LinearOpMode {
     public boolean delay(long duration) {
         return System.currentTimeMillis() >= time + duration;
     }
+
+    public void setTime() {
+        time = System.currentTimeMillis();
+    }
 }
