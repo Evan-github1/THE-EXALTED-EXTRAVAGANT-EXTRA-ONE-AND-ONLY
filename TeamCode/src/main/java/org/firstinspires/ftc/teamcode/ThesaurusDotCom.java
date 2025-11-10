@@ -1,17 +1,22 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+<<<<<<< Updated upstream
 import com.qualcomm.robotcore.hardware.ServoImpl;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
+=======
+import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
+>>>>>>> Stashed changes
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-
 import java.util.List;
-import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
+
 @TeleOp
 public class ThesaurusDotCom extends Movable {
+<<<<<<< Updated upstream
 
     private static DcMotor intakeMotor;
     private static Servo lt1;
@@ -23,6 +28,15 @@ public class ThesaurusDotCom extends Movable {
         intakeMotor = hardwareMap.get(DcMotor.class,"INT");
         lt1 = hardwareMap.get(Servo.class,"lt1");
         lt2 = hardwareMap.get(Servo.class,"lt2");
+=======
+    private static Servo artifactHServo;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        super.runOpMode();
+
+        artifactHServo = hardwareMap.get(Servo.class, "artifact handler");
+>>>>>>> Stashed changes
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -32,7 +46,6 @@ public class ThesaurusDotCom extends Movable {
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
 
         enableEncoders();
-        
         waitForStart();
 
         while (opModeIsActive()) {
@@ -77,7 +90,6 @@ public class ThesaurusDotCom extends Movable {
             telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
             telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
             telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
-
 
             telemetry.update();
         }
