@@ -19,6 +19,9 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     private static DoubleSwitchedServo gateways;
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
+    private static int targetedID;
+    private static double OUTTAKE_POWER;
+    private static boolean turn;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,14 +30,17 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); // april tags
         limelight.start();
+        targetedID = 20;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
-
+        swivelTurretServo.setPosition(.1975);
+        turn = false;
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         outtakeMotor = hardwareMap.get(DcMotor.class, "outtake");
         intakeToggle = false;
         outtakeToggle = false;
+        OUTTAKE_POWER = .5;
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
@@ -42,9 +48,9 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         wiperL = hardwareMap.get(Servo.class, "wiperL");
 
         gateways = new DoubleSwitchedServo(gatewayServo, .26, .73); // .26: right side (when looking at the back)
+
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
-
         wipersL.primaryPos();
         wipersR.primaryPos();
 
@@ -57,10 +63,11 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
+            telemetry.addData("CURRENT TARGETED ID", targetedID);
 
             moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
             strafe();
-            turretTracking();
+            LeBotsEyes();
 
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
@@ -97,11 +104,30 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 time = System.currentTimeMillis();
             }
 
+            if (gamepad1.options && delay()) {
+                if (targetedID == 20) {
+                    targetedID = 24;
+                } else if (targetedID == 24) {
+                    targetedID = 20;
+                }
+                time = System.currentTimeMillis();
+            }
+
             if (gamepad1.x) {
                 intakeMotor.setPower(-1);
             } else {
                 intakeMotor.setPower(0);
             }
+
+            if (gamepad1.dpad_up && delay() && OUTTAKE_POWER < 1) {
+                OUTTAKE_POWER += .1;
+                time = System.currentTimeMillis();
+            } else if (gamepad1.dpad_down && delay() && OUTTAKE_POWER > 0) {
+                OUTTAKE_POWER -= .1;
+                time = System.currentTimeMillis();
+            }
+
+            telemetry.addData("Outtake power", OUTTAKE_POWER);
 
             if (intakeToggle) {
                 boolean LUp = wiperL.getPosition() == wipersL.getSecondaryPos();
@@ -116,7 +142,7 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
             }
 
             if (outtakeToggle) {
-                outtakeMotor.setPower(1);
+                outtakeMotor.setPower(OUTTAKE_POWER);
             } else {
                 outtakeMotor.setPower(0);
             }
@@ -125,23 +151,36 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         }
     }
 
-    private void turretTracking() {
-        // (looking @ the bot from the back) .03 limit for camera looking at left, .425 on the other
-        boolean isContained = (swivelTurretServo.getPosition() >= .3 && swivelTurretServo.getPosition() <= .425);
-
+    private void LeBotsEyes() {
+        final double SPEED = 0.001;
         double tx = getTX(limelight);
+
         if (!Double.isNaN(tx)) {
-            if (tx >= 1 && isContained) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.0005);
-            } else if (tx <= -1 && isContained) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.0005);
+            telemetry.addData("Tag X", getTX(limelight));
+            telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
+
+            if (detectTag(limelight, telemetry) == targetedID) {
+                if (tx >= 3 && swivelTurretServo.getPosition() >= .03) {
+                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
+                } else if (tx <= -3 && swivelTurretServo.getPosition() <= .425) {
+                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
+                }
             }
-            telemetry.addData("I see the tag at", getTX(limelight));
-            telemetry.addData("The tag I see is", detectTag(limelight, telemetry));
-        } else {
-            telemetry.addData("NaN", true);
+        } else { // constantly rotate turret until it sees the tag (dunno if it works yet)
+            if (turn) { // move towards .03
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
+                if (swivelTurretServo.getPosition() <= .03) turn = false;
+            } else {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
+                if (swivelTurretServo.getPosition() >= .425) turn = true;
+            }
         }
-        telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
+
+    }
+
+    @Override
+    public void tag20() {
+
     }
 
     @Override
@@ -157,5 +196,31 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     @Override
     public void tag23() {
 
+    }
+
+    @Override
+    public void tag24() {
+
+    }
+
+    @Override
+    protected void strafe() {
+        final double POWER = .75;
+        final double SPEED = 0.0025;
+        if (gamepad1.left_bumper) {
+            FLW.setPower(-POWER);
+            FRW.setPower(POWER);
+            BLW.setPower(-POWER);
+            BRW.setPower(POWER);
+            if (swivelTurretServo.getPosition() >= .03) swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
+        } else if (gamepad1.right_bumper) {
+            FLW.setPower(POWER);
+            FRW.setPower(-POWER);
+            BLW.setPower(POWER);
+            BRW.setPower(-POWER);
+            if (swivelTurretServo.getPosition() <= .425) swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
+        } else {
+            disablePower();
+        }
     }
 }

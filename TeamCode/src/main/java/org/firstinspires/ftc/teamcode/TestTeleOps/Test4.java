@@ -38,6 +38,11 @@ public class Test4 extends LinearOpMode implements LimelightTags {
     }
 
     @Override
+    public void tag20() {
+
+    }
+
+    @Override
     public void tag21() {
 
     }
@@ -49,6 +54,11 @@ public class Test4 extends LinearOpMode implements LimelightTags {
 
     @Override
     public void tag23() {
+
+    }
+
+    @Override
+    public void tag24() {
 
     }
 }

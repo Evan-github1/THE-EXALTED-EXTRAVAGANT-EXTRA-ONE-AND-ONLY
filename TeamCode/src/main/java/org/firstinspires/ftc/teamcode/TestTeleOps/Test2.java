@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 @TeleOp
 public class Test2 extends Movable {
+
     private static GoBildaPinpointDriver pinpoint;
 
     @Override
