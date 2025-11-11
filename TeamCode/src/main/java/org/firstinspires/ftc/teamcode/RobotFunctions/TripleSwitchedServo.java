@@ -32,6 +32,10 @@ public class TripleSwitchedServo extends DoubleSwitchedServo {
         }
     }
 
+    public double getTertiaryPos() {
+        return pos3;
+    }
+
     @Override
     public void quickSwitch() {
         if (servoSwitch == 0) {

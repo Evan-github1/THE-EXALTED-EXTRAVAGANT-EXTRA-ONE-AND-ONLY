@@ -11,7 +11,7 @@ TODO: this class is useful for servos that utilize two positions
 
 public class DoubleSwitchedServo {
 
-    public boolean servoSwitch = false; // secondary pos
+    protected boolean servoSwitch = false; // secondary pos
     protected Servo servo1, servo2;
     protected double pos1, pos2;
 
@@ -41,6 +41,14 @@ public class DoubleSwitchedServo {
         if (servo2 != null) {
             servo2.setPosition(pos2);
         }
+    }
+
+    public double getPrimaryPos() {
+        return pos1;
+    }
+
+    public double getSecondaryPos() {
+        return pos2;
     }
 
     public void quickSwitch() {
