@@ -3,24 +3,24 @@
 3    package="com.qualcomm.ftcrobotcontroller.test" >
 4
 5    <uses-sdk
-5-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:5:5-74
+5-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:5:5-74
 6        android:minSdkVersion="24"
-6-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:5:15-41
+6-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:5:15-41
 7        android:targetSdkVersion="28" />
-7-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:5:42-71
+7-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:5:42-71
 8
 9    <instrumentation
-9-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:11:5-15:86
+9-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:11:5-15:86
 10        android:name="android.test.InstrumentationTestRunner"
-10-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:11:22-75
+10-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:11:22-75
 11        android:functionalTest="false"
-11-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:14:22-52
+11-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:14:22-52
 12        android:handleProfiling="false"
-12-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:13:22-53
+12-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:13:22-53
 13        android:label="Tests for com.qualcomm.ftcrobotcontroller.test"
-13-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:15:22-84
+13-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:15:22-84
 14        android:targetPackage="com.qualcomm.ftcrobotcontroller.test" />
-14-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:12:22-82
+14-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:12:22-82
 15
 16    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 16-->[:FtcRobotController] /Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:5-81
@@ -178,7 +178,7 @@
 98-->[com.journeyapps:zxing-android-embedded:4.3.0] /Users/exiang/.gradle/caches/8.9/transforms/54327fc486dba706935927183821c8d8/transformed/zxing-android-embedded-4.3.0/AndroidManifest.xml:44:9-33
 99
 100    <application
-100-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:7:5-9:19
+100-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:7:5-9:19
 101        android:name="org.firstinspires.ftc.robotcore.internal.system.RobotApplication"
 101-->[org.firstinspires.ftc:RobotCore:11.0.0] /Users/exiang/.gradle/caches/8.9/transforms/ed8b97fe8b26ca0ed995580bab04e033/transformed/RobotCore-11.0.0/AndroidManifest.xml:85:18-97
 102        android:allowBackup="true"
@@ -198,8 +198,8 @@
 110        android:usesCleartextTraffic="true" >
 110-->[:FtcRobotController] /Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:18:9-44
 111        <uses-library android:name="android.test.runner" />
-111-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:8:9-60
-111-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest17446254053052334111.xml:8:23-57
+111-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:8:9-60
+111-->/Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest13211323152738483589.xml:8:23-57
 112        <!-- Indicates to the ControlHubUpdater what the latest version of the Control Hub is that this app supports -->
 113        <meta-data
 113-->[:FtcRobotController] /Users/exiang/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:9-23:33

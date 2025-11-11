@@ -31,16 +31,16 @@ public class DesktopControlClient {
         out = new DataOutputStream(socket.getOutputStream());
         in = new DataInputStream(socket.getInputStream());
 
-        try (BufferedReader br = new BufferedReader(new FileReader("NetworkTesting/Input.txt"))) {
-            String input;
-            while ((input = br.readLine()) != null) {
-                out.writeUTF(input);
-                out.flush();
-            }
-        } catch (IOException e) {
-            System.out.println("I was unable to process the inputs!");
-            System.out.println(e);
-        }
+//        try (BufferedReader br = new BufferedReader(new FileReader("org/firstinspires/ftc/teamcodeNetworkTesting/Input.txt"))) {
+//            String input;
+//            while ((input = br.readLine()) != null) {
+//                out.writeUTF(input);
+//                out.flush();
+//            }
+//        } catch (IOException e) {
+//            System.out.println("I was unable to process the inputs!");
+//            System.out.println(e);
+//        }
 
         while (true) {
             String output = read.nextLine();

@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +10,8 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
+
+import java.util.List;
 
 @TeleOp
 public class MaliceAndCondescension extends Movable implements LimelightTags { // robot #22335
@@ -42,18 +46,22 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         wiperR = hardwareMap.get(Servo.class, "wiperR");
         wiperL = hardwareMap.get(Servo.class, "wiperL");
 
-        gateways = new DoubleSwitchedServo(gatewayServo, .26, .73);
+        gateways = new DoubleSwitchedServo(gatewayServo, .26, .73); // .26: right side (when looking at the back)
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
+
+        wipersL.primaryPos();
+        wipersR.primaryPos();
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
+
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("Status", "Running.");
+            telemetry.addData("Status", "Running");
 
             moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
             strafe();
@@ -101,7 +109,13 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
             }
 
             if (intakeToggle) {
-                intakeMotor.setPower(1);
+                boolean LUp = wiperL.getPosition() == wipersL.getSecondaryPos();
+                boolean RUp = wiperR.getPosition() == wipersR.getSecondaryPos();
+                boolean gatewayL = gatewayServo.getPosition() == .73;
+                boolean gatewayR = gatewayServo.getPosition() == .26;
+                if ((LUp && gatewayL) || (RUp && gatewayR) || (!LUp && !RUp)) {
+                    intakeMotor.setPower(1);
+                }
             } else {
                 intakeMotor.setPower(0);
             }
@@ -117,25 +131,22 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     }
 
     private void turretTracking() {
-        if (getTX(limelight) >= 3 || getTX(limelight) <= -3) {  // should rotate
-            if (getTX(limelight) >= 3) {
-                // turn the turret left
-//                double nextPos = swivelTurretServo.getPosition() - 0.0005;
-//                swivelTurretServo.setPosition(nextPos);
-            } else if (getTX(limelight) <= -3) {
-                // turn the turret right
-//                double nextPos = swivelTurretServo.getPosition() + 0.0005;
-//                swivelTurretServo.setPosition(nextPos);
+        // (looking @ the bot from the back) .03 limit for camera looking at left, .425 on the other
+        boolean isContained = (swivelTurretServo.getPosition() >= .3 && swivelTurretServo.getPosition() <= .425);
+
+        double tx = getTX(limelight);
+        if (!Double.isNaN(tx)) {
+            if (tx >= 1 && isContained) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.0005);
+            } else if (tx <= -1 && isContained) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.0005);
             }
-            telemetry.addData("boom", "shakalaka");
             telemetry.addData("I see the tag at", getTX(limelight));
             telemetry.addData("The tag I see is", detectTag(limelight, telemetry));
-            telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
-        } else { // getTX is in a domain of [-3, 3]
-            telemetry.addData("I see the tag at", getTX(limelight));
-            telemetry.addData("The tag I see is", detectTag(limelight, telemetry));
-            telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
+        } else {
+            telemetry.addData("NaN", true);
         }
+        telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
     }
 
     @Override
