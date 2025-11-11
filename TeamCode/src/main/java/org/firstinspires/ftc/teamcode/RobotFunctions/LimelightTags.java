@@ -14,11 +14,16 @@ public interface LimelightTags {
     default int detectTag(Limelight3A limelight, Telemetry telemetry) {
         List<LLResultTypes.FiducialResult> results;
         LLResult result = limelight.getLatestResult();
+
         if (result.isValid()) {
             results = result.getFiducialResults();
             for (LLResultTypes.FiducialResult r : results) {
                 int id = r.getFiducialId();
+                telemetry.addData("AprilTag ID", id);
                 switch (id) {
+                    case 20:
+                        tag20();
+                        return 20;
                     case 21:
                         tag21();
                         return 21; // GPP
@@ -28,8 +33,10 @@ public interface LimelightTags {
                     case 23:
                         tag23();
                         return 23; // PPG
+                    case 24:
+                        tag24();
+                        return 24;
                 }
-                telemetry.addData("AprilTag ID", id);
             }
         }
 
@@ -58,7 +65,9 @@ public interface LimelightTags {
         return distance;
     } // doesn't work btw
 
+    void tag20();
     void tag21();
     void tag22();
     void tag23();
+    void tag24();
 }
