@@ -1,38 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImpl;
-
+import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-
 import java.util.List;
-import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
+
 @TeleOp
 public class ThesaurusDotCom extends Movable {
-
     private static DcMotor intakeMotor;
     private static Servo lt1;
     private static Servo lt2;
+    private static Servo artifactHandler;
+    private static TripleSwitchedServo artifactHandlerPos;
 
+    @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
 
-        intakeMotor = hardwareMap.get(DcMotor.class,"INT");
-        lt1 = hardwareMap.get(Servo.class,"lt1");
-        lt2 = hardwareMap.get(Servo.class,"lt2");
+        lt1 = hardwareMap.get(Servo.class, "launcherTiltOne");
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
-        //TODO: Make sure direction for intakeMotor is correct
-        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
 
         enableEncoders();
-        
         waitForStart();
 
         while (opModeIsActive()) {
@@ -54,30 +48,10 @@ public class ThesaurusDotCom extends Movable {
                 disablePower();
             }
 
-            if (gamepad1.b) {
-                intakeMotor.setPower(1);
-            }
-            Thread name = new Thread(() -> {
-                intakeMotor.setPower(-1);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                intakeMotor.setPower(0);
-            });
-            if (gamepad1.a && delay(1001)) {
-                name.start();
-                setTime();
-            } else if (!(name.isAlive())) {
-                intakeMotor.setPower(0);
-            }
-
             telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
             telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
             telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
             telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
-
 
             telemetry.update();
         }
