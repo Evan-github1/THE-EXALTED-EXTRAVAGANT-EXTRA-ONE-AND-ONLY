@@ -83,15 +83,17 @@ public class ThesaurusDotCom extends Movable {
                     launcherMotor2.setPower(1);
                 }
             }else if(gamepad1.left_bumper){
-                lt1.setPosition(lt1.getPosition() - .01);
-                lt1.setPosition(Math.max(lt1.getPosition(),.1));
-                lt2.setPosition(lt2.getPosition() - .01);
-                lt2.setPosition(Math.max(lt2.getPosition(),.1));
+                //Close mode
+                lt1.setPosition(0.23);
+                lt2.setPosition(0.23);
+                forks.setPrimaryPos(0);
+                forks.setSecondaryPos(0);
             }else if(gamepad1.right_bumper){
-                lt1.setPosition(lt1.getPosition() + .01);
-                lt1.setPosition(Math.min(lt1.getPosition(),.9));
-                lt2.setPosition(lt2.getPosition() + .01);
-                lt2.setPosition(Math.min(lt2.getPosition(),.9));
+                //Far mode
+                lt1.setPosition(0.6);
+                lt2.setPosition(0.6);
+                forks.setPrimaryPos(0);
+                forks.setSecondaryPos(0);
             }else if(gamepad1.left_trigger > 0.5 && delay(1000)){
                 setTime();
                 if(fire.getPosition() != .51){
