@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
@@ -13,34 +14,28 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
 
     private static Limelight3A limelight;
     private static Servo swivelTurretServo;
-    private static DcMotor intakeMotor, outtakeMotor;
+    private static DcMotor intakeMotor;
+    private static DcMotorEx outtakeMotor;
     private static boolean intakeToggle, outtakeToggle;
     private static Servo gatewayServo;
     private static DoubleSwitchedServo gateways;
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
     private static int targetedID;
-    private static double OUTTAKE_POWER;
-    private static boolean turn;
+    private static double targetRPM;
+    private static boolean turnLeft;
+    private static boolean tracking;
+    private static Servo hoodServo;
 
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
-
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0); // april tags
-        limelight.start();
-        targetedID = 20;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
-        swivelTurretServo.setPosition(.1975);
-        turn = false;
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
-        outtakeMotor = hardwareMap.get(DcMotor.class, "outtake");
-        intakeToggle = false;
-        outtakeToggle = false;
-        OUTTAKE_POWER = .5;
+        outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtake");
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
@@ -51,48 +46,35 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
 
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
-        wipersL.primaryPos();
-        wipersR.primaryPos();
+
+        hoodServo = hardwareMap.get(Servo.class, "hood");
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
 
+        reset();
+
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
             telemetry.addData("CURRENT TARGETED ID", targetedID);
-
+            telemetry.addData("Outtake Encoder", outtakeMotor.getCurrentPosition());
             moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
             strafe();
-            LeBotsEyes();
+
+            if (tracking) LeBotsEyes();
 
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
                 time = System.currentTimeMillis();
             } else if (gamepad1.left_trigger >= .5 && delay(1001)) {
-                new Thread(() -> {
-                    try {
-                        wipersL.secondaryPos();
-                        Thread.sleep(1000);
-                        wipersL.primaryPos();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
+                liftLeftWiper();
                 time = System.currentTimeMillis();
             } else if (gamepad1.right_trigger >= .5 && delay(1001)) {
-                new Thread(() -> {
-                    try {
-                        wipersR.secondaryPos();
-                        Thread.sleep(1000);
-                        wipersR.primaryPos();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).start();
+                liftRightWiper();
                 time = System.currentTimeMillis();
             }
 
@@ -104,6 +86,13 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 time = System.currentTimeMillis();
             }
 
+            if (gamepad1.right_stick_y > 0.3) {
+                hoodServo.setPosition(hoodServo.getPosition() - .01);
+            } else if (gamepad1.right_stick_y < -0.3) {
+                hoodServo.setPosition(hoodServo.getPosition() + .01);
+            }
+            telemetry.addData("Hood Position", hoodServo.getPosition());
+
             if (gamepad1.options && delay()) {
                 if (targetedID == 20) {
                     targetedID = 24;
@@ -113,25 +102,35 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 time = System.currentTimeMillis();
             }
 
+            if (gamepad1.share && delay()) {
+                tracking = !tracking;
+                time = System.currentTimeMillis();
+            }
+
             if (gamepad1.x) {
                 intakeMotor.setPower(-1);
             } else {
                 intakeMotor.setPower(0);
             }
 
-            if (gamepad1.dpad_up && delay() && OUTTAKE_POWER < 1) {
-                OUTTAKE_POWER += .1;
+            if (gamepad1.dpad_up && delay()) {
+                targetRPM += 50;
                 time = System.currentTimeMillis();
-            } else if (gamepad1.dpad_down && delay() && OUTTAKE_POWER > 0) {
-                OUTTAKE_POWER -= .1;
+            } else if (gamepad1.dpad_down && delay()) {
+                targetRPM -= 50;
                 time = System.currentTimeMillis();
             }
 
-            telemetry.addData("Outtake power", OUTTAKE_POWER);
+            if (gamepad1.dpad_right) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
+            } else if (gamepad1.dpad_left) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
+            }
 
             if (intakeToggle) {
                 boolean LUp = wiperL.getPosition() == wipersL.getSecondaryPos();
                 boolean RUp = wiperR.getPosition() == wipersR.getSecondaryPos();
+                // these two variables not needed but it stops working whenever I remove them so uhhhhhh
                 boolean gatewayL = gatewayServo.getPosition() == .73;
                 boolean gatewayR = gatewayServo.getPosition() == .26;
                 if ((LUp && gatewayL) || (RUp && gatewayR) || (!LUp && !RUp)) {
@@ -142,40 +141,78 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
             }
 
             if (outtakeToggle) {
-                outtakeMotor.setPower(OUTTAKE_POWER);
+                outtakeMotor.setVelocity(getTargetTicksPerSec(28, targetRPM));
             } else {
-                outtakeMotor.setPower(0);
+                outtakeMotor.setVelocity(0);
             }
+            telemetry.addData("Target RPM", targetRPM);
+            telemetry.addData("Measured RPM", outtakeMotor.getVelocity() * 60.0 / 28);
+            telemetry.addData("Ticks/sec", outtakeMotor.getVelocity());
 
             telemetry.update();
         }
     }
 
+    private void liftRightWiper() {
+        new Thread(() -> {
+            try {
+                wipersR.secondaryPos();
+                Thread.sleep(1000);
+                wipersR.primaryPos();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
+    private void liftLeftWiper() {
+        new Thread(() -> {
+            try {
+                wipersL.secondaryPos();
+                Thread.sleep(1000);
+                wipersL.primaryPos();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
+    private double getTargetTicksPerSec(double ticksPerRev, double targetRPM) {
+        return (ticksPerRev * targetRPM) / 60;
+    }
     private void LeBotsEyes() {
-        final double SPEED = 0.001;
+        final double SPEED = 0.002;
         double tx = getTX(limelight);
 
-        if (!Double.isNaN(tx)) {
-            telemetry.addData("Tag X", getTX(limelight));
-            telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
+        telemetry.addData("Tag X", getTX(limelight));
+        telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
 
-            if (detectTag(limelight, telemetry) == targetedID) {
-                if (tx >= 3 && swivelTurretServo.getPosition() >= .03) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                } else if (tx <= -3 && swivelTurretServo.getPosition() <= .425) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                }
-            }
-        } else { // constantly rotate turret until it sees the tag (dunno if it works yet)
-            if (turn) { // move towards .03
+        if ((Double.isNaN(tx) || tx >= 3 || tx <= -3) && detectTag(limelight, telemetry) != targetedID) {
+            if (turnLeft) { // move towards .03, left @ back)
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                if (swivelTurretServo.getPosition() <= .03) turn = false;
+                if (swivelTurretServo.getPosition() <= .03) turnLeft = false; // turns right
             } else {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                if (swivelTurretServo.getPosition() >= .425) turn = true;
+                if (swivelTurretServo.getPosition() >= .425) turnLeft = true;
             }
         }
+    }
 
+    private void reset() {
+        limelight.pipelineSwitch(0); // april tags
+        limelight.start();
+        targetedID = 20;
+        tracking = true;
+        swivelTurretServo.setPosition(.1975);
+        turnLeft = false;
+        outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeToggle = false;
+        outtakeToggle = false;
+        targetRPM = 300;
+        wipersL.primaryPos();
+        wipersR.primaryPos();
+        hoodServo.setPosition(0);
     }
 
     @Override
