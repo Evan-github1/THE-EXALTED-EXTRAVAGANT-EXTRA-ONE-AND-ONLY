@@ -29,6 +29,14 @@ public class DoubleSwitchedServo {
         setDirections();
     }
 
+    public void setPrimaryPos(double pos1){
+        this.pos1 = pos1;
+    }
+
+    public void setSecondaryPos(double pos2){
+        this.pos2 = pos2;
+    }
+
     public void primaryPos() {
         servo1.setPosition(pos1);
         if (servo2 != null) {
