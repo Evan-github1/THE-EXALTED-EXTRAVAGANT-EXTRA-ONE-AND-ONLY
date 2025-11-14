@@ -16,7 +16,10 @@ public class Test1 extends Movable {
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
 
-        enableEncoders();
+        FLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -33,11 +36,6 @@ public class Test1 extends Movable {
             } else {
                 disablePower();
             }
-
-            telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
-            telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
-            telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
-            telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
 
             telemetry.update();
         }

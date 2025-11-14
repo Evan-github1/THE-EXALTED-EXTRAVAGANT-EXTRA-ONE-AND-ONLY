@@ -49,7 +49,7 @@ public abstract class Movable extends LinearOpMode {
         BLW.setPower(-v2);
     }
 
-    protected void strafe() {
+    protected void turn() {
         if (gamepad1.left_bumper) {
             FLW.setPower(-1);
             FRW.setPower(1);
@@ -78,10 +78,10 @@ public abstract class Movable extends LinearOpMode {
         BRW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FRW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        FLW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BLW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BRW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FRW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public boolean delay() {
