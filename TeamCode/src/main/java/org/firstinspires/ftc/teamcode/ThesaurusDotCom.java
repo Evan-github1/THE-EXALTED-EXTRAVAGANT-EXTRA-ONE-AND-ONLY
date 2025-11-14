@@ -19,6 +19,7 @@ public class ThesaurusDotCom extends Movable {
     private static Servo fork;
     private static DoubleSwitchedServo forks;
     private static boolean loading;
+    private static double motorPower;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -27,12 +28,13 @@ public class ThesaurusDotCom extends Movable {
         lt1 = hardwareMap.get(Servo.class,"LT1");
         lt2 = hardwareMap.get(Servo.class,"LT2");
         fire = hardwareMap.get(Servo.class, "FIRE");
-        fires = new TripleSwitchedServo(fire,.61,.51,.43);
+        fires = new TripleSwitchedServo(fire,.62,.56,.37);
         launcherMotor1 = hardwareMap.get(DcMotor.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotor.class,"LAU2");
         fork = hardwareMap.get(Servo.class,"FORK");
-        forks = new DoubleSwitchedServo(fork,0.51,0.82);
+        forks = new DoubleSwitchedServo(fork,0.23,0.75);
         loading = false;
+        motorPower = 1;
 
         long moveOutEndTimeOutput = 0;
         long moveInEndTimeInput = 0;
@@ -42,7 +44,7 @@ public class ThesaurusDotCom extends Movable {
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
-        launcherMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         launcherMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -79,24 +81,44 @@ public class ThesaurusDotCom extends Movable {
                     launcherMotor1.setPower(0);
                     launcherMotor2.setPower(0);
                 }else{
-                    launcherMotor1.setPower(1);
-                    launcherMotor2.setPower(1);
+                    launcherMotor1.setPower(motorPower);
+                    launcherMotor2.setPower(motorPower);
                 }
             }else if(gamepad1.left_bumper){
                 //Close mode
-                lt1.setPosition(0.23);
-                lt2.setPosition(0.23);
-                forks.setPrimaryPos(0);
-                forks.setSecondaryPos(0);
+                //.25
+                new Thread(() -> {
+                    lt1.setPosition(.25);
+                    lt2.setPosition(.25);
+                    forks.setPrimaryPos(.05);
+                    forks.setSecondaryPos(.7);
+                    motorPower = 0.54;
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    forks.primaryPos();
+                }).start();
+
             }else if(gamepad1.right_bumper){
                 //Far mode
-                lt1.setPosition(0.6);
-                lt2.setPosition(0.6);
-                forks.setPrimaryPos(0);
-                forks.setSecondaryPos(0);
+                new Thread(() -> {
+                    lt1.setPosition(.484);
+                    lt2.setPosition(.484);
+                    forks.setPrimaryPos(.23);
+                    forks.setSecondaryPos(.75);
+                    motorPower = 1;
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    forks.primaryPos();
+                }).start();
             }else if(gamepad1.left_trigger > 0.5 && delay(1000)){
                 setTime();
-                if(fire.getPosition() != .51){
+                if(fire.getPosition() != fires.getSecondaryPos()){
                     new Thread(() -> {
                         fires.primaryPos();
                         forks.secondaryPos();
@@ -116,7 +138,7 @@ public class ThesaurusDotCom extends Movable {
                 }
             }else if(gamepad1.right_trigger > 0.5 && delay(1000)){
                 setTime();
-                if(fire.getPosition() == .51){
+                if(fire.getPosition() == fires.getSecondaryPos()){
                     new Thread(()->{
                         fires.tertiaryPos();
                         try {
@@ -131,7 +153,7 @@ public class ThesaurusDotCom extends Movable {
                     new Thread(()->{
                         intakeMotor.setPower(1);
                         try {
-                            Thread.sleep(400);
+                            Thread.sleep(150);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -144,12 +166,17 @@ public class ThesaurusDotCom extends Movable {
                 intakeMotor.setPower(0);
             }
 
+            if(gamepad1.dpad_down) motorPower-=.01;
+            else if(gamepad1.dpad_up) motorPower+=.01;
+
             telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
             telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
             telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
             telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
-            telemetry.addData("Left trigger", gamepad1.left_trigger);
-
+            telemetry.addData("LT1", lt1.getPosition());
+            telemetry.addData("LT2",lt2.getPosition());
+            telemetry.addData("Motor power",motorPower);
+            telemetry.addData("Motor is running at power",launcherMotor1.getPower());
             telemetry.update();
         }
     }

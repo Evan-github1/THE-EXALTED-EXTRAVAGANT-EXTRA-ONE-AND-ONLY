@@ -37,6 +37,11 @@ public class DoubleSwitchedServo {
         this.pos2 = pos2;
     }
 
+    public double getSecondaryPos() { return  pos2; }
+
+    public double getPrimaryPos(){ return pos1; }
+
+
     public void primaryPos() {
         servo1.setPosition(pos1);
         if (servo2 != null) {
