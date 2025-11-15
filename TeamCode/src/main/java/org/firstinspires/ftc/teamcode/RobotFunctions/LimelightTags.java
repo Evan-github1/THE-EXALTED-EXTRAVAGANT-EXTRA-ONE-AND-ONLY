@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.RobotFunctions;
 
-
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -27,21 +26,17 @@ public interface LimelightTags {
                     case 21:
                         tag21();
                         return 21; // GPP
-                    case 22:
-                        tag22();
-                        return 22; // PGP
                     case 23:
                         tag23();
                         return 23; // PPG
                     case 24:
                         tag24();
                         return 24;
+                    }
                 }
             }
+            return -1;
         }
-
-        return -1;
-    }
 
     default double getTA(Limelight3A limelight) {
         LLResult result = limelight.getLatestResult();

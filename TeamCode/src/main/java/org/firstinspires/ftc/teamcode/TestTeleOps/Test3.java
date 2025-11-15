@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightColor;
+import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 
 import java.util.List;
 
 @TeleOp
-public class Test3 extends LinearOpMode implements LimelightColor {
+public class Test3 extends LinearOpMode implements LimelightTags {
 
     private static Limelight3A limelight;
     private static List<LLResultTypes.FiducialResult> results;
@@ -20,15 +21,14 @@ public class Test3 extends LinearOpMode implements LimelightColor {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
 
-        limelight.pipelineSwitch(1); // green
+        limelight.pipelineSwitch(0);
 
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            // is able to get x position, just rotate until it's [-5, 5]
-            colorDetectionGreen(limelight, telemetry);
+            telemetry.addData("ID", detectTag(limelight, telemetry));
 
             telemetry.update();
 
@@ -44,12 +44,27 @@ public class Test3 extends LinearOpMode implements LimelightColor {
     }
 
     @Override
-    public void green() {
+    public void tag20() {
 
     }
 
     @Override
-    public void purple() {
+    public void tag21() {
+
+    }
+
+    @Override
+    public void tag22() {
+
+    }
+
+    @Override
+    public void tag23() {
+
+    }
+
+    @Override
+    public void tag24() {
 
     }
 }

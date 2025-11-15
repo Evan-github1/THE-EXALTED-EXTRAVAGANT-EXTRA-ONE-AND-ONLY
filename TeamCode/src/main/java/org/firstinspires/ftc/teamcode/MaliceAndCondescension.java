@@ -31,11 +31,22 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0); // april tags
+        targetedID = 20;
+        tracking = true;
+        turnLeft = false;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
+        swivelTurretServo.setPosition(.1975);
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtake");
+        intakeToggle = false;
+        outtakeToggle = false;
+        outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        targetRPM = 1400;
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
@@ -46,15 +57,20 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
 
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
+        wipersL.primaryPos();
+        wipersR.primaryPos();
 
         hoodServo = hardwareMap.get(Servo.class, "hood");
+        hoodServo.setPosition(0);
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
-
-        reset();
+        FLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -63,9 +79,9 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
             telemetry.addData("CURRENT TARGETED ID", targetedID);
             telemetry.addData("Outtake Encoder", outtakeMotor.getCurrentPosition());
             moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            strafe();
+            turn();
 
-            if (tracking) LeBotsEyes();
+            if (tracking) PrincessEyes();
 
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
@@ -180,39 +196,36 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     private double getTargetTicksPerSec(double ticksPerRev, double targetRPM) {
         return (ticksPerRev * targetRPM) / 60;
     }
-    private void LeBotsEyes() {
+
+    private void PrincessEyes() {
+
+        // .76 hood
+        // 2200 rpm outtake power
         final double SPEED = 0.002;
         double tx = getTX(limelight);
+        int ID = detectTag(limelight, telemetry);
 
-        telemetry.addData("Tag X", getTX(limelight));
+        telemetry.addData("Tag ID", ID);
+        telemetry.addData("Tag X", tx);
         telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
 
-        if ((Double.isNaN(tx) || tx >= 3 || tx <= -3) && detectTag(limelight, telemetry) != targetedID) {
-            if (turnLeft) { // move towards .03, left @ back)
+        if (ID != targetedID) {
+            if (turnLeft) { // move towards .03, left @ back
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                if (swivelTurretServo.getPosition() <= .03) turnLeft = false; // turns right
+                if (swivelTurretServo.getPosition() <= .03) turnLeft = false; // switch direction
             } else {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
                 if (swivelTurretServo.getPosition() >= .425) turnLeft = true;
             }
+        } else {
+            if (tx <= -3 && swivelTurretServo.getPosition() >= .425) {
+                // move turret left
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
+            } else if (tx >= 3 && swivelTurretServo.getPosition() <= .03) {
+                // move turret right
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
+            }
         }
-    }
-
-    private void reset() {
-        limelight.pipelineSwitch(0); // april tags
-        limelight.start();
-        targetedID = 20;
-        tracking = true;
-        swivelTurretServo.setPosition(.1975);
-        turnLeft = false;
-        outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intakeToggle = false;
-        outtakeToggle = false;
-        targetRPM = 300;
-        wipersL.primaryPos();
-        wipersR.primaryPos();
-        hoodServo.setPosition(0);
     }
 
     @Override
@@ -241,7 +254,7 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     }
 
     @Override
-    protected void strafe() {
+    protected void turn() {
         final double POWER = .75;
         final double SPEED = 0.0025;
         if (gamepad1.left_bumper) {
@@ -256,7 +269,7 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
             BLW.setPower(POWER);
             BRW.setPower(-POWER);
             if (swivelTurretServo.getPosition() <= .425) swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-        } else {
+        } else if (gamepad1.leftBumperWasReleased() || gamepad1.rightBumperWasPressed()) {
             disablePower();
         }
     }
