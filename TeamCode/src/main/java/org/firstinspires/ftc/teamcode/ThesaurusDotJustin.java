@@ -3,13 +3,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 
 @TeleOp
-public class ThesaurusDotCom extends Movable {
+public class ThesaurusDotJustin extends Movable {
 
     private static DcMotor intakeMotor, launcherMotor1, launcherMotor2;
     private static Servo lt1;
@@ -62,20 +61,23 @@ public class ThesaurusDotCom extends Movable {
                 FRW.setPower(-gamepad1.right_stick_x);
                 BLW.setPower(gamepad1.right_stick_x);
                 BRW.setPower(-gamepad1.right_stick_x);
+            }else if(gamepad1.dpad_up) {
+                moveWheels(0,0.5f);
+            }else if(gamepad1.dpad_down){
+                moveWheels(0,-0.5f);
+            }else if(gamepad1.dpad_left){
+                moveWheels(-0.5f,0);
+            }else if(gamepad1.dpad_right){
+                moveWheels(0.5f,0);
             }else{
                 moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
             }
 
-            if (gamepad1.a && delay(1002)) {
-                moveOutEndTimeOutput = System.currentTimeMillis() + 1000;
-                intakeMotor.setPower(-1);
-                setTime();
-            } else if (gamepad1.b) {
+            if (gamepad1.y) {
                 intakeMotor.setPower(1);
-            }else if (System.currentTimeMillis() <= moveOutEndTimeOutput) {
-                intakeMotor.setPower(-1);
-            }else if(gamepad1.y && delay()){
-                setTime();
+            }else if (gamepad1.a) {
+                intakeMotor.setPower(-.5);
+            }else if(gamepad1.x && delay()){
                 if(launcherMotor1.getPower() != 0){
                     launcherMotor1.setPower(0);
                     launcherMotor2.setPower(0);
@@ -83,40 +85,41 @@ public class ThesaurusDotCom extends Movable {
                     launcherMotor1.setPower(motorPower);
                     launcherMotor2.setPower(motorPower);
                 }
-            }else if(gamepad1.left_bumper){
-                //Close mode
-                //.25
-                new Thread(() -> {
-                    lt1.setPosition(.25);
-                    lt2.setPosition(.25);
-                    forks.setPrimaryPos(.05);
-                    forks.setSecondaryPos(.7);
-                    motorPower = 0.54;
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    forks.primaryPos();
-                }).start();
-
-            }else if(gamepad1.right_bumper){
-                //Far mode
-                new Thread(() -> {
-                    lt1.setPosition(.484);
-                    lt2.setPosition(.484);
-                    forks.setPrimaryPos(.23);
-                    forks.setSecondaryPos(.75);
-                    motorPower = 1;
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    forks.primaryPos();
-                }).start();
-            }else if(gamepad1.left_trigger > 0.5 && delay(1000)){
                 setTime();
+            }else if(gamepad1.b && delay()){
+                if(motorPower == 1) {//If far
+                    //Set to close pos
+                    new Thread(() -> {
+                        lt1.setPosition(.25);
+                        lt2.setPosition(.25);
+                        forks.setPrimaryPos(.05);
+                        forks.setSecondaryPos(.7);
+                        motorPower = 0.54;
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        forks.primaryPos();
+                    }).start();
+                }else{
+                    //Set to far pos
+                    new Thread(() -> {
+                        lt1.setPosition(.484);
+                        lt2.setPosition(.484);
+                        forks.setPrimaryPos(.23);
+                        forks.setSecondaryPos(.75);
+                        motorPower = 1;
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        forks.primaryPos();
+                    }).start();
+                }
+                setTime();
+            }else if(gamepad1.left_trigger > 0.5 && delay(1000)){
                 if(fire.getPosition() != fires.getSecondaryPos()){
                     new Thread(() -> {
                         fires.primaryPos();
@@ -134,9 +137,22 @@ public class ThesaurusDotCom extends Movable {
                         }
                         forks.primaryPos();
                     }).start();
+                }else{
+                    loading = true;
+                    new Thread(()->{
+                        intakeMotor.setPower(1);
+                        try {
+                            Thread.sleep(150);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        intakeMotor.setPower(0);
+                        fires.secondaryPos();
+                        loading = false;
+                    }).start();
                 }
-            }else if(gamepad1.right_trigger > 0.5 && delay(1000)){
                 setTime();
+            }else if(gamepad1.right_trigger > 0.5 && delay(1000)){
                 if(fire.getPosition() == fires.getSecondaryPos()){
                     new Thread(()->{
                         fires.tertiaryPos();
@@ -161,12 +177,10 @@ public class ThesaurusDotCom extends Movable {
                         loading = false;
                     }).start();
                 }
+                setTime();
             }else if(!loading){
                 intakeMotor.setPower(0);
             }
-
-            if(gamepad1.dpad_down) motorPower-=.01;
-            else if(gamepad1.dpad_up) motorPower+=.01;
 
             telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
             telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
