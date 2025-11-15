@@ -35,8 +35,6 @@ public class ThesaurusDotJustin extends Movable {
         loading = false;
         motorPower = 1;
 
-        long moveOutEndTimeOutput = 0;
-
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
@@ -66,17 +64,30 @@ public class ThesaurusDotJustin extends Movable {
             }else if(gamepad1.dpad_down){
                 moveWheels(0,-0.5f);
             }else if(gamepad1.dpad_left){
-                moveWheels(-0.5f,0);
-            }else if(gamepad1.dpad_right){
                 moveWheels(0.5f,0);
+            }else if(gamepad1.dpad_right){
+                moveWheels(-0.5f,0);
             }else{
-                moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
+                moveWheels(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
             }
 
-            if (gamepad1.y) {
-                intakeMotor.setPower(1);
-            }else if (gamepad1.a) {
-                intakeMotor.setPower(-.5);
+            if (gamepad1.y && delay()) {
+                if(intakeMotor.getPower() == 0){
+                    intakeMotor.setPower(1);
+                    loading = true;
+                }else {
+                    intakeMotor.setPower(0);
+                    loading = false;
+                }
+                setTime();
+            }else if (gamepad1.a && delay()) {
+                if(intakeMotor.getPower() == 0){
+                    intakeMotor.setPower(-.5);
+                    loading = true;
+                }else {
+                    intakeMotor.setPower(0);
+                }
+                setTime();
             }else if(gamepad1.x && delay()){
                 if(launcherMotor1.getPower() != 0){
                     launcherMotor1.setPower(0);
