@@ -205,10 +205,7 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         return (ticksPerRev * targetRPM) / 60;
     }
 
-    private void PrincessEyes() {
-
-        // .76 hood
-        // 2200 rpm outtake power
+    private void PrincessEyes() { // it works, if you're not Evan don't touch it or I will come for you
         final double SPEED = 0.002;
         double tx = getTX(limelight);
         int ID = detectTag(limelight, telemetry);
