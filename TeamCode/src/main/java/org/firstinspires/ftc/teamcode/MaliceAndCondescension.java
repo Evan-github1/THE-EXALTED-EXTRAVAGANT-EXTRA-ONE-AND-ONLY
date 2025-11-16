@@ -46,7 +46,7 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         outtakeToggle = false;
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        targetRPM = 1400;
+        targetRPM = 1450;
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
@@ -104,7 +104,7 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
 
             if (gamepad1.right_stick_y > 0.3) {
                 hoodServo.setPosition(hoodServo.getPosition() - .01);
-            } else if (gamepad1.right_stick_y < -0.3) {
+            } else if (gamepad1.right_stick_y < -0.3 && hoodServo.getPosition() <= .775) {
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
             telemetry.addData("Hood Position", hoodServo.getPosition());
@@ -129,11 +129,19 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 intakeMotor.setPower(0);
             }
 
-            if (gamepad1.dpad_up && delay()) {
-                targetRPM += 50;
+            if (gamepad1.dpad_up && delay() && targetRPM <= 2300) {
+                if (targetRPM == 1600) {
+                    targetRPM = 2100;
+                } else {
+                    targetRPM += 50;
+                }
                 time = System.currentTimeMillis();
-            } else if (gamepad1.dpad_down && delay()) {
-                targetRPM -= 50;
+            } else if (gamepad1.dpad_down && delay() && targetRPM >= 1450) {
+                if (targetRPM == 2100) {
+                    targetRPM = 1600;
+                } else {
+                    targetRPM -= 50;
+                }
                 time = System.currentTimeMillis();
             }
 
