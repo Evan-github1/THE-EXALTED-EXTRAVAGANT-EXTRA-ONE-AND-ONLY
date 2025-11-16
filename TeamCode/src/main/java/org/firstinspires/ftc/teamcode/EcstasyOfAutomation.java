@@ -27,12 +27,22 @@ public class EcstasyOfAutomation extends Movable implements LimelightTags {
 
     @Override
     public void runOpMode() throws InterruptedException{
+        super.runOpMode();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0); // april tags
+        tracking = true;
+        turnLeft = false;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
+        swivelTurretServo.setPosition(.1975);
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtake");
+        intakeToggle = false;
+        outtakeToggle = false;
+        outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
@@ -43,10 +53,20 @@ public class EcstasyOfAutomation extends Movable implements LimelightTags {
 
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
+        wipersL.primaryPos();
+        wipersR.primaryPos();
 
         hoodServo = hardwareMap.get(Servo.class, "hood");
+        hoodServo.setPosition(0);
 
-        reset();
+        FLW.setDirection(DcMotor.Direction.REVERSE);
+        BLW.setDirection(DcMotor.Direction.REVERSE);
+        FRW.setDirection(DcMotor.Direction.FORWARD);
+        BRW.setDirection(DcMotor.Direction.FORWARD);
+        FLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -55,8 +75,7 @@ public class EcstasyOfAutomation extends Movable implements LimelightTags {
         intakeMotor.setPower(1);
         hoodServo.setPosition(.76);
         sleep(2000);
-        while (detectTag(limelight, telemetry) != 20
-        && getTX(limelight) <= -3 && getTX(limelight) >= 3) {
+        while (detectTag(limelight, telemetry) != 20 && getTX(limelight) >= -3 && getTX(limelight) <= 3) {
             PrincessEyes();
         }
         liftRightWiper();
@@ -65,6 +84,12 @@ public class EcstasyOfAutomation extends Movable implements LimelightTags {
         sleep(2000);
         liftRightWiper();
         sleep(2000);
+
+        // move out of starting pos
+        // turn left
+        // collect balls
+        // detect for tag (again)
+        // shoot da balls
     }
 
     private double getTargetTicksPerSec(double ticksPerRev, double targetRPM) {
@@ -72,7 +97,6 @@ public class EcstasyOfAutomation extends Movable implements LimelightTags {
     }
 
     private void PrincessEyes() {
-
         // .76 hood
         // 2200 rpm outtake power
         final double SPEED = 0.002;
@@ -120,29 +144,6 @@ public class EcstasyOfAutomation extends Movable implements LimelightTags {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void reset() {
-        limelight.pipelineSwitch(0); // april tags
-        limelight.start();
-        tracking = true;
-        swivelTurretServo.setPosition(.1975);
-        turnLeft = false;
-        outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intakeToggle = false;
-        outtakeToggle = false;
-        wipersL.primaryPos();
-        wipersR.primaryPos();
-        hoodServo.setPosition(0);
-        FLW.setDirection(DcMotor.Direction.REVERSE);
-        BLW.setDirection(DcMotor.Direction.REVERSE);
-        FRW.setDirection(DcMotor.Direction.FORWARD);
-        BRW.setDirection(DcMotor.Direction.FORWARD);
-        FLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     @Override
