@@ -19,6 +19,7 @@ public class ThesaurusDotJustin extends Movable {
     private static DoubleSwitchedServo forks;
     private static boolean loading;
     private static double motorPower;
+    private static boolean shooting;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -31,9 +32,10 @@ public class ThesaurusDotJustin extends Movable {
         launcherMotor1 = hardwareMap.get(DcMotor.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotor.class,"LAU2");
         fork = hardwareMap.get(Servo.class,"FORK");
-        forks = new DoubleSwitchedServo(fork,0.23,0.75);
+        forks = new DoubleSwitchedServo(fork,0.23,0.73);
         loading = false;
-        motorPower = 1;
+        motorPower = .54;
+        shooting = false;
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -89,25 +91,19 @@ public class ThesaurusDotJustin extends Movable {
                 }
                 setTime();
             }else if(gamepad1.x && delay()){
-                if(launcherMotor1.getPower() != 0){
-                    launcherMotor1.setPower(0);
-                    launcherMotor2.setPower(0);
-                }else{
-                    launcherMotor1.setPower(motorPower);
-                    launcherMotor2.setPower(motorPower);
-                }
+                shooting = !shooting;
                 setTime();
             }else if(gamepad1.b && delay()){
-                if(motorPower == 1) {//If far
+                if(motorPower == .95) {//If far
                     //Set to close pos
                     new Thread(() -> {
                         lt1.setPosition(.25);
                         lt2.setPosition(.25);
                         forks.setPrimaryPos(.05);
-                        forks.setSecondaryPos(.7);
+                        forks.setSecondaryPos(.68);
                         motorPower = 0.54;
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(800);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -116,11 +112,11 @@ public class ThesaurusDotJustin extends Movable {
                 }else{
                     //Set to far pos
                     new Thread(() -> {
-                        lt1.setPosition(.484);
-                        lt2.setPosition(.484);
+                        lt1.setPosition(.49);
+                        lt2.setPosition(.49);
                         forks.setPrimaryPos(.23);
-                        forks.setSecondaryPos(.75);
-                        motorPower = 1;
+                        forks.setSecondaryPos(.73);
+                        motorPower = .95;
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -149,17 +145,14 @@ public class ThesaurusDotJustin extends Movable {
                         forks.primaryPos();
                     }).start();
                 }else{
-                    loading = true;
                     new Thread(()->{
-                        intakeMotor.setPower(1);
+                        fires.tertiaryPos();
                         try {
-                            Thread.sleep(150);
+                            Thread.sleep(400);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        intakeMotor.setPower(0);
-                        fires.secondaryPos();
-                        loading = false;
+                        fires.primaryPos();
                     }).start();
                 }
                 setTime();
@@ -191,6 +184,14 @@ public class ThesaurusDotJustin extends Movable {
                 setTime();
             }else if(!loading){
                 intakeMotor.setPower(0);
+            }
+
+            if (shooting) {
+                launcherMotor1.setPower(motorPower);
+                launcherMotor2.setPower(motorPower);
+            }else{
+                launcherMotor1.setPower(0);
+                launcherMotor2.setPower(0);
             }
 
             telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
