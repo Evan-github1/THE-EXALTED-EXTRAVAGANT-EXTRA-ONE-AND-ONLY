@@ -32,7 +32,7 @@ public class ThesaurusDotCom extends Movable {
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
             if (gamepad1.left_bumper) {
                 FLW.setPower(-1);
