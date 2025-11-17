@@ -101,7 +101,7 @@ public class Evan_Polymorphism_Code extends Movable {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
-            moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
             if (gamepad1.right_stick_y > .3) {
                 linearSlide.ascend();

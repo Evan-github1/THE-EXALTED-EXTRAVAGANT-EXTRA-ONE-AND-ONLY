@@ -27,7 +27,7 @@ public abstract class Movable extends LinearOpMode {
     }
 
     // all robots have wheels so this method is a must
-    protected void moveWheels(float x, float y) {
+    protected void omnidirectionalMovement(float x, float y) {
         double correctedX = -x;
         angle = Math.atan2(y, correctedX);
         desVol = Math.sqrt(Math.pow(correctedX, 2) + Math.pow(y, 2));

@@ -23,7 +23,7 @@ public class Test2 extends Movable {
         while (opModeIsActive()) {
             Pose2D pose = pinpoint.getPosition();
 
-            moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
             telemetry.addData("X", pose.getX(DistanceUnit.INCH));
             telemetry.addData("Y", pose.getY(DistanceUnit.INCH));

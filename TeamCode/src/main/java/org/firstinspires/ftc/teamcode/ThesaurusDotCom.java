@@ -2,16 +2,24 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-
 import java.util.List;
-import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
+
 @TeleOp
 public class ThesaurusDotCom extends Movable {
+    private static DcMotor intakeMotor;
+    private static Servo lt1;
+    private static Servo lt2;
+    private static Servo artifactHandler;
+    private static TripleSwitchedServo artifactHandlerPos;
+
+    @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
+
+        lt1 = hardwareMap.get(Servo.class, "launcherTiltOne");
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -19,13 +27,12 @@ public class ThesaurusDotCom extends Movable {
         BRW.setDirection(DcMotor.Direction.FORWARD);
 
         enableEncoders();
-        
         waitForStart();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            moveWheels(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
             if (gamepad1.left_bumper) {
                 FLW.setPower(-1);
@@ -45,7 +52,6 @@ public class ThesaurusDotCom extends Movable {
             telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
             telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
             telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
-
 
             telemetry.update();
         }
