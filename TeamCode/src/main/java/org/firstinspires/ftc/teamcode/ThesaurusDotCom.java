@@ -20,6 +20,9 @@ public class ThesaurusDotCom extends Movable {
     private static DoubleSwitchedServo forks;
     private static boolean loading;
     private static double motorPower;
+    Thread orientRobot = new Thread(()->{
+
+    });
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();

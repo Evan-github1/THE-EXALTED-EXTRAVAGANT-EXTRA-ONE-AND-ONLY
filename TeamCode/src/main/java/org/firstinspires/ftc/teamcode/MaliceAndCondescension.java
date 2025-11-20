@@ -103,6 +103,11 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
     }
 
     @Override
+    public void tag20() {
+
+    }
+
+    @Override
     public void tag21() {
 
     }
@@ -114,6 +119,11 @@ public class MaliceAndCondescension extends Movable implements LimelightColor, L
 
     @Override
     public void tag23() {
+
+    }
+
+    @Override
+    public void tag24() {
 
     }
 

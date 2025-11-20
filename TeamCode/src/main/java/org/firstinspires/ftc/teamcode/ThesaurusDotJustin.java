@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
+import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 
 @TeleOp
-public class ThesaurusDotJustin extends Movable {
+public class ThesaurusDotJustin extends Movable implements LimelightTags {
 
     private static DcMotor intakeMotor, launcherMotor1, launcherMotor2;
     private static Servo lt1;
@@ -20,6 +23,9 @@ public class ThesaurusDotJustin extends Movable {
     private static boolean loading;
     private static double motorPower;
     private static boolean shooting;
+    private static Limelight3A limelight;
+    private static Thread orientRobot;
+    private static boolean tracking;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -32,10 +38,17 @@ public class ThesaurusDotJustin extends Movable {
         launcherMotor1 = hardwareMap.get(DcMotor.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotor.class,"LAU2");
         fork = hardwareMap.get(Servo.class,"FORK");
-        forks = new DoubleSwitchedServo(fork,0.23,0.73);
+        forks = new DoubleSwitchedServo(fork,.05,.68);
         loading = false;
         motorPower = .54;
         shooting = false;
+        limelight = hardwareMap.get(Limelight3A.class,"limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0);
+        orientRobot = new Thread(()-> {
+            tracking = true;
+
+        });
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -56,7 +69,7 @@ public class ThesaurusDotJustin extends Movable {
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            if(Math.abs(gamepad1.right_stick_x) > 0.5){
+            if(Math.abs(gamepad1.right_stick_x) > 0.1){
                 FLW.setPower(gamepad1.right_stick_x);
                 FRW.setPower(-gamepad1.right_stick_x);
                 BLW.setPower(gamepad1.right_stick_x);
@@ -126,7 +139,7 @@ public class ThesaurusDotJustin extends Movable {
                     }).start();
                 }
                 setTime();
-            }else if(gamepad1.left_trigger > 0.5 && delay(1000)){
+            }else if(gamepad1.left_trigger > 0.5 && delay(500)){
                 if(fire.getPosition() != fires.getSecondaryPos()){
                     new Thread(() -> {
                         fires.primaryPos();
@@ -156,7 +169,7 @@ public class ThesaurusDotJustin extends Movable {
                     }).start();
                 }
                 setTime();
-            }else if(gamepad1.right_trigger > 0.5 && delay(1000)){
+            }else if(gamepad1.right_trigger > 0.5 && delay(500)){
                 if(fire.getPosition() == fires.getSecondaryPos()){
                     new Thread(()->{
                         fires.tertiaryPos();
@@ -204,5 +217,50 @@ public class ThesaurusDotJustin extends Movable {
             telemetry.addData("Motor is running at power",launcherMotor1.getPower());
             telemetry.update();
         }
+    }
+
+    private void LeBotsEyes(){
+        LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
+
+
+        if(yes != null){
+            double tx = yes.getTargetXDegrees();
+            if(tx < -5){
+                FLW.setPower(-.1);
+                FRW.setPower(.1);
+                BRW.setPower(.1);
+                BLW.setPower(-.1);
+            }else if(tx > 5){
+                FRW.setPower(-.1);
+                FLW.setPower(1);
+                BRW.setPower(-.1);
+                BLW.setPower(.1);
+            }
+        }
+    }
+
+    @Override
+    public void tag20() {
+
+    }
+
+    @Override
+    public void tag21() {
+
+    }
+
+    @Override
+    public void tag22() {
+
+    }
+
+    @Override
+    public void tag23() {
+
+    }
+
+    @Override
+    public void tag24() {
+
     }
 }
