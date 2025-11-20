@@ -1,0 +1,7 @@
+#Wed Nov 19 17:34:30 EST 2025
+base.0=/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode/build/intermediates/dex/release/mergeDexRelease/classes.dex
+base.1=/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode/build/intermediates/dex/release/mergeDexRelease/classes2.dex
+path.0=classes.dex
+path.1=classes2.dex
+renamed.0=classes.dex
+renamed.1=classes2.dex

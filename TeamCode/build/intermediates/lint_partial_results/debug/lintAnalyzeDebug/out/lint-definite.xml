@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.13.1" type="incidents">
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`.">
+        <location
+            file="${:TeamCode*debug*MAIN*sourceProvider*0*javaDir*0}/org/firstinspires/ftc/teamcode/ServoTesting/TestServoPos.java"
+            line="84"
+            column="51"
+            startOffset="3513"
+            endLine="84"
+            endColumn="62"
+            endOffset="3524"/>
+    </incident>
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`.">
+        <location
+            file="${:TeamCode*debug*MAIN*sourceProvider*0*javaDir*0}/org/firstinspires/ftc/teamcode/ServoTesting/TestTwoServoPos.java"
+            line="115"
+            column="55"
+            startOffset="4921"
+            endLine="115"
+            endColumn="66"
+            endOffset="4932"/>
+    </incident>
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`.">
+        <location
+            file="${:TeamCode*debug*MAIN*sourceProvider*0*javaDir*0}/org/firstinspires/ftc/teamcode/ServoTesting/TestTwoServoPos.java"
+            line="117"
+            column="56"
+            startOffset="5054"
+            endLine="117"
+            endColumn="67"
+            endOffset="5065"/>
+    </incident>
+
+    <incident
+        id="Aligned16KB"
+        severity="warning"
+        message="The native library `arm64-v8a/libEasyOpenCV.so` (from `org.openftc:easyopencv:1.7.3`) is not 16 KB aligned">
+        <location
+            file="$GRADLE_USER_HOME/caches/8.13/transforms/decafb1de6acfad2d3f71dd95ee8f074/transformed/easyopencv-1.7.3/jni/arm64-v8a/libEasyOpenCV.so"/>
+    </incident>
+
+    <incident
+        id="Aligned16KB"
+        severity="warning"
+        message="The native library `arm64-v8a/libRobotCore.so` (from `org.firstinspires.ftc:RobotCore:11.0.0`) is not 16 KB aligned">
+        <location
+            file="$GRADLE_USER_HOME/caches/8.13/transforms/7ac5f9c8150d37dd7f92d852404fda01/transformed/RobotCore-11.0.0/jni/arm64-v8a/libRobotCore.so"/>
+    </incident>
+
+    <incident
+        id="Aligned16KB"
+        severity="warning"
+        message="The native library `arm64-v8a/libapriltag.so` (from `org.openftc:apriltag:2.1.0`) is not 16 KB aligned">
+        <location
+            file="$GRADLE_USER_HOME/caches/8.13/transforms/7f07f5bf749d7654992dfeafc9754fda/transformed/apriltag-2.1.0/jni/arm64-v8a/libapriltag.so"/>
+    </incident>
+
+    <incident
+        id="Aligned16KB"
+        severity="warning"
+        message="The native library `arm64-v8a/libc++_shared.so` (from `org.openftc:opencv-repackaged-bundled-dylibs:4.10.0-A`) is not 16 KB aligned">
+        <location
+            file="$GRADLE_USER_HOME/caches/8.13/transforms/6206f37355220781fd9d93280bf21e01/transformed/opencv-repackaged-bundled-dylibs-4.10.0-A/jni/arm64-v8a/libc++_shared.so"/>
+    </incident>
+
+</incidents>
