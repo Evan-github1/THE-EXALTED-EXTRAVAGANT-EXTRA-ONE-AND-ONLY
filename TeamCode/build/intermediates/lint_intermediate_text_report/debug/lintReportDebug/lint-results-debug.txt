@@ -1,0 +1,104 @@
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ServoTesting/TestServoPos.java:84: Warning: Implicitly using the default locale is a common source of bugs: Use toUpperCase(Locale) instead. For strings meant to be internal use Locale.ROOT, otherwise Locale.getDefault(). [DefaultLocale]
+                            servoName += (letters.toUpperCase()).charAt(currentLetterNum);
+                                                  ~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ServoTesting/TestTwoServoPos.java:115: Warning: Implicitly using the default locale is a common source of bugs: Use toUpperCase(Locale) instead. For strings meant to be internal use Locale.ROOT, otherwise Locale.getDefault(). [DefaultLocale]
+                                servoName += (letters.toUpperCase()).charAt(currentLetterNum);
+                                                      ~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ServoTesting/TestTwoServoPos.java:117: Warning: Implicitly using the default locale is a common source of bugs: Use toUpperCase(Locale) instead. For strings meant to be internal use Locale.ROOT, otherwise Locale.getDefault(). [DefaultLocale]
+                                servoName2 += (letters.toUpperCase()).charAt(currentLetterNum);
+                                                       ~~~~~~~~~~~
+
+   Explanation for issues of type "DefaultLocale":
+   Calling String#toLowerCase() or #toUpperCase() without specifying an
+   explicit locale is a common source of bugs. The reason for that is that
+   those methods will use the current locale on the user's device, and even
+   though the code appears to work correctly when you are developing the app,
+   it will fail in some locales. For example, in the Turkish locale, the
+   uppercase replacement for i is not I.
+
+   If you want the methods to just perform ASCII replacement, for example to
+   convert an enum name, call String#toUpperCase(Locale.ROOT) instead. If you
+   really want to use the current locale, call
+   String#toUpperCase(Locale.getDefault()) instead.
+
+   https://developer.android.com/reference/java/util/Locale.html#default_locale
+
+/Users/thomam28/.gradle/caches/8.13/transforms/decafb1de6acfad2d3f71dd95ee8f074/transformed/easyopencv-1.7.3/jni/arm64-v8a/libEasyOpenCV.so: Warning: The native library arm64-v8a/libEasyOpenCV.so (from org.openftc:easyopencv:1.7.3) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/decafb1de6acfad2d3f71dd95ee8f074/transformed/easyopencv-1.7.3/jni/arm64-v8a/libEasyOpenCV.so: Warning: The native library arm64-v8a/libEasyOpenCV.so (from org.openftc:easyopencv:1.7.3) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/decafb1de6acfad2d3f71dd95ee8f074/transformed/easyopencv-1.7.3/jni/arm64-v8a/libEasyOpenCV.so: Warning: The native library arm64-v8a/libEasyOpenCV.so (from org.openftc:easyopencv:1.7.3) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7ac5f9c8150d37dd7f92d852404fda01/transformed/RobotCore-11.0.0/jni/arm64-v8a/libRobotCore.so: Warning: The native library arm64-v8a/libRobotCore.so (from org.firstinspires.ftc:RobotCore:11.0.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7ac5f9c8150d37dd7f92d852404fda01/transformed/RobotCore-11.0.0/jni/arm64-v8a/libRobotCore.so: Warning: The native library arm64-v8a/libRobotCore.so (from org.firstinspires.ftc:RobotCore:11.0.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7ac5f9c8150d37dd7f92d852404fda01/transformed/RobotCore-11.0.0/jni/arm64-v8a/libRobotCore.so: Warning: The native library arm64-v8a/libRobotCore.so (from org.firstinspires.ftc:RobotCore:11.0.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7f07f5bf749d7654992dfeafc9754fda/transformed/apriltag-2.1.0/jni/arm64-v8a/libapriltag.so: Warning: The native library arm64-v8a/libapriltag.so (from org.openftc:apriltag:2.1.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7f07f5bf749d7654992dfeafc9754fda/transformed/apriltag-2.1.0/jni/arm64-v8a/libapriltag.so: Warning: The native library arm64-v8a/libapriltag.so (from org.openftc:apriltag:2.1.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7f07f5bf749d7654992dfeafc9754fda/transformed/apriltag-2.1.0/jni/arm64-v8a/libapriltag.so: Warning: The native library arm64-v8a/libapriltag.so (from org.openftc:apriltag:2.1.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/6206f37355220781fd9d93280bf21e01/transformed/opencv-repackaged-bundled-dylibs-4.10.0-A/jni/arm64-v8a/libc++_shared.so: Warning: The native library arm64-v8a/libc++_shared.so (from org.openftc:opencv-repackaged-bundled-dylibs:4.10.0-A) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/6206f37355220781fd9d93280bf21e01/transformed/opencv-repackaged-bundled-dylibs-4.10.0-A/jni/arm64-v8a/libc++_shared.so: Warning: The native library arm64-v8a/libc++_shared.so (from org.openftc:opencv-repackaged-bundled-dylibs:4.10.0-A) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/6206f37355220781fd9d93280bf21e01/transformed/opencv-repackaged-bundled-dylibs-4.10.0-A/jni/arm64-v8a/libc++_shared.so: Warning: The native library arm64-v8a/libc++_shared.so (from org.openftc:opencv-repackaged-bundled-dylibs:4.10.0-A) is not 16 KB aligned [Aligned16KB]
+
+   Explanation for issues of type "Aligned16KB":
+   Android has traditionally used 4 KB memory page sizes. However, to support
+   future devices that only work with 16 KB aligned libraries apps containing
+   native libraries need to be built with 16 KB alignment.
+
+   Apps with 4 KB aligned native libraries may not work correctly on devices
+   requiring 16 KB alignment. To ensure compatibility and future-proof your
+   app, it is strongly recommended that your native libraries are aligned to
+   16 KB boundaries.
+
+   If your app uses any NDK libraries, directly or indirectly through an SDK,
+   you should rebuild your app to meet this recommendation. Make sure all
+   native libraries within your application, including those from
+   dependencies, are built with 16 KB page alignment.
+
+   This lint check looks at all native libraries that your app depends on. If
+   any are found to be aligned to 4 KB instead of 16 KB, you will need to
+   address this.
+
+   When a library is flagged, first try to update to a newer version that
+   supports 16 KB alignment. If an updated version is not available, contact
+   the library vendor to ask about their plans for 16 KB support and request a
+   compatible version. Updating your libraries proactively will help ensure
+   your app works properly on a wider range of devices.
+
+   https://developer.android.com/guide/practices/page-sizes
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode/src/main/res/raw/readme.md: Warning: The resource R.raw.readme appears to be unused [UnusedResources]
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode/src/main/res/xml/teamwebcamcalibrations.xml:53: Warning: The resource R.xml.teamwebcamcalibrations appears to be unused [UnusedResources]
+<Calibrations>
+^
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+   Available options:
+
+   **skip-libraries** (default is true):
+   Whether the unused resource check should skip reporting unused resources in libraries.
+
+   Many libraries will declare resources that are part of the library surface; other modules depending on the library will also reference the resources. To avoid reporting all these resources as unused (in the context of a library), the unused resource check normally skips reporting unused resources in libraries. Instead, run the unused resource check on the consuming app module (along with `checkDependencies=true`).
+
+   However, there are cases where you want to check that all the resources declared in a library are used; in that case, you can disable the skip option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UnusedResources">
+           <option name="skip-libraries" value="true" />
+       </issue>
+   </lint>
+   ```
+
+0 errors, 17 warnings

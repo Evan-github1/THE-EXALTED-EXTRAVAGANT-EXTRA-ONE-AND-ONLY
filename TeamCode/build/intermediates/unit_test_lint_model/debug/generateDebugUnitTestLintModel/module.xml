@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/TeamCode"
+    name=":TeamCode"
+    type="APP"
+    maven="THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY:TeamCode:unspecified"
+    agpVersion="8.13.1"
+    buildFolder="build"
+    bootClassPath="/Users/thomam28/Library/Android/sdk/platforms/android-30/android.jar:/Users/thomam28/Library/Android/sdk/build-tools/35.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="1.8"
+    compileTarget="android-30"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>

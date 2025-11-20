@@ -1,0 +1,417 @@
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorBNO055IMU.java:57: Warning: This block comment looks like it was intended to be a javadoc comment [WrongCommentType]
+ * @see <a href="http://www.adafruit.com/products/2472">Adafruit IMU</a>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorLimelight3A.java:50: Warning: This block comment looks like it was intended to be a javadoc comment [WrongCommentType]
+ * @see <a href="https://limelightvision.io/">Limelight</a>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorMRGyro.java:58: Warning: This block comment looks like it was intended to be a javadoc comment [WrongCommentType]
+   * depending on what you're trying to do. {@link IntegratingGyroscope} (and it's base interface,
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorMRRangeSensor.java:46: Warning: This block comment looks like it was intended to be a javadoc comment [WrongCommentType]
+ * @see <a href="http://modernroboticsinc.com/range-sensor">MR Range Sensor</a>
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "WrongCommentType":
+   This check flags any block comments which look like they had been intended
+   to be KDoc or javadoc comments instead.
+
+   If you really want to use Javadoc-like constructs in a block comment,
+   there's a convention you can use: include (non-Javadoc) somewhere in the
+   comment, e.g.
+     /* (non-Javadoc)
+      * @see
+   org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
+      */
+     @Override
+     public void setDocumentLocator(Locator locator) {
+   (see https://stackoverflow.com/questions/5172841/non-javadoc-meaning)
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTag.java:200: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTag.java:201: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTag.java:202: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTag.java:203: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTag.java:205: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTag.java:206: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagEasy.java:146: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagEasy.java:147: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagEasy.java:148: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagEasy.java:149: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagEasy.java:151: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagEasy.java:152: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagLocalization.java:226: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagLocalization.java:229: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)",
+                                      ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagLocalization.java:233: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)",
+                                      ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagLocalization.java:239: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagLocalization.java:240: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagSwitchableCameras.java:159: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagSwitchableCameras.java:160: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagSwitchableCameras.java:161: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagSwitchableCameras.java:162: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagSwitchableCameras.java:164: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptAprilTagSwitchableCameras.java:165: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptGamepadTouchpad.java:58: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("Finger 1: x=%5.2f y=%5.2f\n", gamepad1.touchpad_finger_1_x, gamepad1.touchpad_finger_1_y));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptGamepadTouchpad.java:65: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("Finger 2: x=%5.2f y=%5.2f\n", gamepad1.touchpad_finger_2_x, gamepad1.touchpad_finger_2_y));
+                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptVisionColorLocator_Circle.java:237: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("%5.3f      %3d     (%3d,%3d)",
+                                  ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptVisionColorLocator_Rectangle.java:209: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                telemetry.addLine(String.format("(%3d,%3d) %5d %4.2f  %5.2f %3d %5.3f ",
+                                  ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptVisionColorSensor.java:147: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addLine(String.format("RGB   (%3d, %3d, %3d)",
+                              ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptVisionColorSensor.java:149: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addLine(String.format("HSV   (%3d, %3d, %3d)",
+                              ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptVisionColorSensor.java:151: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addLine(String.format("YCrCb (%3d, %3d, %3d)",
+                              ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorAndyMarkTOF.java:72: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorAndyMarkTOF.java:73: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f cm", sensorDistance.getDistance(DistanceUnit.CM)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorAndyMarkTOF.java:74: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f m", sensorDistance.getDistance(DistanceUnit.METER)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorAndyMarkTOF.java:75: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f in", sensorDistance.getDistance(DistanceUnit.INCH)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorKLNavxMicro.java:118: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+        return String.format("%.3f", rate);
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorKLNavxMicro.java:126: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+        return String.format("%.1f", AngleUnit.DEGREES.normalize(degrees));
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorMRGyro.java:149: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+    return String.format("%d", rawValue);
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorMRGyro.java:153: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+    return String.format("%.3f", rate);
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorMRGyro.java:157: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+    return String.format("%.3f", rate);
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorOctoQuadLocalization.java:213: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addLine(String.format("%d CRC error(s) in %d packets", badPackets, totalPackets));
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorREV2mDistance.java:74: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorREV2mDistance.java:75: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f cm", sensorDistance.getDistance(DistanceUnit.CM)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorREV2mDistance.java:76: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f m", sensorDistance.getDistance(DistanceUnit.METER)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorREV2mDistance.java:77: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+            telemetry.addData("range", String.format("%.01f in", sensorDistance.getDistance(DistanceUnit.INCH)));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorSparkFunOTOS.java:152: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+        telemetry.addLine(String.format("OTOS Hardware Version: v%d.%d", hwVersion.major, hwVersion.minor));
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/SensorSparkFunOTOS.java:153: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+        telemetry.addLine(String.format("OTOS Firmware Version: v%d.%d", fwVersion.major, fwVersion.minor));
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/UtilityOctoQuadConfigMenu.java:133: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    String.format("Encoder %d direction", i),
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/UtilityOctoQuadConfigMenu.java:143: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    String.format("Chan %d velocity intvl", i),
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/UtilityOctoQuadConfigMenu.java:155: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    String.format("Chan %d max pulse length", i),
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/UtilityOctoQuadConfigMenu.java:161: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    String.format("Chan %d min pulse length", i),
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/UtilityOctoQuadConfigMenu.java:167: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                    String.format("Chan %d wrap tracking enabled", i),
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/UtilityOctoQuadConfigMenu.java:687: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+                return String.format("%s: <font color='#e37c07' face=monospace>%d</font>", name, i);
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DefaultLocale":
+   Calling String#toLowerCase() or #toUpperCase() without specifying an
+   explicit locale is a common source of bugs. The reason for that is that
+   those methods will use the current locale on the user's device, and even
+   though the code appears to work correctly when you are developing the app,
+   it will fail in some locales. For example, in the Turkish locale, the
+   uppercase replacement for i is not I.
+
+   If you want the methods to just perform ASCII replacement, for example to
+   convert an enum name, call String#toUpperCase(Locale.ROOT) instead. If you
+   really want to use the current locale, call
+   String#toUpperCase(Locale.getDefault()) instead.
+
+   https://developer.android.com/reference/java/util/Locale.html#default_locale
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptSoundsOnBotJava.java:69: Warning: Do not hardcode "/sdcard/"; use Environment.getExternalStorageDirectory().getPath() instead [SdCardPath]
+    private File goldFile   = new File("/sdcard" + soundPath + "/gold.wav");
+                                       ~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/ConceptSoundsOnBotJava.java:70: Warning: Do not hardcode "/sdcard/"; use Environment.getExternalStorageDirectory().getPath() instead [SdCardPath]
+    private File silverFile = new File("/sdcard" + soundPath + "/silver.wav");
+                                       ~~~~~~~~~
+
+   Explanation for issues of type "SdCardPath":
+   Your code should not reference the /sdcard path directly; instead use
+   Environment.getExternalStorageDirectory().getPath().
+
+   Similarly, do not reference the /data/data/ path directly; it can vary in
+   multi-user scenarios. Instead, use Context.getFilesDir().getPath().
+
+   https://developer.android.com/training/data-storage#filesExternal
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/AndroidManifest.xml:26: Warning: Redundant label can be removed [RedundantLabel]
+              android:label="@string/app_name"
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/AndroidManifest.xml:40: Warning: Redundant label can be removed [RedundantLabel]
+      android:label="@string/app_name"
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "RedundantLabel":
+   When an activity does not have a label attribute, it will use the one from
+   the application tag. Since the application has already specified the same
+   label, the label on this activity can be omitted.
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/gradle/wrapper/gradle-wrapper.properties:3: Warning: A newer version of Gradle than 8.13 is available: 8.14.3 [AndroidGradlePluginVersion]
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.13-bin.zip
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "AndroidGradlePluginVersion":
+   This detector looks for usage of the Android Gradle Plugin where the
+   version you are using is not the current stable release. Using older
+   versions is fine, and there are cases where you deliberately want to stick
+   with an older version. However, you may simply not be aware that a more
+   recent version is available, and that is what this lint check helps find.
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/build.dependencies.gradle:15: Warning: A newer version of androidx.appcompat:appcompat than 1.2.0 is available: 1.7.1 [GradleDependency]
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/build.gradle:21: Warning: A newer version of compileSdkVersion than 30 is available: 36 [GradleDependency]
+    compileSdkVersion 30
+    ~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/build.dependencies.gradle:9: Warning: The native library arm64-v8a/libRobotCore.so (from org.firstinspires.ftc:RobotCore:11.0.0) is not 16 KB aligned [Aligned16KB]
+    implementation 'org.firstinspires.ftc:RobotCore:11.0.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/.gradle/caches/8.13/transforms/decafb1de6acfad2d3f71dd95ee8f074/transformed/easyopencv-1.7.3/jni/arm64-v8a/libEasyOpenCV.so: Warning: The native library arm64-v8a/libEasyOpenCV.so (from org.openftc:easyopencv:1.7.3) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/decafb1de6acfad2d3f71dd95ee8f074/transformed/easyopencv-1.7.3/jni/arm64-v8a/libEasyOpenCV.so: Warning: The native library arm64-v8a/libEasyOpenCV.so (from org.openftc:easyopencv:1.7.3) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/decafb1de6acfad2d3f71dd95ee8f074/transformed/easyopencv-1.7.3/jni/arm64-v8a/libEasyOpenCV.so: Warning: The native library arm64-v8a/libEasyOpenCV.so (from org.openftc:easyopencv:1.7.3) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7ac5f9c8150d37dd7f92d852404fda01/transformed/RobotCore-11.0.0/jni/arm64-v8a/libRobotCore.so: Warning: The native library arm64-v8a/libRobotCore.so (from org.firstinspires.ftc:RobotCore:11.0.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7ac5f9c8150d37dd7f92d852404fda01/transformed/RobotCore-11.0.0/jni/arm64-v8a/libRobotCore.so: Warning: The native library arm64-v8a/libRobotCore.so (from org.firstinspires.ftc:RobotCore:11.0.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7f07f5bf749d7654992dfeafc9754fda/transformed/apriltag-2.1.0/jni/arm64-v8a/libapriltag.so: Warning: The native library arm64-v8a/libapriltag.so (from org.openftc:apriltag:2.1.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7f07f5bf749d7654992dfeafc9754fda/transformed/apriltag-2.1.0/jni/arm64-v8a/libapriltag.so: Warning: The native library arm64-v8a/libapriltag.so (from org.openftc:apriltag:2.1.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/7f07f5bf749d7654992dfeafc9754fda/transformed/apriltag-2.1.0/jni/arm64-v8a/libapriltag.so: Warning: The native library arm64-v8a/libapriltag.so (from org.openftc:apriltag:2.1.0) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/6206f37355220781fd9d93280bf21e01/transformed/opencv-repackaged-bundled-dylibs-4.10.0-A/jni/arm64-v8a/libc++_shared.so: Warning: The native library arm64-v8a/libc++_shared.so (from org.openftc:opencv-repackaged-bundled-dylibs:4.10.0-A) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/6206f37355220781fd9d93280bf21e01/transformed/opencv-repackaged-bundled-dylibs-4.10.0-A/jni/arm64-v8a/libc++_shared.so: Warning: The native library arm64-v8a/libc++_shared.so (from org.openftc:opencv-repackaged-bundled-dylibs:4.10.0-A) is not 16 KB aligned [Aligned16KB]
+/Users/thomam28/.gradle/caches/8.13/transforms/6206f37355220781fd9d93280bf21e01/transformed/opencv-repackaged-bundled-dylibs-4.10.0-A/jni/arm64-v8a/libc++_shared.so: Warning: The native library arm64-v8a/libc++_shared.so (from org.openftc:opencv-repackaged-bundled-dylibs:4.10.0-A) is not 16 KB aligned [Aligned16KB]
+
+   Explanation for issues of type "Aligned16KB":
+   Android has traditionally used 4 KB memory page sizes. However, to support
+   future devices that only work with 16 KB aligned libraries apps containing
+   native libraries need to be built with 16 KB alignment.
+
+   Apps with 4 KB aligned native libraries may not work correctly on devices
+   requiring 16 KB alignment. To ensure compatibility and future-proof your
+   app, it is strongly recommended that your native libraries are aligned to
+   16 KB boundaries.
+
+   If your app uses any NDK libraries, directly or indirectly through an SDK,
+   you should rebuild your app to meet this recommendation. Make sure all
+   native libraries within your application, including those from
+   dependencies, are built with 16 KB page alignment.
+
+   This lint check looks at all native libraries that your app depends on. If
+   any are found to be aligned to 4 KB instead of 16 KB, you will need to
+   address this.
+
+   When a library is flagged, first try to update to a newer version that
+   supports 16 KB alignment. If an updated version is not available, contact
+   the library vendor to ask about their plans for 16 KB support and request a
+   compatible version. Updating your libraries proactively will help ensure
+   your app works properly on a wider range of devices.
+
+   https://developer.android.com/guide/practices/page-sizes
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/AndroidManifest.xml:24: Warning: Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios. [DiscouragedApi]
+              android:screenOrientation="fullUser"
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/AndroidManifest.xml:38: Warning: Fixed screen orientations will be ignored in most cases, starting from Android 16. Android is moving toward a model where apps are expected to adapt to various orientations, display sizes, and aspect ratios. [DiscouragedApi]
+      android:screenOrientation="fullUser"
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DiscouragedApi":
+   Discouraged APIs are allowed and are not deprecated, but they may be unfit
+   for common use (e.g. due to slow performance or subtle behavior).
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/AndroidManifest.xml:23: Warning: As of Android 12, android:exported must be set; use true to make the activity available to other apps, and false otherwise. For launcher activities, this should be set to true. [IntentFilterExportedReceiver]
+    <activity android:name="org.firstinspires.ftc.robotcontroller.internal.PermissionValidatorWrapper"
+     ~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/AndroidManifest.xml:36: Warning: As of Android 12, android:exported must be set; use true to make the activity available to other apps, and false otherwise. [IntentFilterExportedReceiver]
+    <activity
+     ~~~~~~~~
+
+   Explanation for issues of type "IntentFilterExportedReceiver":
+   Apps targeting Android 12 and higher are required to specify an explicit
+   value for android:exported when the corresponding component has an intent
+   filter defined. Otherwise, installation will fail. Set it to true to make
+   this activity accessible to other apps, and false to limit it to be used
+   only by this app or the OS. For launch activities, this should be set to
+   true; otherwise, the app will fail to launch.
+
+   Previously, android:exported for components without any intent filters
+   present used to default to false, and when intent filters were present, the
+   default was true. Defaults which change value based on other values are
+   confusing and lead to apps accidentally exporting components as a
+   side-effect of adding intent filters. This is a security risk, and we have
+   made this change to avoid introducing accidental vulnerabilities.
+
+   While the default without intent filters remains unchanged, it is now
+   required to explicitly specify a value when intent filters are present. Any
+   app failing to meet this requirement will fail to install on any Android
+   version after Android 11.
+
+   We recommend setting android:exported to false (even on previous versions
+   of Android prior to this requirement) unless you have a good reason to
+   export a particular component.
+
+   https://goo.gle/IntentFilterExportedReceiver
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/internal/FtcRobotControllerActivity.java:599: Warning: Unnecessary; SDK_INT is always >= 24 [ObsoleteSdkInt]
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/res: Warning: Missing density variation folders in src/main/res: drawable-hdpi, drawable-mdpi, drawable-xxhdpi [IconMissingDensityFolder]
+
+   Explanation for issues of type "IconMissingDensityFolder":
+   Icons will look best if a custom version is provided for each of the major
+   screen density classes (low, medium, high, extra-high, extra-extra-high).
+   This lint check identifies folders which are missing, such as
+   drawable-hdpi.
+
+   Low density is not really used much anymore, so this check ignores the ldpi
+   density. To force lint to include it, set the environment variable
+   ANDROID_LINT_INCLUDE_LDPI=true. For more information on current density
+   usage, see https://developer.android.com/about/dashboards
+
+   https://developer.android.com/guide/practices/screens_support.html
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/internal/FtcRobotControllerActivity.java:433: Warning: Custom view `LinearLayout` has setOnTouchListener called on it but does not override performClick [ClickableViewAccessibility]
+    entireScreenLayout.setOnTouchListener(new View.OnTouchListener() {
+    ^
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/internal/FtcRobotControllerActivity.java:435: Warning: onTouch should call View#performClick when a click is detected [ClickableViewAccessibility]
+      public boolean onTouch(View v, MotionEvent event) {
+                     ~~~~~~~
+
+   Explanation for issues of type "ClickableViewAccessibility":
+   If a View that overrides onTouchEvent or uses an OnTouchListener does not
+   also implement performClick and call it when clicks are detected, the View
+   may not handle accessibility actions properly. Logic handling the click
+   actions should ideally be placed in View#performClick as some accessibility
+   services invoke performClick when a click action should occur.
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/res/layout/activity_ftc_controller.xml:51: Warning: Missing contentDescription attribute on image [ContentDescription]
+    <ImageView
+     ~~~~~~~~~
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/res/layout/activity_ftc_controller.xml:69: Warning: Missing contentDescription attribute on image [ContentDescription]
+    <ImageButton
+     ~~~~~~~~~~~
+
+   Explanation for issues of type "ContentDescription":
+   Non-textual widgets like ImageViews and ImageButtons should use the
+   contentDescription attribute to specify a textual description of the widget
+   such that screen readers and other accessibility tools can adequately
+   describe the user interface.
+
+   Note that elements in application screens that are purely decorative and do
+   not provide any content or enable a user action should not have
+   accessibility content descriptions. In this case, set their descriptions to
+   @null. If your app's minSdkVersion is 16 or higher, you can instead set
+   these graphical elements' android:importantForAccessibility attributes to
+   no.
+
+   Note that for text fields, you should not set both the hint and the
+   contentDescription attributes since the hint will never be shown. Just set
+   the hint.
+
+   https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases
+
+/Users/thomam28/JetBrains/StudioProjects/THE-EXALTED-EXTRAVAGANT-EXTRA-ONE-AND-ONLY/FtcRobotController/src/main/res/layout/activity_ftc_controller.xml:59: Warning: @id/textDeviceName can overlap @id/menu_buttons if @id/textDeviceName grows due to localized text expansion [RelativeOverlap]
+    <TextView
+     ~~~~~~~~
+
+   Explanation for issues of type "RelativeOverlap":
+   If relative layout has text or button items aligned to left and right sides
+   they can overlap each other due to localized text expansion unless they
+   have mutual constraints like toEndOf/toStartOf.
+
+0 errors, 86 warnings
