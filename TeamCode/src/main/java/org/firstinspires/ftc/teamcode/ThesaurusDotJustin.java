@@ -26,6 +26,8 @@ public class ThesaurusDotJustin extends Movable implements LimelightTags {
     private static Limelight3A limelight;
     private static Thread orientRobot;
     private static boolean tracking;
+    private static double pastError, currentError;
+    private static int iterations;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -45,10 +47,6 @@ public class ThesaurusDotJustin extends Movable implements LimelightTags {
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(0);
-        orientRobot = new Thread(()-> {
-            tracking = true;
-
-        });
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -58,6 +56,9 @@ public class ThesaurusDotJustin extends Movable implements LimelightTags {
         launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         launcherMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pastError = 0;
+        currentError = 0;
+        iterations = 0;
 
         enableEncoders();
 
@@ -82,8 +83,21 @@ public class ThesaurusDotJustin extends Movable implements LimelightTags {
                 moveWheels(0.5f,0);
             }else if(gamepad1.dpad_right){
                 moveWheels(-0.5f,0);
+            }else if(gamepad1.share){
+                if(iterations == 0 ){
+                    pastError = 0;
+                    LeBotsEyes(pastError,true);
+                }else{
+                    pastError = LeBotsEyes(pastError,false);
+                    LeBotsEyes(pastError,true);
+
+                }
+                iterations++;
             }else{
                 moveWheels(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
+                pastError = 0;
+                currentError = 0;
+                iterations = 0;
             }
 
             if (gamepad1.y && delay()) {
@@ -206,11 +220,6 @@ public class ThesaurusDotJustin extends Movable implements LimelightTags {
                 launcherMotor1.setPower(0);
                 launcherMotor2.setPower(0);
             }
-
-            telemetry.addData("FLW Encoder", FLW.getCurrentPosition());
-            telemetry.addData("FRW Encoder", FRW.getCurrentPosition());
-            telemetry.addData("BLW Encoder", BLW.getCurrentPosition());
-            telemetry.addData("BRW Encoder", BRW.getCurrentPosition());
             telemetry.addData("LT1", lt1.getPosition());
             telemetry.addData("LT2",lt2.getPosition());
             telemetry.addData("Motor power",motorPower);
@@ -219,24 +228,42 @@ public class ThesaurusDotJustin extends Movable implements LimelightTags {
         }
     }
 
-    private void LeBotsEyes(){
+    private double LeBotsEyes(double pastError, boolean adjustMotor){
+        telemetry.addData("D",true);
         LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
-
-
+        double desiredX = -2.5;
+        double smoothCoeff = 0.25;
         if(yes != null){
+            telemetry.addData("Yes is not null",true);
             double tx = yes.getTargetXDegrees();
-            if(tx < -5){
-                FLW.setPower(-.1);
-                FRW.setPower(.1);
-                BRW.setPower(.1);
-                BLW.setPower(-.1);
-            }else if(tx > 5){
-                FRW.setPower(-.1);
-                FLW.setPower(1);
-                BRW.setPower(-.1);
-                BLW.setPower(.1);
+            double currentError = desiredX - tx;
+            double smoothedError = smoothCoeff*currentError + (1-smoothCoeff)*pastError;
+            smoothedError = smoothedError/25;
+            telemetry.addData(""+currentError,smoothedError);
+            if(adjustMotor) {
+                FLW.setPower(-smoothedError);
+                FRW.setPower(smoothedError);
+                BRW.setPower(smoothedError);
+                BLW.setPower(-smoothedError);
+                return 0.0;
             }
+            return smoothedError;
+
+//            if(tx < -5){
+//                FLW.setPower(-.1);
+//                FRW.setPower(.1);
+//                BRW.setPower(.1);
+//                BLW.setPower(-.1);
+//            }else if(tx > 5){
+//                FRW.setPower(-.1);
+//                FLW.setPower(1);
+//                BRW.setPower(-.1);
+//                BLW.setPower(.1);
+//            }
+        }else{
+            return 0;
         }
+
     }
 
     @Override
