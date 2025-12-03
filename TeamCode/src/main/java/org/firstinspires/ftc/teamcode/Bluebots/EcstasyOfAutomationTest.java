@@ -76,4 +76,9 @@ public class EcstasyOfAutomationTest extends EcstasyOfAutomation {
     public void tag24() {
 
     }
+
+    @Override
+    public void nothing() {
+
+    }
 }

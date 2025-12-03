@@ -36,4 +36,9 @@ public class EcstasyOfAutomationRED_MOVE extends EcstasyOfAutomation {
     public void tag24() {
 
     }
+
+    @Override
+    public void nothing() {
+
+    }
 }

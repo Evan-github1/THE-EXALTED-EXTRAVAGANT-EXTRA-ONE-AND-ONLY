@@ -8,9 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-
 @TeleOp
-public class MaliceAndCondescension extends Movable implements LimelightTags { // robot #22335
+public class MaliceAndCondescensionGRACE extends Movable implements LimelightTags { // robot #22335
 
     private static Limelight3A limelight;
     private static Servo swivelTurretServo;
@@ -21,11 +20,20 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     private static DoubleSwitchedServo gateways;
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
+    private static DoubleSwitchedServo swivelTurret;
     private static int targetedID;
     private static double targetRPM;
     private static boolean turnLeft;
     private static boolean tracking;
     private static Servo hoodServo;
+    private static volatile boolean turretStop;
+    private static boolean sweeping = false;
+    private static double sweepDirection = 0; // +1 = sweep right, -1 = sweep left
+    private static final double SWEEP_SPEED = 0.005;
+    private static boolean sweepInit;
+    private static boolean sweepActive;
+    private static double sweepTarget;
+    private static int currentIndex = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,6 +46,7 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         turnLeft = false;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
+        swivelTurret = new DoubleSwitchedServo(swivelTurretServo, .09, .55);
         swivelTurretServo.setPosition(.1975);
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
@@ -63,14 +72,20 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         hoodServo = hardwareMap.get(Servo.class, "hood");
         hoodServo.setPosition(0);
 
-        FLW.setDirection(DcMotor.Direction.REVERSE);
-        BLW.setDirection(DcMotor.Direction.REVERSE);
-        FRW.setDirection(DcMotor.Direction.FORWARD);
-        BRW.setDirection(DcMotor.Direction.FORWARD);
+        FLW.setDirection(DcMotor.Direction.FORWARD);
+        BLW.setDirection(DcMotor.Direction.FORWARD);
+        FRW.setDirection(DcMotor.Direction.REVERSE);
+        BRW.setDirection(DcMotor.Direction.REVERSE);
         FLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        turretStop = true;
+
+        sweepInit = false;
+        sweepActive = false;
+        sweepTarget = 0.07;
 
         waitForStart();
 
@@ -81,16 +96,21 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
             omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
             turn();
 
-            if (tracking) PrincessEyes();
+            //if (tracking) PrincessEyes();
+            int id = detectTag(limelight, telemetry);
+            telemetry.addData("Turret Stop", turretStop);
 
+            telemetry.addData("Swivel Turret Position", swivelTurretServo.getPosition());
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
                 time = System.currentTimeMillis();
-            } else if (gamepad1.left_trigger >= .5 && delay(1001)) {
-                liftLeftWiper();
+            }
+
+            if (gamepad1.left_trigger >= .5 && delay(1001)) {
+                liftRightWiper();
                 time = System.currentTimeMillis();
             } else if (gamepad1.right_trigger >= .5 && delay(1001)) {
-                liftRightWiper();
+                liftLeftWiper();
                 time = System.currentTimeMillis();
             }
 
@@ -102,9 +122,9 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.right_stick_y > 0.3) {
+            if (gamepad1.left_bumper) {
                 hoodServo.setPosition(hoodServo.getPosition() - .01);
-            } else if (gamepad1.right_stick_y < -0.3 && hoodServo.getPosition() <= .8) {
+            } else if (gamepad1.right_bumper && hoodServo.getPosition() <= .8) {
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
             telemetry.addData("Hood Position", hoodServo.getPosition());
@@ -118,15 +138,10 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.share && delay()) {
-                tracking = !tracking;
-                time = System.currentTimeMillis();
-            }
+            PrincessEyesv3(); // uses option button
 
             if (gamepad1.x) {
                 intakeMotor.setPower(-1);
-            } else {
-                intakeMotor.setPower(0);
             }
 
             if (gamepad1.dpad_up && delay() && targetRPM <= 2300) {
@@ -145,22 +160,66 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_right && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
-            } else if (gamepad1.dpad_left) {
+            } else if (gamepad1.dpad_left && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
             }
+
+            if (gamepad1.leftStickButtonWasPressed() && delay()) {
+                if (gatewayServo.getPosition() < .5) {
+                    new Thread(() -> {
+                        wipersL.secondaryPos();
+                        sleep(1000);
+                        wipersL.primaryPos();
+
+                        sleep(500);
+
+                        wipersR.secondaryPos();
+                        sleep(1000);
+                        wipersR.primaryPos();
+
+                        sleep(500);
+
+                        wipersL.secondaryPos();
+                        sleep(1000);
+                        wipersL.primaryPos();
+                    }).start();
+                } else if (gatewayServo.getPosition() > .5) {
+                    new Thread(() -> {
+                        wipersR.secondaryPos();
+                        sleep(1000);
+                        wipersR.primaryPos();
+
+                        sleep(500);
+
+                        wipersL.secondaryPos();
+                        sleep(1000);
+                        wipersL.primaryPos();
+
+                        sleep(500);
+
+                        wipersR.secondaryPos();
+                        sleep(1000);
+                        wipersR.primaryPos();
+
+                    }).start();
+                }
+                time = System.currentTimeMillis();
+            }
+
+            telemetry.addData("Gateway Position", gatewayServo.getPosition());
 
             if (intakeToggle) {
                 boolean LUp = wiperL.getPosition() == wipersL.getSecondaryPos();
                 boolean RUp = wiperR.getPosition() == wipersR.getSecondaryPos();
-                // these two variables not needed but it stops working whenever I remove them so uhhhhhh
-                boolean gatewayL = gatewayServo.getPosition() == .73;
-                boolean gatewayR = gatewayServo.getPosition() == .26;
-                if ((LUp && gatewayL) || (RUp && gatewayR) || (!LUp && !RUp)) {
+
+                if (LUp || RUp) {
+                    intakeMotor.setPower(0);
+                } else {
                     intakeMotor.setPower(1);
                 }
-            } else {
+            } else if (!gamepad1.x || !intakeToggle) {
                 intakeMotor.setPower(0);
             }
 
@@ -173,12 +232,11 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
             telemetry.addData("Measured RPM", outtakeMotor.getVelocity() * 60.0 / 28);
             telemetry.addData("Ticks/sec", outtakeMotor.getVelocity());
 
-
-            // gamepad 2
-            if (gamepad2.left_trigger >= .5 && delay(1001)) {
+            // GAMEPAD 2
+            if (gamepad2.right_trigger >= .5 && delay(1001)) {
                 liftLeftWiper();
                 time = System.currentTimeMillis();
-            } else if (gamepad2.right_trigger >= .5 && delay(1001)) {
+            } else if (gamepad2.left_trigger >= .5 && delay(1001)) {
                 liftRightWiper();
                 time = System.currentTimeMillis();
             }
@@ -193,12 +251,26 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
 
-            if (gamepad2.dpad_right) {
+            if (gamepad2.dpad_right && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
-            } else if (gamepad2.dpad_left) {
+            } else if (gamepad2.dpad_left && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
             }
 
+            // END OF GAMEPAD 2
+
+            if (id == targetedID) {
+                telemetry.addData("hi", "yes");
+                turretStop = true;
+                double tx = getTX(limelight);
+                if (tx <= -3 && swivelTurretServo.getPosition() >= .57) {
+                    // move turret left
+                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0001);
+                } else if (tx >= 3 && swivelTurretServo.getPosition() <= .07) {
+                    // move turret right
+                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0001);
+                }
+            }
 
             telemetry.update();
         }
@@ -233,23 +305,106 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
         telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
 
         if (ID != targetedID) {
-            if (turnLeft) { // move towards .03, left @ back
+            if (turnLeft) { // move towards .07, left @ back
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                if (swivelTurretServo.getPosition() <= .03) turnLeft = false; // switch direction
+                if (swivelTurretServo.getPosition() <= .07) turnLeft = false; // switch direction
             } else {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                if (swivelTurretServo.getPosition() >= .425) turnLeft = true;
+                if (swivelTurretServo.getPosition() >= .57) turnLeft = true;
             }
         } else {
-            if (tx <= -3 && swivelTurretServo.getPosition() >= .425) {
+            if (tx <= -3 && swivelTurretServo.getPosition() >= .57) {
                 // move turret left
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-            } else if (tx >= 3 && swivelTurretServo.getPosition() <= .03) {
+            } else if (tx >= 3 && swivelTurretServo.getPosition() <= .07) {
                 // move turret right
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
             }
         }
     }
+
+    private void PrincessEyesv2() {
+        turretStop = false;
+        double distFromLeft = Math.abs(swivelTurretServo.getPosition() - swivelTurret.getPrimaryPos());
+        double distFromRight = Math.abs(swivelTurretServo.getPosition() - swivelTurret.getSecondaryPos());
+        if (distFromLeft >= distFromRight) {
+            while (swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
+                if (!turretStop) {
+                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0005);
+                } else {
+                    return;
+                }
+            }
+        } else {
+            while (swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
+                if (!turretStop) {
+                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0005);
+                } else {
+                    return;
+                }
+            }
+        }
+    }
+
+    public void PrincessEyesv3() {
+
+        double leftPos = swivelTurret.getPrimaryPos();
+        double rightPos = swivelTurret.getSecondaryPos();
+        double step = 0.002;  // sweep speed per cycle
+
+        // static variables let this method remember state
+        if (!sweepInit) {
+            sweepInit = true;
+            sweepActive = false;
+            sweepTarget = leftPos;
+        }
+
+        // Button toggles sweep direction
+        if (gamepad1.share && !sweepActive && delay()) {
+            sweepActive = true;
+
+            double current = swivelTurretServo.getPosition();
+            if (Math.abs(current - leftPos) < 0.1) {
+                sweepTarget = rightPos;
+            } else {
+                sweepTarget = leftPos;
+            }
+            time = System.currentTimeMillis();
+        }
+
+        // If sweeping, perform movement
+        if (sweepActive) {
+
+            // Check AprilTag detection
+            int tag = detectTag(limelight, telemetry);
+            if (tag == targetedID) {
+                sweepActive = false;
+                telemetry.addLine("Turret stopped: Tag 20 detected");
+                return;
+            }
+
+            double current = swivelTurretServo.getPosition();
+            double next;
+
+            // Move incrementally toward target
+            if (current < sweepTarget) {
+                next = Math.min(current + step, sweepTarget);
+            } else {
+                next = Math.max(current - step, sweepTarget);
+            }
+
+            swivelTurretServo.setPosition(next);
+
+            // Reached target?
+            if (Math.abs(next - sweepTarget) < 0.005) {
+                sweepActive = false;
+            }
+        }
+
+        telemetry.addData("TurretPos", swivelTurretServo.getPosition());
+        telemetry.addData("SweepActive", sweepActive);
+    }
+
 
     @Override
     public void tag20() {
@@ -277,22 +432,28 @@ public class MaliceAndCondescension extends Movable implements LimelightTags { /
     }
 
     @Override
+    public void nothing() {
+
+    }
+
+    @Override
     protected void turn() {
         final double POWER = .75;
         final double SPEED = 0.0025;
-        if (gamepad1.left_bumper) {
-            FLW.setPower(-POWER);
-            FRW.setPower(POWER);
-            BLW.setPower(-POWER);
-            BRW.setPower(POWER);
-            if (swivelTurretServo.getPosition() >= .03) swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-        } else if (gamepad1.right_bumper) {
+        if (gamepad1.right_stick_x < -.3) {
             FLW.setPower(POWER);
             FRW.setPower(-POWER);
             BLW.setPower(POWER);
             BRW.setPower(-POWER);
-            if (swivelTurretServo.getPosition() <= .425) swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-        } else if (gamepad1.leftBumperWasReleased() || gamepad1.rightBumperWasPressed()) {
+            if (swivelTurretServo.getPosition() >= .07) swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
+        } else if (gamepad1.right_stick_x > .3) {
+            FLW.setPower(-POWER);
+            FRW.setPower(POWER);
+            BLW.setPower(-POWER);
+            BRW.setPower(POWER);
+            if (swivelTurretServo.getPosition() <= .57) swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
+        } else if (gamepad1.right_stick_x >= -.3 && gamepad1.right_stick_x <= .3
+        && gamepad1.left_stick_y == 0 && gamepad1.left_stick_x == 0) {
             disablePower();
         }
     }
