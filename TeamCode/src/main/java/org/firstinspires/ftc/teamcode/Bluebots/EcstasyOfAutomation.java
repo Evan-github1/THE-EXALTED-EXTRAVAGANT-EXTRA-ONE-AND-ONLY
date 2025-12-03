@@ -19,9 +19,15 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
     protected static DoubleSwitchedServo gateways;
     protected static Servo wiperL, wiperR;
     protected static DoubleSwitchedServo wipersL, wipersR;
+    protected static DoubleSwitchedServo swivelTurret;
     protected static boolean turnLeft;
     protected static boolean tracking;
     protected static Servo hoodServo;
+
+    protected static boolean sweepInit;
+    protected static boolean sweepActive;
+    protected static double sweepTarget;
+    protected static final int targetedID = 20;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -33,6 +39,7 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
         turnLeft = false;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
+        swivelTurret = new DoubleSwitchedServo(swivelTurretServo, .09, .55);
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtake");
@@ -216,6 +223,82 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
         }
     }
 
+    protected void PrincessEyesv3() {
+        double leftPos = swivelTurret.getPrimaryPos();
+        double rightPos = swivelTurret.getSecondaryPos();
+        double step = 0.003;  // sweep speed per cycle
+        double tolerance = 2.0; // degrees — tune this for how centered you want
+
+        // Initialize sweep state on first run
+        if (!sweepInit) {
+            sweepInit = true;
+            sweepActive = false;
+            sweepTarget = leftPos;
+        }
+
+        // Button toggles sweep direction
+        if (gamepad1.share && !sweepActive && delay()) {
+            sweepActive = true;
+
+            double current = swivelTurretServo.getPosition();
+
+            // Choose opposite direction
+            if (Math.abs(current - leftPos) < 0.1) {
+                sweepTarget = rightPos;
+            } else {
+                sweepTarget = leftPos;
+            }
+
+            time = System.currentTimeMillis();
+        }
+
+        // Perform sweep movement
+        if (sweepActive) {
+
+            // Check for the desired AprilTag
+            int tag = detectTag(limelight, telemetry);
+
+            if (tag == targetedID) {
+
+                double tx = getTX(limelight); // your method
+
+                if (!Double.isNaN(tx)) {
+
+                    telemetry.addData("TagSeen", tag);
+                    telemetry.addData("tx", tx);
+
+                    // If tag is centered -> stop turret
+                    if (Math.abs(tx) < tolerance) {
+                        sweepActive = false;
+                        telemetry.addLine("Turret centered on tag " + targetedID);
+                        return;
+                    }
+
+                    // Otherwise: keep sweeping until centered
+                }
+            }
+
+            double current = swivelTurretServo.getPosition();
+            double next;
+
+            // Move incrementally toward target
+            if (current < sweepTarget) {
+                next = Math.min(current + step, sweepTarget);
+            } else {
+                next = Math.max(current - step, sweepTarget);
+            }
+
+            swivelTurretServo.setPosition(next);
+
+            // Stop if we've reached the physical target
+            if (Math.abs(next - sweepTarget) < 0.005) {
+                sweepActive = false;
+            }
+        }
+
+        telemetry.addData("TurretPos", swivelTurretServo.getPosition());
+        telemetry.addData("SweepActive", sweepActive);
+    }
 
 
     protected void liftRightWiper() {

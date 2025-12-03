@@ -13,7 +13,6 @@ public interface LimelightTags {
     default int detectTag(Limelight3A limelight, Telemetry telemetry) {
         List<LLResultTypes.FiducialResult> results;
         LLResult result = limelight.getLatestResult();
-
         if (result.isValid()) {
             results = result.getFiducialResults();
             for (LLResultTypes.FiducialResult r : results) {
@@ -35,6 +34,7 @@ public interface LimelightTags {
                     }
                 }
             }
+            nothing();
             return -1;
         }
 
@@ -65,4 +65,5 @@ public interface LimelightTags {
     void tag22();
     void tag23();
     void tag24();
+    void nothing();
 }

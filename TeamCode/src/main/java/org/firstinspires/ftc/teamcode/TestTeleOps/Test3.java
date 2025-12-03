@@ -67,4 +67,9 @@ public class Test3 extends LinearOpMode implements LimelightTags {
     public void tag24() {
 
     }
+
+    @Override
+    public void nothing() {
+
+    }
 }

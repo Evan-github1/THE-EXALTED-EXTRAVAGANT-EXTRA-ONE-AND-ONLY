@@ -53,4 +53,9 @@ public class EcstasyOfAutomationRED_SHOOT extends EcstasyOfAutomation {
     public void tag24() {
 
     }
+
+    @Override
+    public void nothing() {
+
+    }
 }
