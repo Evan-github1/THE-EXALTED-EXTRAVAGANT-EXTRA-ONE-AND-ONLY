@@ -1,16 +1,19 @@
 //This is the Autonomous for 22335!
 
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
+import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 
 @Autonomous
-public class DoomAndDisgust_LEFT extends Movable{
+public class DoomAndDisgust_LEFT extends Movable implements LimelightTags {
     private static DcMotor intakeMotor, launcherMotor1, launcherMotor2;
     private static Servo lt1;
     private static Servo lt2;
@@ -18,6 +21,9 @@ public class DoomAndDisgust_LEFT extends Movable{
     private static TripleSwitchedServo fires;
     private static Servo fork;
     private static DoubleSwitchedServo forks;
+    private static Limelight3A limelight;
+    private static double motorPowerClose,motorPowerFar,pastError;
+    private static int iterations;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -31,6 +37,11 @@ public class DoomAndDisgust_LEFT extends Movable{
         launcherMotor2 = hardwareMap.get(DcMotor.class,"LAU2");
         fork = hardwareMap.get(Servo.class,"FORK");
         forks = new DoubleSwitchedServo(fork,0.23,0.75);
+        limelight = hardwareMap.get(Limelight3A.class,"limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0);
+        motorPowerClose = .54;
+        motorPowerFar = .925;
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -45,6 +56,20 @@ public class DoomAndDisgust_LEFT extends Movable{
 
         waitForStart();
         disablePower();
+
+        long currentTime = System.currentTimeMillis();
+
+        while(System.currentTimeMillis() - currentTime < 5000) {
+            if (iterations == 0) {
+                pastError = 0;
+                LeBotsEyes(pastError, true);
+            } else {
+                pastError = LeBotsEyes(pastError, false);
+                LeBotsEyes(pastError, true);
+            }
+            iterations++;
+        }
+        disablePower();
         lt1.setPosition(.484);
         lt2.setPosition(.484);
         forks.setPrimaryPos(.23);
@@ -53,6 +78,7 @@ public class DoomAndDisgust_LEFT extends Movable{
         launcherMotor2.setPower(.925);
         Thread.sleep(10000);
         forks.primaryPos();
+        //Shoot first
         intakeMotor.setPower(1);
         Thread.sleep(1000);
         intakeMotor.setPower(0);
@@ -61,14 +87,21 @@ public class DoomAndDisgust_LEFT extends Movable{
         fires.tertiaryPos();
         Thread.sleep(400);
         fires.primaryPos();
-        intakeMotor.setPower(1);
-        Thread.sleep(1000);
-        intakeMotor.setPower(0);
+
+        //Shoot second
+        forks.secondaryPos();
+        Thread.sleep(200);
         fires.secondaryPos();
+        Thread.sleep(200);
+        forks.primaryPos();
         Thread.sleep(1000);
         fires.tertiaryPos();
-        Thread.sleep(400);
+        Thread.sleep(300);
         fires.primaryPos();
+        Thread.sleep(500);
+        intakeMotor.setPower(1);
+        Thread.sleep(1000);
+        //Shoot third
         forks.secondaryPos();
         Thread.sleep(200);
         fires.secondaryPos();
@@ -84,5 +117,81 @@ public class DoomAndDisgust_LEFT extends Movable{
         Thread.sleep(200);
     }
 
+    private double LeBotsEyes(double pastError, boolean adjustMotor){
+        double desiredX;
+        telemetry.addData("D",true);
+        if(detectTagSelective(limelight,telemetry) != null){
+            LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
+            if(launcherMotor1.getPower() == motorPowerFar){
+                if(yes.getFiducialId() == 20){
+                    desiredX = -.25;
+                }else{
+                    desiredX = -9.5;
+                    telemetry.addData("Desired x changing",true);
+                }
+            }else{
+                if(yes.getFiducialId() == 20){
+                    desiredX = -2.5;
+                }else{
+                    desiredX = -2.5;
+                }
+            }
+            double smoothCoeff = 0.25;
+            telemetry.addData("Yes is not null",true);
+            double tx = yes.getTargetXDegrees();
+            double currentError = desiredX - tx;
+            double smoothedError = smoothCoeff*currentError + (1-smoothCoeff)*pastError;
+            smoothedError = smoothedError/25;
+            telemetry.addData(""+currentError,smoothedError);
+            if(adjustMotor) {
+                FLW.setPower(-smoothedError);
+                FRW.setPower(smoothedError);
+                BRW.setPower(smoothedError);
+                BLW.setPower(-smoothedError);
+                return 0.0;
+            }
+            return smoothedError;
+
+            //            if(tx < -5){
+            //                FLW.setPower(-.1);
+            //                FRW.setPower(.1);
+            //                BRW.setPower(.1);
+            //                BLW.setPower(-.1);
+            //            }else if(tx > 5){
+            //                FRW.setPower(-.1);
+            //                FLW.setPower(1);
+            //                BRW.setPower(-.1);
+            //                BLW.setPower(.1);
+            //            }
+        }else{
+            return 0;
+        }
+
+    }
+
+    @Override
+    public void tag20() {
+
+    }
+
+    @Override
+    public void tag21() {
+
+    }
+
+    @Override
+    public void tag22() {
+
+    }
+
+    @Override
+    public void tag23() {
+
+    }
+
+    @Override
+    public void tag24() {
+
+    }
 }
 
