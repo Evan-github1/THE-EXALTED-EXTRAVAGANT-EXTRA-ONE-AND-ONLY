@@ -154,76 +154,7 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
         return (ticksPerRev * targetRPM) / 60;
     }//0.00005
 
-    protected void PrincessEyes(int ID) {
-        final double SPEED = 0.00005;
-        final double CENTER_TOLERANCE = 2.0;   // Stop centering when |tx| < 2 degrees
-
-        // 1. SWEEP UNTIL TAG FOUND
-        while (opModeIsActive() && detectTag(limelight, telemetry) != ID) {
-
-            if (turnLeft) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                if (swivelTurretServo.getPosition() <= .03) turnLeft = false;
-            } else {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                if (swivelTurretServo.getPosition() >= .425) turnLeft = true;
-            }
-
-            telemetry.addData("Searching", true);
-            telemetry.update();
-        }
-
-        // 2. CENTER ONCE (STOP AS SOON AS CENTERED)
-        if (opModeIsActive() && detectTag(limelight, telemetry) == ID) {
-            while (opModeIsActive()) {
-                double tx = getTX(limelight);
-
-                if (Math.abs(tx) <= CENTER_TOLERANCE) {
-                    telemetry.addData("Centered", true);
-                    telemetry.update();
-                    break;
-                }
-
-                if (tx < -CENTER_TOLERANCE) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                } else if (tx > CENTER_TOLERANCE) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                }
-
-                telemetry.addData("Centering", tx);
-                telemetry.update();
-            }
-        }
-    }
-
-    protected void PrincessEyesv2(int targetedID) { // same as teleop
-        final double SPEED = 0.002;
-        double tx = getTX(limelight);
-        int ID = detectTag(limelight, telemetry);
-        telemetry.addData("Tag ID", ID);
-        telemetry.addData("Tag X", tx);
-        telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
-
-        if (ID != targetedID) {
-            if (turnLeft) { // move towards .03, left @ back
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                if (swivelTurretServo.getPosition() <= .03) turnLeft = false; // switch direction
-            } else {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                if (swivelTurretServo.getPosition() >= .425) turnLeft = true;
-            }
-        } else {
-            if (tx <= -3 && swivelTurretServo.getPosition() >= .425) {
-                // move turret left
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-            } else if (tx >= 3 && swivelTurretServo.getPosition() <= .03) {
-                // move turret right
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-            }
-        }
-    }
-
-    protected void PrincessEyesv3() {
+    protected void PrincessEyesv3() { // NOT COMPLETE
         double leftPos = swivelTurret.getPrimaryPos();
         double rightPos = swivelTurret.getSecondaryPos();
         double step = 0.003;  // sweep speed per cycle

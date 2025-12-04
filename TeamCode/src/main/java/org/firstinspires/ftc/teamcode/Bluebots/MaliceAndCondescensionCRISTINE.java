@@ -30,6 +30,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static boolean sweeping = false;
     private static double sweepDirection = 0; // +1 = sweep right, -1 = sweep left
     private static final double SWEEP_SPEED = 0.005;
+
     private static boolean sweepInit;
     private static boolean sweepActive;
     private static double sweepTarget;
@@ -95,7 +96,6 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
             turn();
 
-            //if (tracking) PrincessEyes();
             int id = detectTag(limelight, telemetry);
             telemetry.addData("Turret Stop", turretStop);
 
@@ -251,9 +251,9 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
 
-            if (gamepad2.dpad_right && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
+            if (gamepad2.dpad_right && swivelTurretServo.getPosition() < .55) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
-            } else if (gamepad2.dpad_left && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
+            } else if (gamepad2.dpad_left && swivelTurretServo.getPosition() > .09) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
             }
 
@@ -272,6 +272,14 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 }
             }
 
+            double TX = getTX(limelight);
+
+            if (TX > 0 && id == targetedID) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0004);
+            } else if (TX < 0 && id == targetedID) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0004);
+            }
+            telemetry.addData("TX", TX);
             telemetry.update();
         }
     }
@@ -296,76 +304,30 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         return (ticksPerRev * targetRPM) / 60;
     }
 
-    private void PrincessEyes() { // it works, if you're not Evan don't touch it or I will come for you
-        final double SPEED = 0.002;
-        double tx = getTX(limelight);
-        int ID = detectTag(limelight, telemetry);
-        telemetry.addData("Tag ID", ID);
-        telemetry.addData("Tag X", tx);
-        telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
-
-        if (ID != targetedID) {
-            if (turnLeft) { // move towards .07, left @ back
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                if (swivelTurretServo.getPosition() <= .07) turnLeft = false; // switch direction
-            } else {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                if (swivelTurretServo.getPosition() >= .57) turnLeft = true;
-            }
-        } else {
-            if (tx <= -3 && swivelTurretServo.getPosition() >= .57) {
-                // move turret left
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-            } else if (tx >= 3 && swivelTurretServo.getPosition() <= .07) {
-                // move turret right
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-            }
-        }
-    }
-
-    private void PrincessEyesv2() {
-        turretStop = false;
-        double distFromLeft = Math.abs(swivelTurretServo.getPosition() - swivelTurret.getPrimaryPos());
-        double distFromRight = Math.abs(swivelTurretServo.getPosition() - swivelTurret.getSecondaryPos());
-        if (distFromLeft >= distFromRight) {
-            while (swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
-                if (!turretStop) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0005);
-                } else {
-                    return;
-                }
-            }
-        } else {
-            while (swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
-                if (!turretStop) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0005);
-                } else {
-                    return;
-                }
-            }
-        }
-    }
-
     public void PrincessEyesv3() {
-        double leftPos = swivelTurret.getPrimaryPos();
-        double rightPos = swivelTurret.getSecondaryPos();
-        double step = 0.003;  // sweep speed per cycle
-        double tolerance = 2.0; // degrees — tune this for how centered you want
 
-        // Initialize sweep state on first run
+        double leftPos  = swivelTurret.getPrimaryPos();
+        double rightPos = swivelTurret.getSecondaryPos();
+        double step = 0.003;   // sweep speed per cycle
+
+        // -------------------------
+        // Initialization (runs once)
+        // -------------------------
         if (!sweepInit) {
             sweepInit = true;
             sweepActive = false;
             sweepTarget = leftPos;
         }
 
-        // Button toggles sweep direction
+        // -------------------------
+        // Handle button press toggle
+        // -------------------------
         if (gamepad1.share && !sweepActive && delay()) {
-            sweepActive = true;
 
+            sweepActive = true;
             double current = swivelTurretServo.getPosition();
 
-            // Choose opposite direction
+            // Choose direction based on current position
             if (Math.abs(current - leftPos) < 0.1) {
                 sweepTarget = rightPos;
             } else {
@@ -375,36 +337,23 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             time = System.currentTimeMillis();
         }
 
-        // Perform sweep movement
+        // -------------------------
+        // Perform sweep motion
+        // -------------------------
         if (sweepActive) {
 
-            // Check for the desired AprilTag
+            // Stop if AprilTag found
             int tag = detectTag(limelight, telemetry);
-
             if (tag == targetedID) {
-
-                double tx = getTX(limelight); // your method
-
-                if (!Double.isNaN(tx)) {
-
-                    telemetry.addData("TagSeen", tag);
-                    telemetry.addData("tx", tx);
-
-                    // If tag is centered -> stop turret
-                    if (Math.abs(tx) < tolerance) {
-                        sweepActive = false;
-                        telemetry.addLine("Turret centered on tag " + targetedID);
-                        return;
-                    }
-
-                    // Otherwise: keep sweeping until centered
-                }
+                sweepActive = false;
+                telemetry.addLine("Turret stopped: Tag 20 detected");
+                return;
             }
 
             double current = swivelTurretServo.getPosition();
             double next;
 
-            // Move incrementally toward target
+            // Move toward target incrementally
             if (current < sweepTarget) {
                 next = Math.min(current + step, sweepTarget);
             } else {
@@ -413,16 +362,18 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
             swivelTurretServo.setPosition(next);
 
-            // Stop if we've reached the physical target
+            // End sweep when very close
             if (Math.abs(next - sweepTarget) < 0.005) {
                 sweepActive = false;
             }
         }
 
+        // -------------------------
+        // Telemetry
+        // -------------------------
         telemetry.addData("TurretPos", swivelTurretServo.getPosition());
         telemetry.addData("SweepActive", sweepActive);
     }
-
 
     @Override
     public void tag20() {

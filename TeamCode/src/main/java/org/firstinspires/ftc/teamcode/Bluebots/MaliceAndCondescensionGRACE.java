@@ -272,6 +272,14 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 }
             }
 
+            double TX = getTX(limelight);
+
+            if (TX > 0 && id == targetedID) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0004);
+            } else if (TX < 0 && id == targetedID) {
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0004);
+            }
+            telemetry.addData("TX", TX);
             telemetry.update();
         }
     }
@@ -296,86 +304,45 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
         return (ticksPerRev * targetRPM) / 60;
     }
 
-    private void PrincessEyes() { // it works, if you're not Evan don't touch it or I will come for you
-        final double SPEED = 0.002;
-        double tx = getTX(limelight);
-        int ID = detectTag(limelight, telemetry);
-        telemetry.addData("Tag ID", ID);
-        telemetry.addData("Tag X", tx);
-        telemetry.addData("Turret Servo Position", swivelTurretServo.getPosition());
-
-        if (ID != targetedID) {
-            if (turnLeft) { // move towards .07, left @ back
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-                if (swivelTurretServo.getPosition() <= .07) turnLeft = false; // switch direction
-            } else {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-                if (swivelTurretServo.getPosition() >= .57) turnLeft = true;
-            }
-        } else {
-            if (tx <= -3 && swivelTurretServo.getPosition() >= .57) {
-                // move turret left
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-            } else if (tx >= 3 && swivelTurretServo.getPosition() <= .07) {
-                // move turret right
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-            }
-        }
-    }
-
-    private void PrincessEyesv2() {
-        turretStop = false;
-        double distFromLeft = Math.abs(swivelTurretServo.getPosition() - swivelTurret.getPrimaryPos());
-        double distFromRight = Math.abs(swivelTurretServo.getPosition() - swivelTurret.getSecondaryPos());
-        if (distFromLeft >= distFromRight) {
-            while (swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
-                if (!turretStop) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0005);
-                } else {
-                    return;
-                }
-            }
-        } else {
-            while (swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
-                if (!turretStop) {
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0005);
-                } else {
-                    return;
-                }
-            }
-        }
-    }
-
     public void PrincessEyesv3() {
 
-        double leftPos = swivelTurret.getPrimaryPos();
+        double leftPos  = swivelTurret.getPrimaryPos();
         double rightPos = swivelTurret.getSecondaryPos();
-        double step = 0.002;  // sweep speed per cycle
+        double step = 0.003;   // sweep speed per cycle
 
-        // static variables let this method remember state
+        // -------------------------
+        // Initialization (runs once)
+        // -------------------------
         if (!sweepInit) {
             sweepInit = true;
             sweepActive = false;
             sweepTarget = leftPos;
         }
 
-        // Button toggles sweep direction
+        // -------------------------
+        // Handle button press toggle
+        // -------------------------
         if (gamepad1.share && !sweepActive && delay()) {
-            sweepActive = true;
 
+            sweepActive = true;
             double current = swivelTurretServo.getPosition();
+
+            // Choose direction based on current position
             if (Math.abs(current - leftPos) < 0.1) {
                 sweepTarget = rightPos;
             } else {
                 sweepTarget = leftPos;
             }
+
             time = System.currentTimeMillis();
         }
 
-        // If sweeping, perform movement
+        // -------------------------
+        // Perform sweep motion
+        // -------------------------
         if (sweepActive) {
 
-            // Check AprilTag detection
+            // Stop if AprilTag found
             int tag = detectTag(limelight, telemetry);
             if (tag == targetedID) {
                 sweepActive = false;
@@ -386,7 +353,7 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
             double current = swivelTurretServo.getPosition();
             double next;
 
-            // Move incrementally toward target
+            // Move toward target incrementally
             if (current < sweepTarget) {
                 next = Math.min(current + step, sweepTarget);
             } else {
@@ -395,15 +362,19 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
 
             swivelTurretServo.setPosition(next);
 
-            // Reached target?
+            // End sweep when very close
             if (Math.abs(next - sweepTarget) < 0.005) {
                 sweepActive = false;
             }
         }
 
+        // -------------------------
+        // Telemetry
+        // -------------------------
         telemetry.addData("TurretPos", swivelTurretServo.getPosition());
         telemetry.addData("SweepActive", sweepActive);
     }
+
 
 
     @Override
