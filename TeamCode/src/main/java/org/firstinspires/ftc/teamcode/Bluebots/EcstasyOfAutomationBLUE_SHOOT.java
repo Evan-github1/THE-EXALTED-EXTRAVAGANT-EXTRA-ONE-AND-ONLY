@@ -33,11 +33,11 @@ public class EcstasyOfAutomationBLUE_SHOOT extends EcstasyOfAutomation {
 
         // move forward and take the balls
         // take in a ball and switch
-        move(Direction.FORWARD, 2000, .1);
+        move(Direction.FORWARD, 2000, .2);
         gateways.quickSwitch();
-        move(Direction.FORWARD, 2500, .5);
+        move(Direction.FORWARD, 2500, .4);
 
-        move(Direction.BACKWARD, 3000, .5);
+        move(Direction.BACKWARD, 2000, .4);
 
         // search for ID
         // launch ze balls

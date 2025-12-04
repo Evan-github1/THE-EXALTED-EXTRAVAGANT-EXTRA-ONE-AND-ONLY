@@ -21,7 +21,7 @@ public class EcstasyOfAutomationTest extends EcstasyOfAutomation {
 
         new Thread(() -> {
             while (!isStopRequested()) {
-                PrincessEyesv2(20);
+
             }
         }).start();
 
