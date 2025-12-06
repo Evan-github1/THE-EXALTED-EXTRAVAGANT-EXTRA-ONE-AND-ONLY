@@ -46,8 +46,7 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
         turnLeft = false;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
-        swivelTurret = new DoubleSwitchedServo(swivelTurretServo, .09, .55);
-        swivelTurretServo.setPosition(.1975);
+        swivelTurret = new DoubleSwitchedServo(swivelTurretServo, .1, .54);
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtake");
@@ -66,11 +65,8 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
 
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
-        wipersL.primaryPos();
-        wipersR.primaryPos();
 
         hoodServo = hardwareMap.get(Servo.class, "hood");
-        hoodServo.setPosition(0);
 
         FLW.setDirection(DcMotor.Direction.FORWARD);
         BLW.setDirection(DcMotor.Direction.FORWARD);
@@ -88,6 +84,11 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
         sweepTarget = 0.07;
 
         waitForStart();
+
+        wipersL.primaryPos();
+        wipersR.primaryPos();
+        hoodServo.setPosition(0);
+        swivelTurretServo.setPosition(.1975);
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
@@ -160,13 +161,24 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.dpad_right && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
+            if (targetRPM >= 1400 && targetRPM <= 1600) { // low is yellow
+                gamepad1.setLedColor(255, 255, 0, 5);
+                telemetry.addData("yellow", true);
+            } else if (targetRPM >= 2100 && targetRPM <= 2350) { // high is green
+                gamepad1.setLedColor(0, 255, 0, 5);
+                telemetry.addData("green", true);
+            } else { // ??? is red
+                gamepad1.setLedColor(255, 0, 0, 5);
+                telemetry.addData("red", true);
+            }
+
+            if (gamepad1.dpad_right && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
-            } else if (gamepad1.dpad_left && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
+            } else if (gamepad1.dpad_left && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
             }
 
-            if (gamepad1.leftStickButtonWasPressed() && delay()) {
+            if (gamepad1.leftStickButtonWasPressed() && delay(5000)) {
                 if (gatewayServo.getPosition() < .5) {
                     new Thread(() -> {
                         wipersL.secondaryPos();
@@ -251,9 +263,9 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
 
-            if (gamepad2.dpad_right && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
+            if (gamepad2.dpad_right && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
-            } else if (gamepad2.dpad_left && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
+            } else if (gamepad2.dpad_left && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
             }
 

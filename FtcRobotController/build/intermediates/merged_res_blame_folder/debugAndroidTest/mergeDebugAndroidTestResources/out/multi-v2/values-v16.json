@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.qualcomm.ftcrobotcontroller.test.FtcRobotController-mergeDebugAndroidTestResources-14:/values-v16/values-v16.xml",
+            "outputFile": "com.qualcomm.ftcrobotcontroller.test.FtcRobotController-mergeDebugAndroidTestResources-38:/values-v16/values-v16.xml",
             "map": [
                 {
-                    "source": "/Users/exiang/.gradle/caches/8.13/transforms/b2d2602b52c7e63bae0d11933df5b2d9/transformed/appcompat-1.2.0/res/values-v16/values-v16.xml",
+                    "source": "/Users/exiang/.gradle/caches/8.13/transforms/1a6e709335c150838ac2470377cec764/transformed/appcompat-1.6.1/res/values-v16/values-v16.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -12,24 +12,6 @@
                         "endLines": "5",
                         "endColumns": "12",
                         "endOffsets": "223"
-                    },
-                    "to": {
-                        "startLines": "3",
-                        "startColumns": "4",
-                        "startOffsets": "121",
-                        "endLines": "6",
-                        "endColumns": "12",
-                        "endOffsets": "289"
-                    }
-                },
-                {
-                    "source": "/Users/exiang/.gradle/caches/8.13/transforms/1696d6b8d2d62841496734c6e220ad82/transformed/core-1.3.0/res/values-v16/values-v16.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "65",
-                        "endOffsets": "116"
                     }
                 }
             ]

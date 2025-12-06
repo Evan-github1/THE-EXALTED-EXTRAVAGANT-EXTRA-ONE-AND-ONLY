@@ -7,6 +7,8 @@ public class EcstasyOfAutomationRED_MOVE extends EcstasyOfAutomation {
     @Override
     public void runOpMode() throws InterruptedException{
         super.runOpMode();
+        waitForStart();
+
         // detect for tag
         move(Direction.RIGHT, 500, 1);
     }

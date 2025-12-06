@@ -27,7 +27,6 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
     protected static boolean sweepInit;
     protected static boolean sweepActive;
     protected static double sweepTarget;
-    protected static final int targetedID = 20;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -72,15 +71,15 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
         BLW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        waitForStart();
     }
 
     protected enum Direction {
         FORWARD,
         BACKWARD,
         LEFT,
-        RIGHT;
+        RIGHT,
+        STRAFE_LEFT,
+        STRAFE_RIGHT;
     }
 
     protected void move(Direction dir, int ms) {
@@ -109,6 +108,18 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
                 FRW.setPower(-POWER);
                 BLW.setPower(POWER);
                 BRW.setPower(-POWER);
+                break;
+            case STRAFE_LEFT:
+                FLW.setPower(-POWER);
+                FRW.setPower(POWER);
+                BLW.setPower(POWER);
+                BRW.setPower(-POWER);
+                break;
+            case STRAFE_RIGHT:
+                FLW.setPower(POWER);
+                FRW.setPower(-POWER);
+                BLW.setPower(-POWER);
+                BRW.setPower(POWER);
                 break;
             default: break;
         }
@@ -143,6 +154,18 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
                 BLW.setPower(POWER);
                 BRW.setPower(-POWER);
                 break;
+            case STRAFE_LEFT:
+                FLW.setPower(-POWER);
+                FRW.setPower(POWER);
+                BLW.setPower(POWER);
+                BRW.setPower(-POWER);
+                break;
+            case STRAFE_RIGHT:
+                FLW.setPower(POWER);
+                FRW.setPower(-POWER);
+                BLW.setPower(-POWER);
+                BRW.setPower(POWER);
+                break;
             default: break;
         }
         sleep(ms);
@@ -150,87 +173,25 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
         sleep(500);
     }
 
-    protected double getTargetTicksPerSec(double ticksPerRev, double targetRPM) {
-        return (ticksPerRev * targetRPM) / 60;
-    }//0.00005
-
-    protected void PrincessEyesv3() { // NOT COMPLETE
-        double leftPos = swivelTurret.getPrimaryPos();
-        double rightPos = swivelTurret.getSecondaryPos();
-        double step = 0.003;  // sweep speed per cycle
-        double tolerance = 2.0; // degrees — tune this for how centered you want
-
-        // Initialize sweep state on first run
-        if (!sweepInit) {
-            sweepInit = true;
-            sweepActive = false;
-            sweepTarget = leftPos;
+    protected void PrincessEyesv4(int targetedID, boolean left) {
+        double move;
+        if (left) {
+            move = .0001;
+        } else {
+            move = -.0001;
         }
-
-        // Button toggles sweep direction
-        if (gamepad1.share && !sweepActive && delay()) {
-            sweepActive = true;
-
-            double current = swivelTurretServo.getPosition();
-
-            // Choose opposite direction
-            if (Math.abs(current - leftPos) < 0.1) {
-                sweepTarget = rightPos;
-            } else {
-                sweepTarget = leftPos;
+        do {
+            if (swivelTurretServo.getPosition() >= swivelTurret.getSecondaryPos()
+            || swivelTurretServo.getPosition() <= swivelTurret.getPrimaryPos()) {
+                move *= -1;
             }
-
-            time = System.currentTimeMillis();
-        }
-
-        // Perform sweep movement
-        if (sweepActive) {
-
-            // Check for the desired AprilTag
-            int tag = detectTag(limelight, telemetry);
-
-            if (tag == targetedID) {
-
-                double tx = getTX(limelight); // your method
-
-                if (!Double.isNaN(tx)) {
-
-                    telemetry.addData("TagSeen", tag);
-                    telemetry.addData("tx", tx);
-
-                    // If tag is centered -> stop turret
-                    if (Math.abs(tx) < tolerance) {
-                        sweepActive = false;
-                        telemetry.addLine("Turret centered on tag " + targetedID);
-                        return;
-                    }
-
-                    // Otherwise: keep sweeping until centered
-                }
-            }
-
-            double current = swivelTurretServo.getPosition();
-            double next;
-
-            // Move incrementally toward target
-            if (current < sweepTarget) {
-                next = Math.min(current + step, sweepTarget);
-            } else {
-                next = Math.max(current - step, sweepTarget);
-            }
-
-            swivelTurretServo.setPosition(next);
-
-            // Stop if we've reached the physical target
-            if (Math.abs(next - sweepTarget) < 0.005) {
-                sweepActive = false;
-            }
-        }
-
-        telemetry.addData("TurretPos", swivelTurretServo.getPosition());
-        telemetry.addData("SweepActive", sweepActive);
+            swivelTurretServo.setPosition(swivelTurretServo.getPosition() + move);
+        } while ((getTX(limelight) > .2 || getTX(limelight) < -.2) && detectTag(limelight, telemetry) != targetedID);
     }
 
+    protected double getTargetTicksPerSec(double ticksPerRev, double targetRPM) {
+        return (ticksPerRev * targetRPM) / 60;
+    }
 
     protected void liftRightWiper() {
         intakeMotor.setPower(0);
