@@ -7,6 +7,7 @@ public class EcstasyOfAutomationANY_SIDE_FORWARD extends EcstasyOfAutomation {
     @Override
     public void runOpMode() throws InterruptedException{
         super.runOpMode();
+        waitForStart();
 
         move(Direction.FORWARD, 1000, .3);
     }

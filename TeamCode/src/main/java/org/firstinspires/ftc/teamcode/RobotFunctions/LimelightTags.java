@@ -38,6 +38,19 @@ public interface LimelightTags {
             return -1;
         }
 
+    default List<LLResultTypes.FiducialResult> getResultList(Limelight3A limelight) {
+        List<LLResultTypes.FiducialResult> results;
+        LLResult result = limelight.getLatestResult();
+
+        if (result.isValid()) {
+            results = result.getFiducialResults();
+            return results;
+        }
+
+        return null;
+    }
+
+
     default double getTA(Limelight3A limelight) {
         LLResult result = limelight.getLatestResult();
         if (result.isValid()) {

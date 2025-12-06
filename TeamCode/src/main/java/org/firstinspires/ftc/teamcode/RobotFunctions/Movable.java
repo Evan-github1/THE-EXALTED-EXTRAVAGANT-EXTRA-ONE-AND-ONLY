@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.RobotFunctions;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 // TODO: inherit this class to be able to drive
+@Disabled
 public abstract class Movable extends LinearOpMode {
     static protected DcMotor FLW;
     static protected DcMotor BLW;

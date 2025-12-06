@@ -8,6 +8,7 @@ public class EcstasyOfAutomationTest extends EcstasyOfAutomation {
     @Override
     public void runOpMode() throws InterruptedException{
         super.runOpMode();
+        waitForStart();
 
         new Thread(() -> {
             try {

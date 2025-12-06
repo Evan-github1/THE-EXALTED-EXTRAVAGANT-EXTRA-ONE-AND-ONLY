@@ -7,6 +7,8 @@ public class EcstasyOfAutomationBLUE_MOVE extends EcstasyOfAutomation {
     @Override
     public void runOpMode() throws InterruptedException{
         super.runOpMode();
+        waitForStart();
+
         move(Direction.LEFT, 500, 1);
     }
 
