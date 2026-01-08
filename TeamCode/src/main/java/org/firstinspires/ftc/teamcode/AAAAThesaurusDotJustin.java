@@ -3,7 +3,9 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
@@ -14,7 +16,8 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 @TeleOp
 public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
-    private static DcMotor intakeMotor, launcherMotor1, launcherMotor2;
+    private static DcMotor intakeMotor;
+    private static DcMotorEx launcherMotor1, launcherMotor2;
     private static Servo lt1;
     private static Servo lt2;
     private static Servo fire;
@@ -22,7 +25,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static Servo fork;
     private static DoubleSwitchedServo forks;
     private static boolean loading;
-    private static double motorPower;
     private static boolean shooting;
     private static Limelight3A limelight;
     private static Thread orientRobot;
@@ -30,6 +32,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static double pastError;
     private static int iterations;
     private static double motorPowerFar, motorPowerClose;
+    private static double rpm, tps, targetRPM, P, F, currentTargetRPM;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -37,20 +40,19 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         intakeMotor = hardwareMap.get(DcMotor.class,"INT");
         lt1 = hardwareMap.get(Servo.class,"LT1");
         lt2 = hardwareMap.get(Servo.class,"LT2");
-        fire = hardwareMap.get(Servo.class, "FIRE");
-        fires = new TripleSwitchedServo(fire,.62,.56,.37);
-        launcherMotor1 = hardwareMap.get(DcMotor.class,"LAU1");
-        launcherMotor2 = hardwareMap.get(DcMotor.class,"LAU2");
+        fire = hardwareMap.get(Servo.class, "FIRE");fires = new TripleSwitchedServo(fire,.55,.49,.35);
+        launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
+        launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         fork = hardwareMap.get(Servo.class,"FORK");
         forks = new DoubleSwitchedServo(fork,.05,.68);
         loading = false;
-        motorPower = .54;
         shooting = false;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(0);
-        motorPowerClose = .54;
-        motorPowerFar = .925;
+        motorPowerClose = 3000;
+        motorPowerFar = 4800;
+        targetRPM = motorPowerFar;
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
@@ -58,8 +60,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         BRW.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
         launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        launcherMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        launcherMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launcherMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        launcherMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launcherMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pastError = 0;
         iterations = 0;
 
@@ -72,6 +75,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
+
+            tps = launcherMotor2.getVelocity();
+
+            rpm = tps * 60 / 28;
+            telemetry.addData("RPM",rpm);
+            telemetry.addData("Target RPM",targetRPM);
 
             if(Math.abs(gamepad1.right_stick_x) > 0.1){
                 FLW.setPower(gamepad1.right_stick_x);
@@ -123,14 +132,14 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 shooting = !shooting;
                 setTime();
             }else if(gamepad1.b && delay()){
-                if(motorPower == motorPowerFar) {//If far
+                if(targetRPM == motorPowerFar) {//If far
                     //Set to close pos
                     new Thread(() -> {
                         lt1.setPosition(.25);
                         lt2.setPosition(.25);
                         forks.setPrimaryPos(.05);
                         forks.setSecondaryPos(.68);
-                        motorPower = motorPowerClose;
+                        targetRPM = motorPowerClose;
                         try {
                             Thread.sleep(800);
                         } catch (InterruptedException e) {
@@ -145,7 +154,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                         lt2.setPosition(.45);
                         forks.setPrimaryPos(.2);
                         forks.setSecondaryPos(.73);
-                        motorPower = motorPowerFar;
+                        targetRPM = motorPowerFar;
                         try {
                             Thread.sleep(700);
                         } catch (InterruptedException e) {
@@ -216,16 +225,17 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }
 
             if (shooting) {
-                launcherMotor1.setPower(motorPower);
-                launcherMotor2.setPower(motorPower);
+                launcherMotor1.setVelocity(targetRPM / 60 * 28);
+                launcherMotor2.setVelocity(targetRPM / 60 * 28);
             }else{
-                launcherMotor1.setPower(0);
-                launcherMotor2.setPower(0);
+                launcherMotor1.setVelocity(0);
+                launcherMotor2.setVelocity(0);
             }
-            telemetry.addData("LT1", lt1.getPosition());
-            telemetry.addData("LT2",lt2.getPosition());
-            telemetry.addData("Motor power",motorPower);
-            telemetry.addData("Motor is running at power",launcherMotor1.getPower());
+
+            telemetry.addData("FLW encoder",FLW.getCurrentPosition());
+            telemetry.addData("FRW encoder",FRW.getCurrentPosition());
+            telemetry.addData("BLW encoder",BLW.getCurrentPosition());
+            telemetry.addData("BRW encoder",BRW.getCurrentPosition());
             telemetry.update();
         }
     }
@@ -235,20 +245,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         telemetry.addData("D",true);
         if(detectTagSelective(limelight,telemetry) != null){
             LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
-            if(motorPower == motorPowerFar){
-                if(yes.getFiducialId() == 20){
-                    desiredX = -.25;
-                }else{
-                    desiredX = -7.9;
-                    telemetry.addData("Desired x changing",true);
-                }
-            }else{
-                if(yes.getFiducialId() == 20){
-                    desiredX = -2.5;
-                }else{
-                    desiredX = -2.5;
-                }
-            }
+            desiredX = 0;
             double smoothCoeff = 0.25;
             telemetry.addData("Yes is not null",true);
             double tx = yes.getTargetXDegrees();
@@ -265,17 +262,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }
             return smoothedError;
 
-            //            if(tx < -5){
-            //                FLW.setPower(-.1);
-            //                FRW.setPower(.1);
-            //                BRW.setPower(.1);
-            //                BLW.setPower(-.1);
-            //            }else if(tx > 5){
-            //                FRW.setPower(-.1);
-            //                FLW.setPower(1);
-            //                BRW.setPower(-.1);
-            //                BLW.setPower(.1);
-            //            }
         }else{
             return 0;
         }

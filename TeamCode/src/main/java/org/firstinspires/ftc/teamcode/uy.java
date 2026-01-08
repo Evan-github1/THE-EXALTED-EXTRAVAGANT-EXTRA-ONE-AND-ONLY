@@ -26,7 +26,7 @@ public class uy extends Movable{
         lt1 = hardwareMap.get(Servo.class,"LT1");
         lt2 = hardwareMap.get(Servo.class,"LT2");
         fire = hardwareMap.get(Servo.class, "FIRE");
-        fires = new TripleSwitchedServo(fire,.62,.56,.37);
+        fires = new TripleSwitchedServo(fire,.62,.54,.37);
         launcherMotor1 = hardwareMap.get(DcMotor.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotor.class,"LAU2");
         fork = hardwareMap.get(Servo.class,"FORK");

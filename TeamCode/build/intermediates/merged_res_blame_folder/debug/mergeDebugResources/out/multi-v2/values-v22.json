@@ -1,19 +1,11 @@
 {
     "logs": [
         {
-            "outputFile": "org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-16:/values-v22/values-v22.xml",
+            "outputFile": "org.firstinspires.ftc.teamcode.TeamCode-mergeDebugResources-40:/values-v22/values-v22.xml",
             "map": [
                 {
-                    "source": "/Users/arhansengupta/.gradle/caches/8.13/transforms/17a8f69197be8b8874602635d8512a82/transformed/appcompat-1.2.0/res/values-v22/values-v22.xml",
+                    "source": "/Users/arhansengupta/.gradle/caches/8.13/transforms/52accc19cb6cac4825b092776e2fd397/transformed/appcompat-1.6.1/res/values-v22/values-v22.xml",
                     "from": {
-                        "startLines": "2,3,4,9",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "55,130,217,553",
-                        "endLines": "2,3,8,13",
-                        "endColumns": "74,86,12,12",
-                        "endOffsets": "125,212,548,896"
-                    },
-                    "to": {
                         "startLines": "2,3,4,9",
                         "startColumns": "4,4,4,4",
                         "startOffsets": "55,130,217,487",
