@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.Bluebots;
+import android.graphics.Color;
+
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.RobotFunctions.ColorSensing;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
@@ -34,6 +38,8 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static boolean sweepInit;
     private static boolean sweepActive;
     private static double sweepTarget;
+
+    private static ColorSensing colorSensing;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,12 +89,17 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         sweepActive = false;
         sweepTarget = 0.07;
 
+        colorSensing = new ColorSensing(hardwareMap, 7);
+
         waitForStart();
 
         wipersL.primaryPos();
         wipersR.primaryPos();
         swivelTurretServo.setPosition(.1975);
         hoodServo.setPosition(0);
+
+        outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");

@@ -3,6 +3,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
@@ -89,6 +90,8 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
         wipersR.primaryPos();
         hoodServo.setPosition(0);
         swivelTurretServo.setPosition(.1975);
+
+        outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");

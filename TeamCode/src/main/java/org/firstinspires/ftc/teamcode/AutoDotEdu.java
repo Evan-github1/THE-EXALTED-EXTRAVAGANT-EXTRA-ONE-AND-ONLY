@@ -59,7 +59,7 @@ public class AutoDotEdu extends Movable implements LimelightColor, LimelightTags
 
     @Override
     public void tag20() {
-        
+
     }
 
     @Override
