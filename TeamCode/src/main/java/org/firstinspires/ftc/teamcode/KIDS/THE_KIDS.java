@@ -91,10 +91,10 @@ public class THE_KIDS extends LinearOpMode implements LimelightTags { // robot #
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
 
-            if (gamepad1.dpad_up && delay(100) && targetRPM <= 2500) {
+            if (gamepad1.dpad_up && delay(100)) {
                 targetRPM += 25;
                 time = System.currentTimeMillis();
-            } else if (gamepad1.dpad_down && delay(100) && targetRPM >= 1000) {
+            } else if (gamepad1.dpad_down && delay(100)) {
                 targetRPM -= 25;
                 time = System.currentTimeMillis();
             }
@@ -124,16 +124,16 @@ public class THE_KIDS extends LinearOpMode implements LimelightTags { // robot #
                 outtakeMotor.setVelocity(0);
             }
 
-            telemetry.addData("Target RPM", targetRPM);
+            telemetry.addData("Target RPM", Math.abs(targetRPM));
             telemetry.addData("Hood Position", hoodServo.getPosition());
 
             telemetry.addLine();
             telemetry.addLine("EXTRA INFO (IGNORE)");
             telemetry.addLine();
 
-            telemetry.addData("Outtake Encoder", outtakeMotor.getCurrentPosition());
+            telemetry.addData("Outtake Encoder", Math.abs(outtakeMotor.getCurrentPosition()));
             telemetry.addData("Swivel Turret Position", swivelTurretServo.getPosition());
-            telemetry.addData("Measured RPM", outtakeMotor.getVelocity() * 60.0 / 28);
+            telemetry.addData("Measured RPM", Math.abs(outtakeMotor.getVelocity() * 60.0 / 28));
             telemetry.update();
 
         }

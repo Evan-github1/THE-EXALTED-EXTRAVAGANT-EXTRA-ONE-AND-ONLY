@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.RobotFunctions;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -9,61 +8,82 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ColorSensing { // RAHH COMPOSITION (?)
 
-    private static NormalizedColorSensor leftSensor, rightSensor;
+    public NormalizedColorSensor leftSensor, rightSensor;
 
     public ColorSensing(HardwareMap hardwareMap, int gain) {
         leftSensor = hardwareMap.get(NormalizedColorSensor.class, "leftSensor");
         rightSensor = hardwareMap.get(NormalizedColorSensor.class, "rightSensor");
         leftSensor.setGain(gain);
-        rightSensor.setGain(gain); // 7
+        rightSensor.setGain(gain);
     }
 
-    protected static Colors detectColorLeft(Telemetry telemetry) {
+    public Colors detectColorLeft(Telemetry t) {
         NormalizedRGBA colors = leftSensor.getNormalizedColors();
 
-        float normR, normG, normB;
-        normR = colors.red / colors.alpha;
-        normG = colors.green / colors.alpha;
-        normB = colors.blue / colors.alpha;
+        float r = colors.red;
+        float g = colors.green;
+        float b = colors.blue;
+        float a = colors.alpha;
 
-        telemetry.addData("Left Red", normR);
-        telemetry.addData("Left Green", normG);
-        telemetry.addData("Left Blue", normB);
+//        t.addData("R", r);
+//        t.addData("G", g);
+//        t.addData("B", b);
+//        t.addData("Alpha", a);
 
-        if (normR < .09 && normG > .25 && normB > .20) {
-            return Colors.GREEN;
-        } else if (normR > .10 && normG > .15 && normB > .32) {
-            return Colors.PURPLE;
-        } else {
-            return Colors.UNKNOWN;
+        if (a < .08) return Colors.UNKNOWN;
+
+        if (a > .9) {
+            if (r > .12 && r < .25
+                    && g > .17 && g < .27
+                    && b > .33 && b < .48) {
+                return Colors.PURPLE;
+            } else if (r > .05 && r < .12
+                    && g > .26 && g < .43
+                    && b > .18 && b < .33) {
+                return Colors.GREEN;
+            }
+        } else if (a > .1) {
+            if (g > r && g > b) {
+                return Colors.GREEN;
+            } else if (b > r && b > g) {
+                return Colors.PURPLE;
+            }
         }
+        return Colors.UNKNOWN;
     }
 
-    protected static Colors detectColorRight(Telemetry telemetry) {
-        NormalizedRGBA colors = leftSensor.getNormalizedColors();
+    public Colors detectColorRight(Telemetry t) {
+        NormalizedRGBA colors = rightSensor.getNormalizedColors();
 
-        float normR, normG, normB;
-        normR = colors.red / colors.alpha;
-        normG = colors.green / colors.alpha;
-        normB = colors.blue / colors.alpha;
+        float r = colors.red;
+        float g = colors.green;
+        float b = colors.blue;
+        float a = colors.alpha;
 
-        telemetry.addData("Right Red", normR);
-        telemetry.addData("Right Green", normG);
-        telemetry.addData("Right Blue", normB);
+//        t.addData("R", r);
+//        t.addData("G", g);
+//        t.addData("B", b);
+//        t.addData("Alpha", a);
 
-        if (normR < .09 && normG > .25 && normB > .20) {
-            return Colors.GREEN;
-        } else if (normR > .10 && normG > .15 && normB > .32) {
-            return Colors.PURPLE;
-        } else {
-            return Colors.UNKNOWN;
+        if (a < .08) return Colors.UNKNOWN;
+
+        if (a > .9) {
+            if (r > .12 && r < .20
+                    && g > .17 && g < .25
+                    && b > .33 && b < .48) {
+                return Colors.PURPLE;
+            } else if (r > .05 && r < .12
+                    && g > .26 && g < .43
+                    && b > .18 && b < .33) {
+                return Colors.GREEN;
+            }
+        } else if (a > .1) {
+            if (g > r && g > b) {
+                return Colors.GREEN;
+            } else if (b > r && b > g) {
+                return Colors.PURPLE;
+            }
         }
+        return Colors.UNKNOWN;
     }
-
-    protected enum Colors {
-        PURPLE,
-        GREEN,
-        UNKNOWN;
-    }
-
 }
