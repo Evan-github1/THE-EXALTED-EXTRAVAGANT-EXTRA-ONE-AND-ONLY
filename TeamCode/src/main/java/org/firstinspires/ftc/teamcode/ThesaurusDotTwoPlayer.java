@@ -296,4 +296,14 @@ public class ThesaurusDotTwoPlayer extends Movable implements LimelightTags{
     public void tag24() {
 
     }
+
+    @Override
+    public void green() {
+
+    }
+
+    @Override
+    public void purple() {
+
+    }
 }

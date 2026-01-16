@@ -21,9 +21,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static Servo lt1;
     private static Servo lt2;
     private static Servo fire;
-    private static TripleSwitchedServo fires;
-    private static Servo fork;
-    private static DoubleSwitchedServo forks;
+    private static DoubleSwitchedServo fires;
     private static boolean loading;
     private static boolean shooting;
     private static Limelight3A limelight;
@@ -40,11 +38,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         intakeMotor = hardwareMap.get(DcMotor.class,"INT");
         lt1 = hardwareMap.get(Servo.class,"LT1");
         lt2 = hardwareMap.get(Servo.class,"LT2");
-        fire = hardwareMap.get(Servo.class, "FIRE");fires = new TripleSwitchedServo(fire,.55,.49,.35);
+        fire = hardwareMap.get(Servo.class, "FIRE");
+        fires = new DoubleSwitchedServo(fire,.79,0);
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
-        fork = hardwareMap.get(Servo.class,"FORK");
-        forks = new DoubleSwitchedServo(fork,.05,.68);
         loading = false;
         shooting = false;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
@@ -71,7 +68,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         waitForStart();
 
         fires.primaryPos();
-        forks.primaryPos();
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
@@ -137,89 +133,37 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     new Thread(() -> {
                         lt1.setPosition(.25);
                         lt2.setPosition(.25);
-                        forks.setPrimaryPos(.05);
-                        forks.setSecondaryPos(.68);
                         targetRPM = motorPowerClose;
                         try {
                             Thread.sleep(800);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        forks.primaryPos();
                     }).start();
                 }else{
                     //Set to far pos
                     new Thread(() -> {
                         lt1.setPosition(.45);
                         lt2.setPosition(.45);
-                        forks.setPrimaryPos(.2);
-                        forks.setSecondaryPos(.73);
                         targetRPM = motorPowerFar;
                         try {
                             Thread.sleep(700);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        forks.primaryPos();
                     }).start();
                 }
                 setTime();
-            }else if(gamepad1.left_trigger > 0.5 && delay(500)){
-                if(fire.getPosition() != fires.getSecondaryPos()){
-                    new Thread(() -> {
-                        fires.primaryPos();
-                        forks.secondaryPos();
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        fires.secondaryPos();
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        forks.primaryPos();
-                    }).start();
-                }else{
-                    new Thread(()->{
-                        fires.tertiaryPos();
-                        try {
-                            Thread.sleep(400);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        fires.primaryPos();
-                    }).start();
-                }
-                setTime();
-            }else if(gamepad1.right_trigger > 0.5 && delay(500)){
-                if(fire.getPosition() == fires.getSecondaryPos()){
-                    new Thread(()->{
-                        fires.tertiaryPos();
-                        try {
-                            Thread.sleep(400);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        fires.primaryPos();
-                    }).start();
-                }else {
-                    loading = true;
-                    new Thread(()->{
-                        intakeMotor.setPower(1);
-                        try {
-                            Thread.sleep(150);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        intakeMotor.setPower(0);
-                        fires.secondaryPos();
-                        loading = false;
-                    }).start();
-                }
-                setTime();
+            }else if(gamepad1.right_trigger > 0.5 && delay(200)){
+                new Thread(() -> {
+                    fires.secondaryPos();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    fires.primaryPos();
+                }).start();
             }else if(!loading){
                 intakeMotor.setPower(0);
             }
@@ -290,6 +234,16 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
     @Override
     public void tag24() {
+
+    }
+
+    @Override
+    public void green() {
+
+    }
+
+    @Override
+    public void purple() {
 
     }
 }

@@ -87,6 +87,8 @@ public interface LimelightTags {
         return distance;
     } //Doesn't work btw
 
+
+
     void tag20();
     void tag21();
     void tag22();

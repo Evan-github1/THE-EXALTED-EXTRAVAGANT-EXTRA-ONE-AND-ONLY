@@ -81,4 +81,38 @@ public class Test5 extends Movable  {
     }
 
 
+    @Override
+    public void green() {
+
+    }
+
+    @Override
+    public void purple() {
+
+    }
+
+    @Override
+    public void tag20() {
+
+    }
+
+    @Override
+    public void tag21() {
+
+    }
+
+    @Override
+    public void tag22() {
+
+    }
+
+    @Override
+    public void tag23() {
+
+    }
+
+    @Override
+    public void tag24() {
+
+    }
 }

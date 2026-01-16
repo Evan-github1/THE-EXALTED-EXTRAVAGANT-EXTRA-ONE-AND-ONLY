@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.RobotFunctions;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 // TODO: inherit this class to be able to drive
-public abstract class Movable extends LinearOpMode {
+public abstract class Movable extends LinearOpMode implements LimelightTags,LimelightColor {
     static protected DcMotor FLW;
     static protected DcMotor BLW;
     static protected DcMotor FRW;
@@ -12,6 +16,8 @@ public abstract class Movable extends LinearOpMode {
 
     static protected double angle, desVol, vx, vy, v1, v2, max;
 
+    static protected double motorPowerClose,motorPowerFar;
+
     @Override
     public void runOpMode() throws InterruptedException {
         time = System.currentTimeMillis();
@@ -19,6 +25,8 @@ public abstract class Movable extends LinearOpMode {
         BLW = hardwareMap.get(DcMotor.class, "BLW");
         FRW = hardwareMap.get(DcMotor.class, "FRW");
         BRW = hardwareMap.get(DcMotor.class, "BRW");
+        motorPowerClose = .5185;
+        motorPowerFar = .888;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -85,6 +93,36 @@ public abstract class Movable extends LinearOpMode {
     }
 
 
+    private double LeBotsEyes(double pastError, boolean adjustMotor, Limelight3A limelight, Telemetry telemetry){
+        double desiredX;
+        telemetry.addData("D",true);
+        if(detectTagSelective(limelight,telemetry) != null){
+            LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
+            desiredX = 0;
+            double smoothCoeff = 0.25;
+            telemetry.addData("Yes is not null",true);
+            double tx = yes.getTargetXDegrees();
+            double currentError = desiredX - tx;
+            double smoothedError = smoothCoeff*currentError + (1-smoothCoeff)*pastError;
+            smoothedError = smoothedError/25;
+            telemetry.addData(""+currentError,smoothedError);
+            if(adjustMotor) {
+                FLW.setPower(-smoothedError);
+                FRW.setPower(smoothedError);
+                BRW.setPower(smoothedError);
+                BLW.setPower(-smoothedError);
+                return 0.0;
+            }
+            return smoothedError;
+        }else{
+            return 0;
+        }
+
+    }
+
+    public void angleToTag(){
+
+    }
 
     public boolean delay() {
         return System.currentTimeMillis() >= time + 250;
