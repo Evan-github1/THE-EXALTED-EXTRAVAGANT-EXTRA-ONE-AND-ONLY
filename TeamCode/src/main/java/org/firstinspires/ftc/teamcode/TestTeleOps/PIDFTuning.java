@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class PIDFTuning extends OpMode {
 
     private static DcMotorEx outtakeMotor;
-    private static final double HIGH_VELOCITY = 2300, LOW_VELOCITY = 1450;
+    private static final double HIGH_VELOCITY = 1300, LOW_VELOCITY = 800;
     private static double currentTargetVelocity;
     private static double F = 0, P = 0;
     private static double[] stepSizes = {10, 1, .1, .01, .001, .0001};
@@ -39,6 +39,9 @@ public class PIDFTuning extends OpMode {
             } else {
                 currentTargetVelocity = HIGH_VELOCITY;
             }
+
+            // f = 20.28
+            // p =
         }
 
         if (gamepad1.bWasPressed()) {

@@ -326,6 +326,8 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         rightStoredColor = Colors.UNKNOWN;
         sleep(1000);
         wipersR.primaryPos();
+        rightState = ChamberState.EMPTY;
+        rightStoredColor = Colors.UNKNOWN;
     }
 
     private void liftLeftWiperNT() {
@@ -334,6 +336,8 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         leftStoredColor = Colors.UNKNOWN;
         sleep(1000);
         wipersL.primaryPos();
+        leftState = ChamberState.EMPTY;
+        leftStoredColor = Colors.UNKNOWN;
     }
 
     private void liftRightWiper() {
@@ -343,6 +347,8 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             rightStoredColor = Colors.UNKNOWN;
             sleep(1000);
             wipersR.primaryPos();
+            rightState = ChamberState.EMPTY;
+            rightStoredColor = Colors.UNKNOWN;
         }).start();
     }
 
@@ -353,6 +359,8 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             leftStoredColor = Colors.UNKNOWN;
             sleep(1000);
             wipersL.primaryPos();
+            leftState = ChamberState.EMPTY;
+            leftStoredColor = Colors.UNKNOWN;
         }).start();
     }
 

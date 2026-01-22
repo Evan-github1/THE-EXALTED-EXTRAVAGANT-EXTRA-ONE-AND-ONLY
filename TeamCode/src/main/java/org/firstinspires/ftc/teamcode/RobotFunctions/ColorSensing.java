@@ -30,7 +30,7 @@ public class ColorSensing { // RAHH COMPOSITION (?)
 //        t.addData("B", b);
 //        t.addData("Alpha", a);
 
-        if (a < .08) return Colors.UNKNOWN;
+        if (a <= .2) return Colors.UNKNOWN;
 
         if (a > .9) {
             if (r > .12 && r < .25
@@ -42,7 +42,7 @@ public class ColorSensing { // RAHH COMPOSITION (?)
                     && b > .18 && b < .33) {
                 return Colors.GREEN;
             }
-        } else if (a > .1) {
+        } else if (a > .2) {
             if (g > r && g > b) {
                 return Colors.GREEN;
             } else if (b > r && b > g) {
@@ -65,7 +65,7 @@ public class ColorSensing { // RAHH COMPOSITION (?)
 //        t.addData("B", b);
 //        t.addData("Alpha", a);
 
-        if (a < .08) return Colors.UNKNOWN;
+        if (a <= .2) return Colors.UNKNOWN;
 
         if (a > .9) {
             if (r > .12 && r < .20
@@ -77,7 +77,7 @@ public class ColorSensing { // RAHH COMPOSITION (?)
                     && b > .18 && b < .33) {
                 return Colors.GREEN;
             }
-        } else if (a > .1) {
+        } else if (a > .2) {
             if (g > r && g > b) {
                 return Colors.GREEN;
             } else if (b > r && b > g) {
