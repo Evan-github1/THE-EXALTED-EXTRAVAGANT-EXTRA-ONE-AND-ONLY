@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode.Bluebots;
+import android.graphics.Color;
+
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.RobotFunctions.ColorSensing;
+import org.firstinspires.ftc.teamcode.RobotFunctions.Colors;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
@@ -23,27 +28,29 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static DoubleSwitchedServo swivelTurret;
     private static int targetedID;
     private static double targetRPM;
-    private static boolean turnLeft;
-    private static boolean tracking;
     private static Servo hoodServo;
     private static volatile boolean turretStop;
-    private static boolean sweeping = false;
-    private static double sweepDirection = 0; // +1 = sweep right, -1 = sweep left
-    private static final double SWEEP_SPEED = 0.005;
 
     private static boolean sweepInit;
     private static boolean sweepActive;
     private static double sweepTarget;
+
+    private static ColorSensing colorSensing;
+    private static int motifID = -1;
+
+    private static ChamberState leftState;
+    private static ChamberState rightState;
+
+    private static Colors leftStoredColor;
+    private static Colors rightStoredColor;
 
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
-        limelight.pipelineSwitch(0); // april tags
+        limelight.pipelineSwitch(3); // motif mode
         targetedID = 20;
-        tracking = true;
-        turnLeft = false;
 
         swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
         swivelTurret = new DoubleSwitchedServo(swivelTurretServo, .1, .54);
@@ -83,12 +90,21 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         sweepActive = false;
         sweepTarget = 0.07;
 
+        colorSensing = new ColorSensing(hardwareMap, 18);
+
+        leftStoredColor = Colors.UNKNOWN;
+        rightStoredColor = Colors.UNKNOWN;
+        leftState = ChamberState.EMPTY;
+        rightState = ChamberState.EMPTY;
+
         waitForStart();
 
         wipersL.primaryPos();
         wipersR.primaryPos();
         swivelTurretServo.setPosition(.1975);
         hoodServo.setPosition(0);
+
+        outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
@@ -98,6 +114,14 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             turn();
 
             int id = detectTag(limelight, telemetry);
+
+            if (motifID == -1) {
+                limelight.pipelineSwitch(3);
+                if (id == 21 || id == 22 || id == 23)  motifID = id;
+            } else {
+                limelight.pipelineSwitch(0);
+            }
+            telemetry.addData("Motif ID", motifID);
             telemetry.addData("Turret Stop", turretStop);
 
             telemetry.addData("Swivel Turret Position", swivelTurretServo.getPosition());
@@ -160,17 +184,6 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 time = System.currentTimeMillis();
             }
 
-            if (targetRPM >= 1400 && targetRPM <= 1600) { // low is yellow
-                gamepad1.setLedColor(255, 255, 0, 5);
-                telemetry.addData("yellow", true);
-            } else if (targetRPM >= 2100 && targetRPM <= 2350) { // high is green
-                gamepad1.setLedColor(0, 255, 0, 5);
-                telemetry.addData("green", true);
-            } else { // ??? is red
-                gamepad1.setLedColor(255, 0, 0, 5);
-                telemetry.addData("red", true);
-            }
-
             if (gamepad1.dpad_right && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
             } else if (gamepad1.dpad_left) {
@@ -179,44 +192,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
 
             if (gamepad1.leftStickButtonWasPressed() && delay(5000)) {
-                if (gatewayServo.getPosition() < .5) {
-                    new Thread(() -> {
-                        wipersL.secondaryPos();
-                        sleep(1000);
-                        wipersL.primaryPos();
-
-                        sleep(500);
-
-                        wipersR.secondaryPos();
-                        sleep(1000);
-                        wipersR.primaryPos();
-
-                        sleep(500);
-
-                        wipersL.secondaryPos();
-                        sleep(1000);
-                        wipersL.primaryPos();
-                    }).start();
-                } else if (gatewayServo.getPosition() > .5) {
-                    new Thread(() -> {
-                        wipersR.secondaryPos();
-                        sleep(1000);
-                        wipersR.primaryPos();
-
-                        sleep(500);
-
-                        wipersL.secondaryPos();
-                        sleep(1000);
-                        wipersL.primaryPos();
-
-                        sleep(500);
-
-                        wipersR.secondaryPos();
-                        sleep(1000);
-                        wipersR.primaryPos();
-
-                    }).start();
-                }
+                motifMacroShoot();
                 time = System.currentTimeMillis();
             }
 
@@ -291,24 +267,100 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             } else if (TX < 0 && id == targetedID) {
                 swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0004);
             }
+
+            if (rightState == ChamberState.EMPTY) {
+                Colors detected = colorSensing.detectColorRight(telemetry);
+                if (detected != Colors.UNKNOWN) {
+                    rightStoredColor = detected;
+                    rightState = ChamberState.LOADED;
+                }
+            }
+
+            if (leftState == ChamberState.EMPTY) {
+                Colors detected = colorSensing.detectColorLeft(telemetry);
+                if (detected != Colors.UNKNOWN) {
+                    leftStoredColor = detected;
+                    leftState = ChamberState.LOADED;
+                }
+            }
+            telemetry.addData("Left Chamber", leftState);
+            telemetry.addData("Left Stored Color", leftStoredColor);
+
+            telemetry.addData("Right Chamber", rightState);
+            telemetry.addData("Right Stored Color", rightStoredColor);
+
             telemetry.addData("TX", TX);
             telemetry.update();
         }
     }
 
+    private void motifMacroShoot() {
+        final Colors[][] MOTIFS = {
+                {Colors.GREEN, Colors.PURPLE, Colors.PURPLE}, // 21
+                {Colors.PURPLE, Colors.GREEN, Colors.PURPLE}, // 22
+                {Colors.PURPLE, Colors.PURPLE, Colors.GREEN} // 23
+        };
+        new Thread(() -> {
+            if (motifID == 21 || motifID == 22 || motifID == 23) {
+                Colors[] motif = MOTIFS[motifID - 21];
+                for (int i = 0; i < motif.length; i++) {
+                    if (leftStoredColor == motif[i]) {
+                        liftLeftWiperNT();
+                    } else if (rightStoredColor == motif[i]) {
+                        liftRightWiperNT();
+                    }
+                    sleep(300);
+                }
+            }
+        }).start();
+    }
+
+    enum ChamberState {
+        EMPTY,
+        LOADED
+    }
+
+    private void liftRightWiperNT() {
+        wipersR.secondaryPos();
+        rightState = ChamberState.EMPTY;
+        rightStoredColor = Colors.UNKNOWN;
+        sleep(1000);
+        wipersR.primaryPos();
+        rightState = ChamberState.EMPTY;
+        rightStoredColor = Colors.UNKNOWN;
+    }
+
+    private void liftLeftWiperNT() {
+        wipersL.secondaryPos();
+        leftState = ChamberState.EMPTY;
+        leftStoredColor = Colors.UNKNOWN;
+        sleep(1000);
+        wipersL.primaryPos();
+        leftState = ChamberState.EMPTY;
+        leftStoredColor = Colors.UNKNOWN;
+    }
+
     private void liftRightWiper() {
         new Thread(() -> {
             wipersR.secondaryPos();
+            rightState = ChamberState.EMPTY;
+            rightStoredColor = Colors.UNKNOWN;
             sleep(1000);
             wipersR.primaryPos();
+            rightState = ChamberState.EMPTY;
+            rightStoredColor = Colors.UNKNOWN;
         }).start();
     }
 
     private void liftLeftWiper() {
         new Thread(() -> {
             wipersL.secondaryPos();
+            leftState = ChamberState.EMPTY;
+            leftStoredColor = Colors.UNKNOWN;
             sleep(1000);
             wipersL.primaryPos();
+            leftState = ChamberState.EMPTY;
+            leftStoredColor = Colors.UNKNOWN;
         }).start();
     }
 
@@ -353,7 +405,6 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         // Perform sweep motion
         // -------------------------
         if (sweepActive) {
-
             // Stop if AprilTag found
             int tag = detectTag(limelight, telemetry);
             if (tag == targetedID) {
@@ -380,42 +431,22 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             }
         }
 
-        // -------------------------
-        // Telemetry
-        // -------------------------
         telemetry.addData("TurretPos", swivelTurretServo.getPosition());
         telemetry.addData("SweepActive", sweepActive);
     }
 
     @Override
-    public void tag20() {
-
-    }
-
+    public void tag20() {}
     @Override
-    public void tag21() {
-
-    }
-
+    public void tag21() {}
     @Override
-    public void tag22() {
-
-    }
-
+    public void tag22() {}
     @Override
-    public void tag23() {
-
-    }
-
+    public void tag23() {}
     @Override
-    public void tag24() {
-
-    }
-
+    public void tag24() {}
     @Override
-    public void nothing() {
-
-    }
+    public void nothing() {}
 
     @Override
     protected void turn() {
@@ -426,13 +457,15 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             FRW.setPower(POWER);
             BLW.setPower(-POWER);
             BRW.setPower(POWER);
-            if (swivelTurretServo.getPosition() >= .07) swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
+            if (swivelTurretServo.getPosition() >= .07)
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
         } else if (gamepad1.left_bumper) { // turn left
             FLW.setPower(POWER);
             FRW.setPower(-POWER);
             BLW.setPower(POWER);
             BRW.setPower(-POWER);
-            if (swivelTurretServo.getPosition() <= .57) swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
+            if (swivelTurretServo.getPosition() <= .57)
+                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
         } else if (gamepad1.rightBumperWasReleased() && gamepad1.leftBumperWasReleased()
                 && gamepad1.left_stick_y == 0 && gamepad1.left_stick_x == 0) {
             disablePower();
