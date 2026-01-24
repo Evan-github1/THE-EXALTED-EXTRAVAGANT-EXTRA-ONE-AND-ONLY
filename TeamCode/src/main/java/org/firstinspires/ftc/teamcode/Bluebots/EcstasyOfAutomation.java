@@ -28,6 +28,9 @@ public abstract class EcstasyOfAutomation extends Movable implements LimelightTa
     protected static boolean sweepActive;
     protected static double sweepTarget;
 
+    protected final static double ROBOT_LENGTH = 15.875; // inches
+    protected final static double ROBOT_WIDTH = 17.125; // also inches
+
     @Override
     public void runOpMode() throws InterruptedException{
         super.runOpMode();

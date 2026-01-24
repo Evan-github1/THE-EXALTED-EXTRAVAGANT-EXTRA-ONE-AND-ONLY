@@ -270,7 +270,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
             if (rightState == ChamberState.EMPTY) {
                 Colors detected = colorSensing.detectColorRight(telemetry);
-                if (detected != Colors.UNKNOWN) {
+                if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
                     rightStoredColor = detected;
                     rightState = ChamberState.LOADED;
                 }
@@ -278,7 +278,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
             if (leftState == ChamberState.EMPTY) {
                 Colors detected = colorSensing.detectColorLeft(telemetry);
-                if (detected != Colors.UNKNOWN) {
+                if (detected != Colors.UNKNOWN && wiperL.getPosition() != wipersL.getSecondaryPos()) {
                     leftStoredColor = detected;
                     leftState = ChamberState.LOADED;
                 }
