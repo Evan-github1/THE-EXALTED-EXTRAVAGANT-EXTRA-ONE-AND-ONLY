@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TestTeleOps;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,6 +37,9 @@ public class PIDFTuning extends Movable implements LimelightTags {
     private static int stepIndex;
     private static PIDFCoefficients pidfCoefficients;
 
+
+
+
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
 
@@ -53,7 +56,7 @@ public class PIDFTuning extends Movable implements LimelightTags {
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(0);
-        motorPowerClose = 3000;
+        motorPowerClose = 2500;
         motorPowerFar = 4500;
         targetRPM = motorPowerFar;
         stepSizes = new double[]{10, 1, 0.1, 0.01, 0.001,0.0001};
@@ -95,14 +98,6 @@ public class PIDFTuning extends Movable implements LimelightTags {
                 FRW.setPower(-gamepad1.right_stick_x);
                 BLW.setPower(gamepad1.right_stick_x);
                 BRW.setPower(-gamepad1.right_stick_x);
-            }else if(gamepad1.dpad_up) {
-                moveWheels(0,0.5f);
-            }else if(gamepad1.dpad_down){
-                moveWheels(0,-0.5f);
-            }else if(gamepad1.dpad_left){
-                moveWheels(0.5f,0);
-            }else if(gamepad1.dpad_right){
-                moveWheels(-0.5f,0);
             }else if(gamepad1.right_stick_button){
                 if(iterations == 0){
                     pastError = 0;
@@ -118,6 +113,11 @@ public class PIDFTuning extends Movable implements LimelightTags {
                 pastError = 0;
                 iterations = 0;
             }
+
+            //16.8 F Slower
+
+
+            //15 F faster
 
             if (gamepad1.y && delay()) {
                 if(intakeMotor.getPower() == 0){
@@ -172,6 +172,7 @@ public class PIDFTuning extends Movable implements LimelightTags {
                     }).start();
                 }
                 setTime();
+                //TODO: UPDATE THIS NOW
             }else if(gamepad1.left_trigger > 0.5 && delay(500)){
                 if(fire.getPosition() != fires.getSecondaryPos()){
                     new Thread(() -> {

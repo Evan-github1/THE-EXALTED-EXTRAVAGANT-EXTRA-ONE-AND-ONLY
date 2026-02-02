@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.PedroPathing;
 
+import com.pedropathing.control.FilteredPIDFCoefficients;
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -8,15 +10,23 @@ import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(11.943);
+            .mass(11.943)
+            .forwardZeroPowerAcceleration(-25.3459)
+            .lateralZeroPowerAcceleration(-64.70768)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.02,0.018))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.2,0,0.05,0.025))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.03,0,0.00002,0.5,0.01))
+            .centripetalScaling(0.0005)
+            ;
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.8, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
@@ -43,7 +53,9 @@ public class Constants {
             .leftFrontMotorDirection(DcMotor.Direction.REVERSE)
             .leftRearMotorDirection(DcMotor.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotor.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotor.Direction.FORWARD);
+            .rightRearMotorDirection(DcMotor.Direction.FORWARD)
+            .xVelocity(76.391)
+            .yVelocity(61.93);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(-5)
