@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollow
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -76,8 +78,9 @@ public class DoomAndDisgust_PEDRO extends Movable {
         motorPowerFar = 4500; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
+        limelight.pipelineSwitch(0);
         limelight.start();
-        limelight.pipelineSwitch(1);
+        limelight.pipelineSwitch(0);
         targetRPM = motorPowerFar;
         P = 30;
         FClose = 16.8;
@@ -165,8 +168,8 @@ public class DoomAndDisgust_PEDRO extends Movable {
         waitForStart();
         launcherMotor1.setVelocity(motorPowerFar);
         launcherMotor2.setVelocity(motorPowerFar);
-        lt1.setPosition(.45); //from 0.45 for both
-        lt2.setPosition(.45);
+        lt1.setPosition(.4475); //from 0.45 for both
+        lt2.setPosition(.4475);
 
 
         while (opModeIsActive()) {
@@ -186,7 +189,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
 
                 case 1:
                     if(!follower.isBusy()) {
-                        if (actionTimer.getElapsedTimeSeconds() < 3.5) {
+                        if (actionTimer.getElapsedTimeSeconds() < 3) {
                             if (iterations == 0) {
                                 pastError = 0;
                                 LeBotsEyes(pastError, true);
@@ -196,6 +199,10 @@ public class DoomAndDisgust_PEDRO extends Movable {
                             }
                             iterations++;
                         } else {
+                            FLW.setPower(0);
+                            FRW.setPower(0);
+                            BRW.setPower(0);
+                            BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
                             intakeMotor.setPower(1);
@@ -227,7 +234,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
                     break;
                 case 4:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 3.5) {
+                        if(actionTimer.getElapsedTimeSeconds() < 3) {
                             if (iterations == 0) {
                                 pastError = 0;
                                 LeBotsEyes(pastError, true);
@@ -237,6 +244,10 @@ public class DoomAndDisgust_PEDRO extends Movable {
                             }
                             iterations++;
                         }else {
+                            FLW.setPower(0);
+                            FRW.setPower(0);
+                            BRW.setPower(0);
+                            BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
                             intakeMotor.setPower(1);
@@ -268,7 +279,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
                     break;
                 case 7:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 3.5) {
+                        if(actionTimer.getElapsedTimeSeconds() < 3) {
                             if (iterations == 0) {
                                 pastError = 0;
                                 LeBotsEyes(pastError, true);
@@ -278,6 +289,10 @@ public class DoomAndDisgust_PEDRO extends Movable {
                             }
                             iterations++;
                         }else {
+                            FLW.setPower(0);
+                            FRW.setPower(0);
+                            BRW.setPower(0);
+                            BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
                             intakeMotor.setPower(1);
@@ -318,6 +333,10 @@ public class DoomAndDisgust_PEDRO extends Movable {
                             }
                             iterations++;
                         }else {
+                            FLW.setPower(0);
+                            FRW.setPower(0);
+                            BRW.setPower(0);
+                            BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
                             intakeMotor.setPower(1);
@@ -326,7 +345,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
                             sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
-                            follower.followPath(goToPickup3);
+                            follower.followPath(goToPickup2);
                             pathState++;
                             actionTimer.resetTimer();
                         }
@@ -342,7 +361,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
         telemetry.addData("D", true);
         if(detectTagSelective(limelight,telemetry) != null){
             LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
-            desiredX = 0;
+            desiredX = 4;
             double smoothCoeff = 0.25;
             telemetry.addData("Yes is not null",true);
             double tx = yes.getTargetXDegrees();
