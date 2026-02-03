@@ -24,11 +24,11 @@ public class PIDFTuning extends OpMode {
         stepIndex = 1;
 
         outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtake");
-        outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtakeMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeMotor.setDirection(DcMotorEx.Direction.REVERSE);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
-        outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class PIDFTuning extends OpMode {
             P += stepSizes[stepIndex];
         }
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
-        outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         outtakeMotor.setVelocity(currentTargetVelocity);
 
         double currentVelocity = -outtakeMotor.getVelocity();
