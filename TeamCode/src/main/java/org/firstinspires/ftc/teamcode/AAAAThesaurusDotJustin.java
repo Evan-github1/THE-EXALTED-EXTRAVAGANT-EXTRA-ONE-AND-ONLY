@@ -67,12 +67,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         limelight.start();
         limelight.pipelineSwitch(0);
         motorPowerClose = 2500;
-        motorPowerFar = 4500;
+        motorPowerFar = 4500; //from 4500
         targetRPM = motorPowerFar;
-        P = 30;
+        P = 50;
         FClose = 16.8;
         FFar = 15;
-        pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
+        pidfCoefficients = new PIDFCoefficients(P,0,0.005,FFar);
         follower = createFollower(hardwareMap);
         follower.setStartingPose(new Pose(96, 0 + robotLength()/2, Math.toRadians(-90)));
 
@@ -162,7 +162,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 if(targetRPM == motorPowerFar) {//If far
                     //Set to close pos
                     new Thread(() -> {
-                        lt1.setPosition(.25);
+                        lt1.setPosition(.25);//from .25
                         lt2.setPosition(.25);
                         targetRPM = motorPowerClose;
                         pidfCoefficients = new PIDFCoefficients(P,0,0,FClose);
