@@ -39,7 +39,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static DoubleSwitchedServo fires;
     private static boolean loading;
     private static boolean shooting;
-    private static boolean isAimed, prevAimedState; //boolean for if autoaim is locked on
     private static Limelight3A limelight;
     private static Thread orientRobot;
     private static boolean tracking;
@@ -64,8 +63,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         loading = false;
         shooting = false;
-        isAimed = false;
-        prevAimedState = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(0);
@@ -138,10 +135,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
             }else{
                 moveWheels(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
-                pastError = 10;
+                pastError = 0;
                 iterations = 0;
             }
-            checkAimed(pastError);
             if (gamepad1.y && delay()) {
                 if(intakeMotor.getPower() == 0){
                     intakeMotor.setPower(1);
@@ -255,20 +251,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             return 0;
         }
 
-    }
-
-    private static void checkAimed(double Aimerror){
-        isAimed = (Math.abs(Aimerror)<=0.05);
-        if(isAimed != prevAimedState){
-            prevAimedState = isAimed;
-            if(isAimed){
-                indR.setPosition(0.5);
-                indL.setPosition(0.5);
-            } else{
-                indR.setPosition(0.277);
-                indL.setPosition(0.277);
-            }
-        }
     }
 
 
