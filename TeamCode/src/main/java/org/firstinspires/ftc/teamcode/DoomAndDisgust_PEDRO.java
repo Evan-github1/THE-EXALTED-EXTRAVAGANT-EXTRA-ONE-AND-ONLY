@@ -189,7 +189,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
 
                 case 1:
                     if(!follower.isBusy()) {
-                        if (actionTimer.getElapsedTimeSeconds() < 3) {
+                        if (actionTimer.getElapsedTimeSeconds() < 2.5) {
                             if (iterations == 0) {
                                 pastError = 0;
                                 LeBotsEyes(pastError, true);
@@ -234,7 +234,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
                     break;
                 case 4:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 3) {
+                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
                             if (iterations == 0) {
                                 pastError = 0;
                                 LeBotsEyes(pastError, true);
@@ -279,7 +279,7 @@ public class DoomAndDisgust_PEDRO extends Movable {
                     break;
                 case 7:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 3) {
+                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
                             if (iterations == 0) {
                                 pastError = 0;
                                 LeBotsEyes(pastError, true);
