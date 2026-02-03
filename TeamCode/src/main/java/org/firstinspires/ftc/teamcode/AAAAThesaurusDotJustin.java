@@ -252,7 +252,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             return smoothedError;
 
         }else{
-            return 10;
+            return 0;
         }
 
     }
