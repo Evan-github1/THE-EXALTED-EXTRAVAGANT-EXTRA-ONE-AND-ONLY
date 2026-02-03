@@ -195,8 +195,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     }).start();
                 }
                 setTime();
-            }else if(gamepad1.right_trigger > 0.5 && delay(1600)){
-                new Thread(() -> {
+            }else if(gamepad1.right_trigger > 0.5 /*&& delay(1600)*/ && !fires.isSecondaryPos()){
+                fires.secondaryPos();
+                /*new Thread(() -> {
                     fires.secondaryPos();
                     try {
                         Thread.sleep(1500);
@@ -204,7 +205,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                         throw new RuntimeException(e);
                     }
                     fires.primaryPos();
-                }).start();
+                }).start();*/
+
+            }else if(gamepad1.right_trigger <= 0.5 && fires.isSecondaryPos()){
+                fires.primaryPos();
             }else if(!loading){
                 intakeMotor.setPower(0);
             }

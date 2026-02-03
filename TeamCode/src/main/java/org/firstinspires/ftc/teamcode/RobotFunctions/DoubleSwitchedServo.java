@@ -73,4 +73,10 @@ public class DoubleSwitchedServo {
             servo2.setDirection(Servo.Direction.REVERSE);
         }
     }
+
+    //this method returns current servo pos to be able to do thing efficiently
+    //false = primaryPos, true=secondaryPos
+    public boolean isSecondaryPos(){
+        return(servo1.getPosition()==this.getSecondaryPos());
+    }
 }
