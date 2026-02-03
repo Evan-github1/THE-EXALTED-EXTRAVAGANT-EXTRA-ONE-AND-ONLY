@@ -225,23 +225,26 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.x && delay(1000)) {
+            if (gamepad1.shareWasPressed()) {
                 motifMacroShoot();
                 time = System.currentTimeMillis();
             }
 
             telemetry.addData("Gateway Position", gatewayServo.getPosition());
 
-            if (intakeToggle) {
+            if (intakeToggle || gamepad1.x) {
                 boolean LUp = wiperL.getPosition() == wipersL.getSecondaryPos();
                 boolean RUp = wiperR.getPosition() == wipersR.getSecondaryPos();
 
-                if (LUp || RUp) {
+                if (gamepad1.x) {
+                    intakeMotor.setPower(-1);
+                } else if (LUp || RUp) {
                     intakeMotor.setPower(0);
                 } else {
                     intakeMotor.setPower(1);
                 }
-            } else if (!gamepad1.x || !intakeToggle) {
+
+            } else if (!intakeToggle) {
                 intakeMotor.setPower(0);
             }
 
