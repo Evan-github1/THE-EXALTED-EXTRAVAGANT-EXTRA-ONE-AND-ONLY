@@ -252,13 +252,13 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             return smoothedError;
 
         }else{
-            return 0;
+            return 10;
         }
 
     }
 
     private static void checkAimed(double Aimerror){
-        isAimed = (Math.abs(Aimerror)<=0.5);
+        isAimed = (Math.abs(Aimerror)<=0.05);
         if(isAimed != prevAimedState){
             prevAimedState = isAimed;
             if(isAimed){
