@@ -29,7 +29,7 @@ import com.pedropathing.util.Timer;
 @TeleOp
 public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
-    private static DcMotor intakeMotor;
+    private static DcMotor intakeMotor, transferMotor;
     private static DcMotorEx launcherMotor1, launcherMotor2;
     private static Servo lt1;
     private static Servo lt2;
@@ -45,7 +45,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static double pastError;
     private static int iterations;
     private static double motorPowerFar, motorPowerClose;
-    private static double rpm, tps, targetRPM, P, FClose, FFar, currentTargetRPM;
+    private static double rpm, rpm2, tps, tps2, targetRPM, P, FClose, FFar, currentTargetRPM;
     private static PIDFCoefficients pidfCoefficients;
     private static Follower follower;
 
@@ -53,6 +53,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         super.runOpMode();
 
         intakeMotor = hardwareMap.get(DcMotor.class,"INT");
+        transferMotor = hardwareMap.get(DcMotor.class, "INT2");
         lt1 = hardwareMap.get(Servo.class,"LT1");
         lt2 = hardwareMap.get(Servo.class,"LT2");
         fire = hardwareMap.get(Servo.class, "FIRE");
@@ -81,6 +82,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         FRW.setDirection(DcMotor.Direction.FORWARD);
         BRW.setDirection(DcMotor.Direction.FORWARD);
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        transferMotor.setDirection(DcMotor.Direction.FORWARD);
+        transferMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         launcherMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
         pastError = 0;
@@ -101,10 +105,14 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             follower.update();
             telemetry.addData("Status", "Running");
 
-            tps = launcherMotor2.getVelocity();
+            tps = launcherMotor1.getVelocity();
+            tps2 = launcherMotor2.getVelocity();
 
             rpm = tps * 60 / 28;
-            telemetry.addData("RPM",rpm);
+            rpm2 = tps * 60 / 28;
+
+            telemetry.addData("RPM1",rpm);
+            telemetry.addData("RPM2", rpm2);
             telemetry.addData("Target RPM",targetRPM);
             telemetry.addData("Position", follower.getPose().getX() + " " + follower.getPose().getY());
             telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
@@ -192,6 +200,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }
                 setTime();
             }else if(gamepad1.right_trigger > 0.5 /*&& delay(1600)*/ && !fires.isSecondaryPos()){
+                transferMotor.setPower(1);
                 fires.secondaryPos();
                 /*new Thread(() -> {
                     fires.secondaryPos();
@@ -204,6 +213,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }).start();*/
 
             }else if(gamepad1.right_trigger <= 0.5 && fires.isSecondaryPos()){
+                transferMotor.setPower(0);
                 fires.primaryPos();
             }else if(!loading){
                 intakeMotor.setPower(0);
