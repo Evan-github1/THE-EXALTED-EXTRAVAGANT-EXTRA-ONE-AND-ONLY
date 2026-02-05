@@ -68,7 +68,7 @@ public class DoomAndDisgust_PEDRORED extends Movable {
         fork = hardwareMap.get(Servo.class,"FORK");
         follower = createFollower(hardwareMap);
         motorPowerClose = 2500;
-        motorPowerFar = 4500; //from 4800
+        motorPowerFar = 4200; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);
@@ -161,8 +161,8 @@ public class DoomAndDisgust_PEDRORED extends Movable {
         waitForStart();
         launcherMotor1.setVelocity(motorPowerFar);
         launcherMotor2.setVelocity(motorPowerFar);
-        lt1.setPosition(.4475); //from 0.45 for both
-        lt2.setPosition(.4475);
+        lt1.setPosition(.4525); //from 0.45 for both
+        lt2.setPosition(.4525);
 
 
         while (opModeIsActive()) {

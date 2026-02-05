@@ -67,7 +67,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         limelight.start();
         limelight.pipelineSwitch(0);
         motorPowerClose = 2500;
-        motorPowerFar = 4500; //from 4500
+        motorPowerFar = 4250; //from 4500
         targetRPM = motorPowerFar;
         P = 50;
         FClose = 16.8;
