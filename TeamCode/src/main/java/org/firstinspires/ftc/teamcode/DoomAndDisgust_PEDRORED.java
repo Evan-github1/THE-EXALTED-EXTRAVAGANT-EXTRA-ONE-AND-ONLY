@@ -26,7 +26,7 @@ public class DoomAndDisgust_PEDRORED extends Movable {
 
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
-    private static DcMotorEx intakeMotor, launcherMotor1, launcherMotor2;
+    private static DcMotorEx intakeMotor, launcherMotor1, launcherMotor2, transferMotor;
     private static Servo lt1;
     private static Servo lt2;
     private static Servo fire;
@@ -44,7 +44,7 @@ public class DoomAndDisgust_PEDRORED extends Movable {
 
 
     private final Pose startPose = new Pose(96, 0 + robotLength()/2, Math.toRadians(-90)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(88,13.5,Math.toRadians(-115.5));
+    private final Pose scorePose = new Pose(88.6,11.7,Math.toRadians(-115.5));
     private final Pose ball1PickupStart = new Pose(100,31,0);
     private final Pose ball1PickupEnd = new Pose(137,31,0);
     private final Pose ball2PickupStart = new Pose(100,55,0);
@@ -59,6 +59,7 @@ public class DoomAndDisgust_PEDRORED extends Movable {
         super.runOpMode();
 
         intakeMotor = hardwareMap.get(DcMotorEx.class,"INT");
+        transferMotor = hardwareMap.get(DcMotorEx.class, "INT2");
         lt1 = hardwareMap.get(Servo.class,"LT1");
         lt2 = hardwareMap.get(Servo.class,"LT2");
         fire = hardwareMap.get(Servo.class, "FIRE");
@@ -68,17 +69,17 @@ public class DoomAndDisgust_PEDRORED extends Movable {
         fork = hardwareMap.get(Servo.class,"FORK");
         follower = createFollower(hardwareMap);
         motorPowerClose = 2500;
-        motorPowerFar = 4200; //from 4800
+        motorPowerFar = 3900; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);
         limelight.start();
         limelight.pipelineSwitch(0);
         targetRPM = motorPowerFar;
-        P = 30;
+        P = 50;
         FClose = 16.8;
         FFar = 15;
-        pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
+        pidfCoefficients = new PIDFCoefficients(P,0,0.005,FFar);
         actionTimer = new Timer();
 
 
@@ -161,8 +162,11 @@ public class DoomAndDisgust_PEDRORED extends Movable {
         waitForStart();
         launcherMotor1.setVelocity(motorPowerFar);
         launcherMotor2.setVelocity(motorPowerFar);
-        lt1.setPosition(.4525); //from 0.45 for both
-        lt2.setPosition(.4525);
+        lt1.setPosition(.4375); //from 0.45 for both
+        lt2.setPosition(.4375);
+        intakeMotor.setPower(1);
+        sleep(1000);
+        boolean breaked = false;
 
 
         while (opModeIsActive()) {
@@ -182,15 +186,17 @@ public class DoomAndDisgust_PEDRORED extends Movable {
 
                 case 1:
                     if(!follower.isBusy()) {
-                        if (actionTimer.getElapsedTimeSeconds() < 2.5) {
-                            if (iterations == 0) {
-                                pastError = 0;
-                                LeBotsEyes(pastError, true);
-                            } else {
-                                pastError = LeBotsEyes(pastError, false);
-                                LeBotsEyes(pastError, true);
-                            }
-                            iterations++;
+                        if (actionTimer.getElapsedTimeSeconds() < 3) {
+                            try {
+                                if (iterations == 0) {
+                                    pastError = 0;
+                                    LeBotsEyes(pastError, true);
+                                } else {
+                                    pastError = LeBotsEyes(pastError, false);
+                                    LeBotsEyes(pastError, true);
+                                }
+                                iterations++;
+                            }catch(Exception ignored){};
                         } else {
                             FLW.setPower(0);
                             FRW.setPower(0);
@@ -198,11 +204,12 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                             BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
-                            intakeMotor.setPower(1);
+                            transferMotor.setPower(1);
                             fires.secondaryPos();
                             sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
+                            transferMotor.setPower(0);
                             follower.followPath(goToPickup1);
                             pathState++;
                             actionTimer.resetTimer();
@@ -211,7 +218,6 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                     break;
                 case 2:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(1);
                         follower.followPath(grabPickup1,0.75,true);
                         pathState++;
                     }
@@ -219,7 +225,6 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                     break;
                 case 3:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(0);
                         follower.followPath(scorePickup1);
                         pathState++;
                     }
@@ -227,15 +232,17 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                     break;
                 case 4:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
-                            if (iterations == 0) {
-                                pastError = 0;
-                                LeBotsEyes(pastError, true);
-                            } else {
-                                pastError = LeBotsEyes(pastError, false);
-                                LeBotsEyes(pastError, true);
-                            }
-                            iterations++;
+                        if(actionTimer.getElapsedTimeSeconds() < 3) {
+                            try {
+                                if (iterations == 0) {
+                                    pastError = 0;
+                                    LeBotsEyes(pastError, true);
+                                } else {
+                                    pastError = LeBotsEyes(pastError, false);
+                                    LeBotsEyes(pastError, true);
+                                }
+                                iterations++;
+                            }catch(Exception ignored){};
                         }else {
                             FLW.setPower(0);
                             FRW.setPower(0);
@@ -243,12 +250,13 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                             BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
-                            intakeMotor.setPower(1);
+                            transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
                             sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
+                            transferMotor.setPower(0);
                             follower.followPath(goToPickup2);
                             pathState++;
                             actionTimer.resetTimer();
@@ -264,7 +272,6 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                     break;
                 case 6:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(0);
                         follower.followPath(scorePickup2);
                         pathState++;
                     }
@@ -272,15 +279,17 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                     break;
                 case 7:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
-                            if (iterations == 0) {
-                                pastError = 0;
-                                LeBotsEyes(pastError, true);
-                            } else {
-                                pastError = LeBotsEyes(pastError, false);
-                                LeBotsEyes(pastError, true);
-                            }
-                            iterations++;
+                        if(actionTimer.getElapsedTimeSeconds() < 3) {
+                            try {
+                                if (iterations == 0) {
+                                    pastError = 0;
+                                    LeBotsEyes(pastError, true);
+                                } else {
+                                    pastError = LeBotsEyes(pastError, false);
+                                    LeBotsEyes(pastError, true);
+                                }
+                                iterations++;
+                            }catch(Exception ignored){};
                         }else {
                             FLW.setPower(0);
                             FRW.setPower(0);
@@ -288,11 +297,13 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                             BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
-                            intakeMotor.setPower(1);
+                            transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
                             sleep(1000);
-                            followerActive = true;                            fires.primaryPos();
+                            followerActive = true;
+                            fires.primaryPos();
+                            transferMotor.setPower(0);
                             follower.followPath(goToPickup3);
                             pathState++;
                             actionTimer.resetTimer();
@@ -308,7 +319,6 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                     break;
                 case 9:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(0);
                         follower.followPath(scorePickup3);
                         pathState++;
                     }
@@ -317,14 +327,16 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                 case 10:
                     if(!follower.isBusy()) {
                         if(actionTimer.getElapsedTimeSeconds() < 3){
-                            if(iterations == 0 ){
-                                pastError = 0;
-                                LeBotsEyes(pastError,true);
-                            }else{
-                                pastError = LeBotsEyes(pastError,false);
-                                LeBotsEyes(pastError,true);
-                            }
-                            iterations++;
+                            try {
+                                if (iterations == 0) {
+                                    pastError = 0;
+                                    LeBotsEyes(pastError, true);
+                                } else {
+                                    pastError = LeBotsEyes(pastError, false);
+                                    LeBotsEyes(pastError, true);
+                                }
+                                iterations++;
+                            }catch(Exception ignored){};
                         }else {
                             FLW.setPower(0);
                             FRW.setPower(0);
@@ -332,19 +344,23 @@ public class DoomAndDisgust_PEDRORED extends Movable {
                             BLW.setPower(0);
                             followerActive = false;
                             iterations = 0;
-                            intakeMotor.setPower(1);
+                            transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
                             sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
+                            transferMotor.setPower(0);
                             follower.followPath(goToPickup2);
                             pathState++;
                             actionTimer.resetTimer();
                         }
                     }
                     break;
+                case 11:
+                    if(!follower.isBusy()) breaked = true;
             }
+            if(breaked) break;
         }
 
     }

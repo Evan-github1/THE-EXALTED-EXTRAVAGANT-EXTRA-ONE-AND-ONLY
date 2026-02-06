@@ -68,7 +68,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         limelight.start();
         limelight.pipelineSwitch(0);
         motorPowerClose = 2500;
-        motorPowerFar = 4250; //from 4500
+        motorPowerFar = 3950; //from 4500
         targetRPM = motorPowerFar;
         P = 50;
         FClose = 16.8;
@@ -116,6 +116,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("Target RPM",targetRPM);
             telemetry.addData("Position", follower.getPose().getX() + " " + follower.getPose().getY());
             telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
+            telemetry.addData("Power",launcherMotor1.getPower());
 
             if(Math.abs(gamepad1.right_stick_x) > 0.1){
                 FLW.setPower(gamepad1.right_stick_x);
@@ -123,24 +124,25 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 BLW.setPower(gamepad1.right_stick_x);
                 BRW.setPower(-gamepad1.right_stick_x);
             }else if(gamepad1.dpad_up) {
-                moveWheels(0,0.5f);
+                moveWheels(0,0.33f);
             }else if(gamepad1.dpad_down){
-                moveWheels(0,-0.5f);
+                moveWheels(0,-0.33f);
             }else if(gamepad1.dpad_left){
-                moveWheels(0.5f,0);
+                moveWheels(0.33f,0);
             }else if(gamepad1.dpad_right){
-                moveWheels(-0.5f,0);
+                moveWheels(-0.33f,0);
             }else if(gamepad1.right_stick_button){
-                if(iterations == 0 ){
-                    pastError = 0;
-                    LeBotsEyes(pastError,true);
-                }else{
-                    pastError = LeBotsEyes(pastError,false);
-                    LeBotsEyes(pastError,true);
+                try {
+                    if (iterations == 0) {
+                        pastError = 0;
+                        LeBotsEyes(pastError, true);
+                    } else {
+                        pastError = LeBotsEyes(pastError, false);
+                        LeBotsEyes(pastError, true);
 
-                }
-                iterations++;
-
+                    }
+                    iterations++;
+                }catch(Exception ignored){}
             }else{
                 moveWheels(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
                 pastError = 0;
@@ -185,8 +187,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }else{
                     //Set to far pos
                     new Thread(() -> {
-                        lt1.setPosition(.45);
-                        lt2.setPosition(.45);
+                        lt1.setPosition(.4375);
+                        lt2.setPosition(.4375);
                         targetRPM = motorPowerFar;
                         pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
                         launcherMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
