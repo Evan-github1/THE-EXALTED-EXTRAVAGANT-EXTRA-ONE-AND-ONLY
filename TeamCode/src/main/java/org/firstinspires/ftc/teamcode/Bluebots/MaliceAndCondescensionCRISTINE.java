@@ -49,9 +49,12 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static final double OUTTAKE_TICKS_PER_REV = 28;
     private static Servo light;
 
+    public double prevSmooth;
+    public double alpha = 0.5;
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
+        prevSmooth = 0;
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
         limelight.pipelineSwitch(3); // motif mode
@@ -195,7 +198,15 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             } else {
                 light.setPosition(.277);
             }
-
+//            if (id == targetedID) {
+//                double tx = getTX(limelight);
+//                telemetry.addLine("I see the targeted ID at tx = " +tx);
+//                sweep = false;
+//                double smoothedInput = alpha * tx + (1 - alpha) * prevSmooth;
+//                telemetry.addLine("Smoothed input value: "+smoothedInput);
+//                swivelTurretMotor.setPower(smoothedInput);
+//                prevSmooth = smoothedInput;
+//            }
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
                 time = System.currentTimeMillis();
