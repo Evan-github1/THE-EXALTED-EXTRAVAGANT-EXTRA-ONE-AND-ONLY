@@ -98,7 +98,7 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
                 /* ================= PRELOAD ================= */
 
                 case PRELOAD_SPINUP:
-                    outtakeMotor.setVelocity(1800);
+                    outtakeMotor.setVelocity(1825);
                     hoodServo.setPosition(.4);
                     moveMotorToPosition(-315, .25);
                     timer.reset();
@@ -106,7 +106,7 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
                     break;
 
                 case PRELOAD_WAIT:
-                    if (rpmReady(1800) && turretReady()) {
+                    if (rpmReady(1825) && turretReady()) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
@@ -311,7 +311,7 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
         goToCloseShoot = follower.pathBuilder()
                 .addPath(new BezierCurve(
                         endCollectSecondArtifacts,
-                        new Pose(24 + ROBOT_LENGTH / 2, 48 + ROBOT_WIDTH / 2),
+                        new Pose(48 + ROBOT_LENGTH / 2, 48 + ROBOT_WIDTH / 2),
                         shootClosePos))
                 .setLinearHeadingInterpolation(
                         endCollectSecondArtifacts.getHeading(),

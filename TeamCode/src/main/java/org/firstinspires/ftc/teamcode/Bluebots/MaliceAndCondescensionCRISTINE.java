@@ -166,7 +166,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             if (!sweep) {
                 if (gamepad1.dpad_right && swivelTurretMotor.getCurrentPosition() <= TURRET_LIMIT_RIGHT) {
                     swivelTurretMotor.setPower(POWER);
-                } else if (gamepad1.dpad_right && swivelTurretMotor.getCurrentPosition() >= TURRET_LIMIT_LEFT) {
+                } else if (gamepad1.dpad_left && swivelTurretMotor.getCurrentPosition() >= TURRET_LIMIT_LEFT) {
                     swivelTurretMotor.setPower(-POWER);
                 } else {
                     swivelTurretMotor.setPower(0);
