@@ -51,7 +51,7 @@ public class TheDeathOfBlueFarPedroGPTed
     private static final Pose shootClosePos =
             new Pose(48,
                     ROBOT_WIDTH / 2 + 96,
-                    Math.toRadians(-45));
+                    Math.toRadians(-35));
 
     /* ================= PATHS ================= */
 
@@ -65,7 +65,6 @@ public class TheDeathOfBlueFarPedroGPTed
     /* ================= SHOOTER ================= */
 
     private enum ShotPhase { LIFT, DROP, FEED }
-
     private ShotPhase shotPhase = ShotPhase.LIFT;
     private int shotCount = 0;
 
@@ -80,7 +79,6 @@ public class TheDeathOfBlueFarPedroGPTed
         PATH_TO_FIRST,
         WAIT_FIRST,
         COLLECT_FIRST,
-
         BACK_FROM_FIRST,
         WAIT_BACK_FROM_FIRST,
 
@@ -103,7 +101,6 @@ public class TheDeathOfBlueFarPedroGPTed
     }
 
     private AutoState autoState = AutoState.PRELOAD_SPINUP;
-
     private final ElapsedTime timer = new ElapsedTime();
 
     /* ================= RUN ================= */
@@ -112,7 +109,6 @@ public class TheDeathOfBlueFarPedroGPTed
     public void runOpMode() throws InterruptedException {
 
         super.runOpMode();
-
         buildPaths();
         follower.setStartingPose(startPose);
 
@@ -120,31 +116,25 @@ public class TheDeathOfBlueFarPedroGPTed
         timer.reset();
 
         while (opModeIsActive()) {
-
             follower.update();
 
             switch (autoState) {
 
-                /* ========== PRELOAD ========== */
+                /* ================= PRELOAD ================= */
 
                 case PRELOAD_SPINUP:
-
                     outtakeMotor.setVelocity(1900);
                     hoodServo.setPosition(.3);
-                    moveMotorToPosition(-315, .25);
-
+                    moveMotorToPosition(-310, .25);
                     timer.reset();
                     autoState = AutoState.PRELOAD_WAIT;
                     break;
 
                 case PRELOAD_WAIT:
-
                     if (rpmReady(1900) && turretReady()) {
-
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
-
                         timer.reset();
                         autoState = AutoState.PRELOAD_SHOOT;
                     }
@@ -154,7 +144,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     runTripleShot(AutoState.PATH_TO_FIRST);
                     break;
 
-                /* ========== FIRST ROW ========== */
+                /* ================= FIRST ROW ================= */
 
                 case PATH_TO_FIRST:
                     follower.followPath(startToFirstCollect);
@@ -183,36 +173,31 @@ public class TheDeathOfBlueFarPedroGPTed
                         autoState = AutoState.MID_SPINUP;
                     break;
 
-                /* ========== MID ========== */
+                /* ================= MID ================= */
 
                 case MID_SPINUP:
-
                     outtakeMotor.setVelocity(1900);
                     hoodServo.setPosition(.2);
-                    moveMotorToPosition(-315, .25);
-
+                    moveMotorToPosition(-310, .25);
                     timer.reset();
                     autoState = AutoState.MID_WAIT;
                     break;
 
                 case MID_WAIT:
-
                     if (rpmReady(1900)) {
-
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
-
                         timer.reset();
                         autoState = AutoState.MID_SHOOT;
                     }
                     break;
 
                 case MID_SHOOT:
-                    runTripleShot(AutoState.PATH_TO_SECOND);
+                    runTripleShotRightOnly(AutoState.PATH_TO_SECOND);
                     break;
 
-                /* ========== SECOND ROW ========== */
+                /* ================= SECOND ROW ================= */
 
                 case PATH_TO_SECOND:
                     follower.followPath(startToSecondCollect);
@@ -229,7 +214,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     autoState = AutoState.PATH_TO_CLOSE;
                     break;
 
-                /* ========== CLOSE ========== */
+                /* ================= CLOSE ================= */
 
                 case PATH_TO_CLOSE:
                     if (!follower.isBusy()) {
@@ -244,31 +229,28 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case CLOSE_SPINUP:
-
                     outtakeMotor.setVelocity(1500);
                     hoodServo.setPosition(.5);
                     moveMotorToPosition(0, .3);
-
                     timer.reset();
                     autoState = AutoState.CLOSE_WAIT;
                     break;
 
                 case CLOSE_WAIT:
-
                     if (rpmReady(1500)) {
-
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
-
                         timer.reset();
                         autoState = AutoState.CLOSE_SHOOT;
                     }
                     break;
 
                 case CLOSE_SHOOT:
-                    runTripleShot(AutoState.DONE);
+                    runTripleShotRightOnly(AutoState.DONE);
                     break;
+
+                /* ================= DONE ================= */
 
                 case DONE:
                     follower.breakFollowing();
@@ -282,55 +264,85 @@ public class TheDeathOfBlueFarPedroGPTed
         }
     }
 
-    /* ================= SHOOT ROUTINE ================= */
+    /* ================= TRIPLE SHOT (PRELOAD) ================= */
 
     private void runTripleShot(AutoState nextState) {
-
         final double LIFT_TIME = 0.90;
         final double FEED_TIME = 0.50;
 
         if (shotCount >= 3) {
-
             wipersL.primaryPos();
             wipersR.primaryPos();
             intakeMotor.setPower(1);
-
             autoState = nextState;
             return;
         }
 
         switch (shotPhase) {
-
             case LIFT:
-
                 intakeMotor.setPower(0);
-
                 if (shotCount == 0 || shotCount == 2)
                     wipersR.secondaryPos();
                 else
                     wipersL.secondaryPos();
-
                 timer.reset();
                 shotPhase = ShotPhase.DROP;
                 break;
 
             case DROP:
-
                 if (timer.seconds() > LIFT_TIME) {
-
                     wipersL.primaryPos();
                     wipersR.primaryPos();
                     intakeMotor.setPower(1);
-
                     timer.reset();
                     shotPhase = ShotPhase.FEED;
                 }
                 break;
 
             case FEED:
-
                 if (timer.seconds() > FEED_TIME) {
+                    intakeMotor.setPower(0);
+                    shotCount++;
+                    shotPhase = ShotPhase.LIFT;
+                    timer.reset();
+                }
+                break;
+        }
+    }
 
+    /* ================= RIGHT-ONLY SHOOT ================= */
+
+    private void runTripleShotRightOnly(AutoState nextState) {
+        final double LIFT_TIME = 0.90;
+        final double FEED_TIME = 0.50;
+
+        if (shotCount >= 3) {
+            wipersL.primaryPos();
+            wipersR.primaryPos();
+            intakeMotor.setPower(.3);
+            autoState = nextState;
+            return;
+        }
+
+        switch (shotPhase) {
+            case LIFT:
+                intakeMotor.setPower(0);
+                wipersR.secondaryPos(); // always right
+                timer.reset();
+                shotPhase = ShotPhase.DROP;
+                break;
+
+            case DROP:
+                if (timer.seconds() > LIFT_TIME) {
+                    wipersR.primaryPos();
+                    intakeMotor.setPower(.3);
+                    timer.reset();
+                    shotPhase = ShotPhase.FEED;
+                }
+                break;
+
+            case FEED:
+                if (timer.seconds() > FEED_TIME) {
                     intakeMotor.setPower(0);
                     shotCount++;
                     shotPhase = ShotPhase.LIFT;
@@ -353,7 +365,6 @@ public class TheDeathOfBlueFarPedroGPTed
     }
 
     private void moveMotorToPosition(int target, double power) {
-
         swivelTurretMotor.setTargetPosition(target);
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         swivelTurretMotor.setPower(power);
@@ -364,44 +375,35 @@ public class TheDeathOfBlueFarPedroGPTed
     private void buildPaths() {
 
         startToFirstCollect = follower.pathBuilder()
-                .addPath(new BezierLine(startPose,
-                        startCollectFirstArtifacts))
+                .addPath(new BezierLine(startPose, startCollectFirstArtifacts))
                 .setLinearHeadingInterpolation(
                         startPose.getHeading(),
                         startCollectFirstArtifacts.getHeading())
                 .build();
 
         firstCollect = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        startCollectFirstArtifacts,
-                        endCollectFirstArtifacts))
+                .addPath(new BezierLine(startCollectFirstArtifacts, endCollectFirstArtifacts))
                 .setLinearHeadingInterpolation(
                         startCollectFirstArtifacts.getHeading(),
                         endCollectFirstArtifacts.getHeading())
                 .build();
 
         backFromFirst = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        endCollectFirstArtifacts,
-                        resetStartPose))
+                .addPath(new BezierLine(endCollectFirstArtifacts, resetStartPose))
                 .setLinearHeadingInterpolation(
                         endCollectFirstArtifacts.getHeading(),
                         resetStartPose.getHeading())
                 .build();
 
         startToSecondCollect = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        resetStartPose,
-                        startCollectSecondArtifacts))
+                .addPath(new BezierLine(resetStartPose, startCollectSecondArtifacts))
                 .setLinearHeadingInterpolation(
                         resetStartPose.getHeading(),
                         startCollectSecondArtifacts.getHeading())
                 .build();
 
         secondCollect = follower.pathBuilder()
-                .addPath(new BezierLine(
-                        startCollectSecondArtifacts,
-                        endCollectSecondArtifacts))
+                .addPath(new BezierLine(startCollectSecondArtifacts, endCollectSecondArtifacts))
                 .setLinearHeadingInterpolation(
                         startCollectSecondArtifacts.getHeading(),
                         endCollectSecondArtifacts.getHeading())
@@ -410,9 +412,7 @@ public class TheDeathOfBlueFarPedroGPTed
         goToCloseShoot = follower.pathBuilder()
                 .addPath(new BezierCurve(
                         endCollectSecondArtifacts,
-                        new Pose(
-                                24 + ROBOT_LENGTH / 2,
-                                48 + ROBOT_WIDTH / 2),
+                        new Pose(48 + ROBOT_LENGTH / 2, 48 + ROBOT_WIDTH / 2),
                         shootClosePos))
                 .setLinearHeadingInterpolation(
                         endCollectSecondArtifacts.getHeading(),
