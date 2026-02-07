@@ -182,9 +182,9 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 double tx = getTX(limelight);
                 // red: .277, green: .444
                 if (tx <= -1) {
-                    swivelTurretMotor.setPower(-POWER * 1.5);
+                    swivelTurretMotor.setPower(-POWER * 1.25);
                 } else if (tx >= 1) {
-                    swivelTurretMotor.setPower(POWER * 1.5);
+                    swivelTurretMotor.setPower(POWER * 1.25);
                 }
 
                 if (tx < 1 && -1 > tx) {

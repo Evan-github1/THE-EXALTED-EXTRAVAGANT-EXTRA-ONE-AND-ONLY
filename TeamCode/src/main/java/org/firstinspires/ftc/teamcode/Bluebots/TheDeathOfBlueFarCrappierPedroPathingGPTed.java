@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Bluebots.TheDeathOfPedroPathing;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 
 @Autonomous
@@ -99,15 +98,15 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
                 /* ================= PRELOAD ================= */
 
                 case PRELOAD_SPINUP:
-                    outtakeMotor.setVelocity(1775);
-                    hoodServo.setPosition(.3);
+                    outtakeMotor.setVelocity(1800);
+                    hoodServo.setPosition(.4);
                     moveMotorToPosition(-315, .25);
                     timer.reset();
                     autoState = AutoState.PRELOAD_WAIT;
                     break;
 
                 case PRELOAD_WAIT:
-                    if (rpmReady(1775) && turretReady()) {
+                    if (rpmReady(1800) && turretReady()) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
@@ -152,7 +151,7 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
                     break;
 
                 case CLOSE_SPINUP:
-                    outtakeMotor.setVelocity(1500);
+                    outtakeMotor.setVelocity(1400);
                     hoodServo.setPosition(.5);
                     moveMotorToPosition(0, .3);
                     timer.reset();
@@ -160,7 +159,7 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
                     break;
 
                 case CLOSE_WAIT:
-                    if (rpmReady(1500)) {
+                    if (rpmReady(1400)) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
