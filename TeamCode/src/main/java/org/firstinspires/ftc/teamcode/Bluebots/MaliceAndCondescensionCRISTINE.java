@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.ChamberState;
@@ -27,7 +28,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
     private static int targetedID;
-    private static double targetRPM;
+    private static double targetVelocity;
     private static Servo hoodServo;
 
     private static ColorSensing colorSensing;
@@ -46,6 +47,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static final int TURRET_LIMIT_RIGHT = 300;
     private static int currentPipeline = -1;
     private static final double OUTTAKE_TICKS_PER_REV = 28;
+    private static Servo light;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -63,14 +65,14 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         outtakeToggle = false;
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        targetRPM = 4000;
+        targetVelocity = 2000;
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
         wiperR = hardwareMap.get(Servo.class, "wiperR");
         wiperL = hardwareMap.get(Servo.class, "wiperL");
 
-        gateways = new DoubleSwitchedServo(gatewayServo, .26, .73); // .26: right side (when looking at the back)
+        gateways = new DoubleSwitchedServo(gatewayServo, .26, .73); // .26: left front
 
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
@@ -107,6 +109,11 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
         swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(2, 0, 0, 13.2);
+        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+        light = hardwareMap.get(Servo.class, "lights");
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
@@ -173,11 +180,20 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 telemetry.addLine("I see the targeted ID!");
                 sweep = false;
                 double tx = getTX(limelight);
+                // red: .277, green: .444
                 if (tx <= -1) {
-                    swivelTurretMotor.setPower(-POWER/2);
+                    swivelTurretMotor.setPower(-POWER * 1.5);
                 } else if (tx >= 1) {
-                    swivelTurretMotor.setPower(POWER/2);
+                    swivelTurretMotor.setPower(POWER * 1.5);
                 }
+
+                if (tx < 1 && -1 > tx) {
+                    light.setPosition(.444);
+                } else {
+                    light.setPosition(.277);
+                }
+            } else {
+                light.setPosition(.277);
             }
 
             if (gamepad1.b && delay()) {
@@ -217,11 +233,11 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.dpad_up && delay()) {
-                targetRPM += 50;
+            if (gamepad1.dpad_up && targetVelocity < 2000 && delay(100)) {
+                targetVelocity += 50;
                 time = System.currentTimeMillis();
-            } else if (gamepad1.dpad_down && delay()) {
-                targetRPM -= 50;
+            } else if (gamepad1.dpad_down && targetVelocity > 1500 && delay(100)) {
+                targetVelocity -= 50;
                 time = System.currentTimeMillis();
             }
 
@@ -244,19 +260,17 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                     intakeMotor.setPower(1);
                 }
 
-            } else if (!intakeToggle) {
+            } else if (!intakeToggle && !gamepad1.x) {
                 intakeMotor.setPower(0);
             }
 
             if (outtakeToggle) {
-                outtakeMotor.setVelocity(getTargetTicksPerSec(OUTTAKE_TICKS_PER_REV, targetRPM));
+                outtakeMotor.setVelocity(targetVelocity);
             } else {
                 outtakeMotor.setVelocity(0);
             }
-            telemetry.addData("Target RPM", targetRPM);
-            telemetry.addData("Measured RPM",
-                    outtakeMotor.getVelocity() * 60.0 / OUTTAKE_TICKS_PER_REV);
-            telemetry.addData("Ticks/sec", outtakeMotor.getVelocity());
+            telemetry.addData("Target Velocity", targetVelocity);
+            telemetry.addData("Velocity", outtakeMotor.getVelocity());
 
             // GAMEPAD 2
             if (gamepad2.right_trigger >= .5 && delay(1001)) {
@@ -340,7 +354,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     }
 
     private void liftRightWiperNT() {
-        intakeMotor.setPower(-.75);
+        intakeMotor.setPower(-1);
         wipersR.secondaryPos();
         rightState = ChamberState.EMPTY;
         rightStoredColor = Colors.UNKNOWN;
@@ -353,7 +367,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     }
 
     private void liftLeftWiperNT() {
-        intakeMotor.setPower(-.75);
+        intakeMotor.setPower(-1);
         wipersL.secondaryPos();
         leftState = ChamberState.EMPTY;
         leftStoredColor = Colors.UNKNOWN;

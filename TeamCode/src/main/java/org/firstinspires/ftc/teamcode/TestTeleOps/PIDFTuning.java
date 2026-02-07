@@ -1,17 +1,11 @@
 package org.firstinspires.ftc.teamcode.TestTeleOps;
 import static java.lang.Thread.sleep;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.RobotFunctions.ChamberState;
-import org.firstinspires.ftc.teamcode.RobotFunctions.Colors;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 
 
@@ -19,7 +13,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 public class PIDFTuning extends OpMode {
 
     private static DcMotorEx outtakeMotor;
-    private static final double HIGH_VELOCITY = 3800, LOW_VELOCITY = 3000;
+    private static final double HIGH_VELOCITY = 2000, LOW_VELOCITY = 1500;
     private static double currentTargetVelocity;
     private static double F = 0, P = 0;
     private static double[] stepSizes = {10, 1, .1, .01, .001, .0001};
@@ -53,8 +47,7 @@ public class PIDFTuning extends OpMode {
                 currentTargetVelocity = HIGH_VELOCITY;
             }
 
-            // f = 20.28
-            // p =
+
         }
 
         if (gamepad1.bWasPressed()) {

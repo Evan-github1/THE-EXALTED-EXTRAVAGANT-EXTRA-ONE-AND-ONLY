@@ -5,7 +5,12 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.RobotFunctions.ChamberState;
+import org.firstinspires.ftc.teamcode.RobotFunctions.ColorSensing;
+import org.firstinspires.ftc.teamcode.RobotFunctions.Colors;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 
 @Autonomous
@@ -15,6 +20,7 @@ public class TheDeathOfBlueFarPedroPathing extends TheDeathOfPedroPathing implem
     private static Pose startCollectFirstArtifcats = new Pose(48 + ROBOT_LENGTH/2, ROBOT_WIDTH/2 + 26, Math.toRadians(180));
     private static Pose endCollectFirstArtifcats = new Pose(ROBOT_LENGTH/2, ROBOT_WIDTH/2 + 26, Math.toRadians(180));
 
+    private static Pose resetStartPose = new Pose(48 + ROBOT_LENGTH/2, ROBOT_WIDTH/2 + 2, Math.toRadians(180));
     private static Pose startCollectSecondArtifcats = new Pose(48 + ROBOT_LENGTH/2, ROBOT_WIDTH/2 + 48, Math.toRadians(180));
     private static Pose endCollectSecondArtifcats = new Pose(ROBOT_LENGTH/2, ROBOT_WIDTH/2 + 48, Math.toRadians(180));
 
@@ -37,13 +43,13 @@ public class TheDeathOfBlueFarPedroPathing extends TheDeathOfPedroPathing implem
                 .build();
 
         goBackToStartFromFirstCollect = follower.pathBuilder()
-                .addPath(new BezierLine(endCollectFirstArtifcats, startPose))
-                .setLinearHeadingInterpolation(endCollectFirstArtifcats.getHeading(), startPose.getHeading())
+                .addPath(new BezierLine(endCollectFirstArtifcats, resetStartPose))
+                .setLinearHeadingInterpolation(endCollectFirstArtifcats.getHeading(), resetStartPose.getHeading())
                 .build();
 
         startToSecondCollect = follower.pathBuilder()
-                .addPath(new BezierLine(startPose, startCollectSecondArtifcats))
-                .setLinearHeadingInterpolation(startPose.getHeading(), startCollectSecondArtifcats.getHeading())
+                .addPath(new BezierLine(resetStartPose, startCollectSecondArtifcats))
+                .setLinearHeadingInterpolation(resetStartPose.getHeading(), startCollectSecondArtifcats.getHeading())
                 .build();
 
         secondCollect = follower.pathBuilder()
@@ -58,13 +64,24 @@ public class TheDeathOfBlueFarPedroPathing extends TheDeathOfPedroPathing implem
 
         follower.setStartingPose(startPose);
 
+        outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         waitForStart();
 
+        intakeMotor.setPower(1);
         int id = -1;
         ElapsedTime detectTimer = new ElapsedTime();
 
+        outtakeMotor.setVelocity(2000);
+        hoodServo.setPosition(.3);
+        swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        moveMotorToPosition(-250, .2);
+
         while (opModeIsActive()
-                && detectTimer.seconds() < 4.0
+                && detectTimer.seconds() < 3.0
                 && id != 21
                 && id != 22
                 && id != 23) {
@@ -78,14 +95,30 @@ public class TheDeathOfBlueFarPedroPathing extends TheDeathOfPedroPathing implem
             motifID = id;
         }
 
-        // shoot
+        moveMotorToPosition(-320, .2);
+
+        ElapsedTime spinupTimer = new ElapsedTime();
+        while (opModeIsActive()
+                && outtakeMotor.getVelocity() < 1990
+                && spinupTimer.seconds() < 3.0) {
+            telemetry.addLine("Spinning up the outtake...");
+            telemetry.addData("Velocity", outtakeMotor.getVelocity());
+            telemetry.update();
+
+            idle();
+        }
+
+        motifMacroShoot();
 
         limelight.pipelineSwitch(0);
 
         while (opModeIsActive()) {
-            follower.update();
+            if (shooting) {
+                follower.update();
+                continue;
+            }
+            detectColors();
             telemetry.addLine("Running!");
-
             switch (pathState) {
                 case 0:
                     follower.followPath(startToFirstCollect);
@@ -94,23 +127,22 @@ public class TheDeathOfBlueFarPedroPathing extends TheDeathOfPedroPathing implem
 
                 case 1:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(1);
-                        follower.followPath(firstCollect, .25, true);
+                        follower.followPath(firstCollect, .5, true);
                         pathState++;
                     }
                     break;
 
                 case 2:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(0);
                         follower.followPath(goBackToStartFromFirstCollect);
+                        moveMotorToPosition(-320, .2);
+                        motifMacroShoot();
                         pathState++;
                     }
                     break;
 
                 case 3:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(1);
                         follower.followPath(startToSecondCollect);
                         pathState++;
                     }
@@ -118,8 +150,7 @@ public class TheDeathOfBlueFarPedroPathing extends TheDeathOfPedroPathing implem
 
                 case 4:
                     if (!follower.isBusy()) {
-                        intakeMotor.setPower(0);
-                        follower.followPath(secondCollect, .25, true);
+                        follower.followPath(secondCollect, .5, true);
                         pathState++;
                     }
                     break;
@@ -132,9 +163,21 @@ public class TheDeathOfBlueFarPedroPathing extends TheDeathOfPedroPathing implem
                     break;
             }
 
+            telemetry.addData("Left Chamber", leftState);
+            telemetry.addData("Left Stored Color", leftStoredColor);
+
+            telemetry.addData("Right Chamber", rightState);
+            telemetry.addData("Right Stored Color", rightStoredColor);
             telemetry.update();
         }
     }
+
+    public void moveMotorToPosition(int targetPosition, double power) {
+        swivelTurretMotor.setTargetPosition(targetPosition);
+        swivelTurretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        swivelTurretMotor.setPower(power);
+    }
+
 
     @Override
     public void tag20() {}

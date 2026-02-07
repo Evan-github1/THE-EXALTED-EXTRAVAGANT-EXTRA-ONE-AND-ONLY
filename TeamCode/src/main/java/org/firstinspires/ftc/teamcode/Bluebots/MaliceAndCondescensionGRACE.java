@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode.Bluebots;
+import android.graphics.Color;
+
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.RobotFunctions.ChamberState;
+import org.firstinspires.ftc.teamcode.RobotFunctions.ColorSensing;
+import org.firstinspires.ftc.teamcode.RobotFunctions.Colors;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
@@ -13,7 +19,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 public class MaliceAndCondescensionGRACE extends Movable implements LimelightTags { // robot #22335
 
     private static Limelight3A limelight;
-    private static Servo swivelTurretServo;
+    private static DcMotorEx swivelTurretMotor;
     private static DcMotor intakeMotor;
     private static DcMotorEx outtakeMotor;
     private static boolean intakeToggle, outtakeToggle;
@@ -21,33 +27,37 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
     private static DoubleSwitchedServo gateways;
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
-    private static DoubleSwitchedServo swivelTurret;
     private static int targetedID;
-    private static double targetRPM;
-    private static boolean turnLeft;
-    private static boolean tracking;
+    private static double targetVelocity;
     private static Servo hoodServo;
-    private static volatile boolean turretStop;
-    private static boolean sweeping = false;
-    private static double sweepDirection = 0; // +1 = sweep right, -1 = sweep left
-    private static final double SWEEP_SPEED = 0.005;
-    private static boolean sweepInit;
-    private static boolean sweepActive;
-    private static double sweepTarget;
-    private static int currentIndex = 0;
+
+    private static ColorSensing colorSensing;
+    private static int motifID;
+
+    private static ChamberState leftState;
+    private static ChamberState rightState;
+
+    private static Colors leftStoredColor;
+    private static Colors rightStoredColor;
+
+    private static volatile boolean sweep;
+    private static volatile boolean moveLeft;
+
+    private static final int TURRET_LIMIT_LEFT = -300;
+    private static final int TURRET_LIMIT_RIGHT = 300;
+    private static int currentPipeline = -1;
+    private static final double OUTTAKE_TICKS_PER_REV = 28;
+    private static Servo light;
 
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
-        limelight.pipelineSwitch(0); // april tags
+        limelight.pipelineSwitch(3); // motif mode
         targetedID = 20;
-        tracking = true;
-        turnLeft = false;
 
-        swivelTurretServo = hardwareMap.get(Servo.class, "swivelTurret");
-        swivelTurret = new DoubleSwitchedServo(swivelTurretServo, .1, .54);
+        swivelTurretMotor = hardwareMap.get(DcMotorEx.class, "swivelTurret");
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intake");
         outtakeMotor = hardwareMap.get(DcMotorEx.class, "outtake");
@@ -55,14 +65,14 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
         outtakeToggle = false;
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        targetRPM = 1450;
+        targetVelocity = 2000;
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
         wiperR = hardwareMap.get(Servo.class, "wiperR");
         wiperL = hardwareMap.get(Servo.class, "wiperL");
 
-        gateways = new DoubleSwitchedServo(gatewayServo, .26, .73); // .26: right side (when looking at the back)
+        gateways = new DoubleSwitchedServo(gatewayServo, .26, .73); // .26: left front
 
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
@@ -78,33 +88,114 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
         FRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BRW.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        turretStop = true;
+        colorSensing = new ColorSensing(hardwareMap, 18);
 
-        sweepInit = false;
-        sweepActive = false;
-        sweepTarget = 0.07;
+        leftStoredColor = Colors.UNKNOWN;
+        rightStoredColor = Colors.UNKNOWN;
+        leftState = ChamberState.EMPTY;
+        rightState = ChamberState.EMPTY;
+
+        motifID = -1;
+        outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        sweep = false;
+        moveLeft = true;
 
         waitForStart();
 
         wipersL.primaryPos();
         wipersR.primaryPos();
         hoodServo.setPosition(0);
-        swivelTurretServo.setPosition(.1975);
 
-        outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(2, 0, 0, 13.2);
+        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+        light = hardwareMap.get(Servo.class, "lights");
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
-            telemetry.addData("CURRENT TARGETED ID", targetedID);
+            telemetry.addData("Camera is targetting", targetedID);
             telemetry.addData("Outtake Encoder", outtakeMotor.getCurrentPosition());
             omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
             turn();
 
-            //if (tracking) PrincessEyes();
             int id = detectTag(limelight, telemetry);
-            telemetry.addData("Turret Stop", turretStop);
 
-            telemetry.addData("Swivel Turret Position", swivelTurretServo.getPosition());
+            int desiredPipeline;
+
+            if (motifID == -1) {
+                desiredPipeline = 3; // motif mode
+            } else {
+                desiredPipeline = 0; // targeting mode
+            }
+
+            if (desiredPipeline != currentPipeline) {
+                limelight.pipelineSwitch(desiredPipeline);
+                currentPipeline = desiredPipeline;
+            }
+            if (motifID == -1 && (id == 21 || id == 22 || id == 23)) {
+                motifID = id;
+            }
+
+            telemetry.addData("Motif ID", motifID);
+            telemetry.addLine("I spy with my little eye... " + id);
+
+            if (gamepad1.leftStickButtonWasPressed()) {
+                sweep = !sweep;
+            }
+
+            final double POWER = .1;
+            telemetry.addData("Sweep", sweep);
+            if (sweep) {
+                if (moveLeft) {
+                    swivelTurretMotor.setPower(-POWER);
+                } else {
+                    swivelTurretMotor.setPower(POWER);
+                }
+
+                if (swivelTurretMotor.getCurrentPosition() <= TURRET_LIMIT_LEFT) {
+                    moveLeft = false;
+                } else if (swivelTurretMotor.getCurrentPosition() >= TURRET_LIMIT_RIGHT) {
+                    moveLeft = true;
+                }
+            }
+
+            if (!sweep) {
+                if (gamepad1.dpad_right && swivelTurretMotor.getCurrentPosition() <= TURRET_LIMIT_RIGHT) {
+                    swivelTurretMotor.setPower(POWER);
+                } else if (gamepad1.dpad_left && swivelTurretMotor.getCurrentPosition() >= TURRET_LIMIT_LEFT) {
+                    swivelTurretMotor.setPower(-POWER);
+                } else {
+                    swivelTurretMotor.setPower(0);
+                }
+            }
+
+            telemetry.addData("Turret Rotate Encoder", swivelTurretMotor.getCurrentPosition());
+
+
+            if (id == targetedID) {
+                telemetry.addLine("I see the targeted ID!");
+                sweep = false;
+                double tx = getTX(limelight);
+                // red: .277, green: .444
+                if (tx <= -1) {
+                    swivelTurretMotor.setPower(-POWER * 1.5);
+                } else if (tx >= 1) {
+                    swivelTurretMotor.setPower(POWER * 1.5);
+                }
+
+                if (tx < 1 && -1 > tx) {
+                    light.setPosition(.444);
+                } else {
+                    light.setPosition(.277);
+                }
+            } else {
+                light.setPosition(.277);
+            }
+
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
                 time = System.currentTimeMillis();
@@ -128,7 +219,7 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
 
             if (gamepad1.left_bumper) {
                 hoodServo.setPosition(hoodServo.getPosition() - .01);
-            } else if (gamepad1.right_bumper && hoodServo.getPosition() <= .8) {
+            } else if (gamepad1.right_bumper) {
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
             telemetry.addData("Hood Position", hoodServo.getPosition());
@@ -142,110 +233,46 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 time = System.currentTimeMillis();
             }
 
-            PrincessEyesv3(); // uses option button
-
-            if (gamepad1.x) {
-                intakeMotor.setPower(-1);
-            }
-
-            if (gamepad1.dpad_up && delay() && targetRPM <= 2300) {
-                if (targetRPM == 1600) {
-                    targetRPM = 2100;
-                } else {
-                    targetRPM += 50;
-                }
+            if (gamepad1.dpad_up && targetVelocity < 2000 && delay(100)) {
+                targetVelocity += 50;
                 time = System.currentTimeMillis();
-            } else if (gamepad1.dpad_down && delay() && targetRPM >= 1450) {
-                if (targetRPM == 2100) {
-                    targetRPM = 1600;
-                } else {
-                    targetRPM -= 50;
-                }
+            } else if (gamepad1.dpad_down && targetVelocity > 1500 && delay(100)) {
+                targetVelocity -= 50;
                 time = System.currentTimeMillis();
             }
 
-            if (targetRPM >= 1400 && targetRPM <= 1600) { // low is yellow
-                gamepad1.setLedColor(255, 255, 0, 5);
-                telemetry.addData("yellow", true);
-            } else if (targetRPM >= 2100 && targetRPM <= 2350) { // high is green
-                gamepad1.setLedColor(0, 255, 0, 5);
-                telemetry.addData("green", true);
-            } else { // ??? is red
-                gamepad1.setLedColor(255, 0, 0, 5);
-                telemetry.addData("red", true);
-            }
-
-            if (gamepad1.dpad_right && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
-            } else if (gamepad1.dpad_left && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
-            }
-
-            if (gamepad1.leftStickButtonWasPressed() && delay(5000)) {
-                if (gatewayServo.getPosition() < .5) {
-                    new Thread(() -> {
-                        wipersL.secondaryPos();
-                        sleep(1000);
-                        wipersL.primaryPos();
-
-                        sleep(500);
-
-                        wipersR.secondaryPos();
-                        sleep(1000);
-                        wipersR.primaryPos();
-
-                        sleep(500);
-
-                        wipersL.secondaryPos();
-                        sleep(1000);
-                        wipersL.primaryPos();
-                    }).start();
-                } else if (gatewayServo.getPosition() > .5) {
-                    new Thread(() -> {
-                        wipersR.secondaryPos();
-                        sleep(1000);
-                        wipersR.primaryPos();
-
-                        sleep(500);
-
-                        wipersL.secondaryPos();
-                        sleep(1000);
-                        wipersL.primaryPos();
-
-                        sleep(500);
-
-                        wipersR.secondaryPos();
-                        sleep(1000);
-                        wipersR.primaryPos();
-
-                    }).start();
-                }
+            if (gamepad1.shareWasPressed()) {
+                motifMacroShoot();
                 time = System.currentTimeMillis();
             }
 
             telemetry.addData("Gateway Position", gatewayServo.getPosition());
 
-            if (intakeToggle) {
+            if (intakeToggle || gamepad1.x) {
                 boolean LUp = wiperL.getPosition() == wipersL.getSecondaryPos();
                 boolean RUp = wiperR.getPosition() == wipersR.getSecondaryPos();
 
-                if (LUp || RUp) {
+                if (gamepad1.x) {
+                    intakeMotor.setPower(-1);
+                } else if (LUp || RUp) {
                     intakeMotor.setPower(0);
                 } else {
                     intakeMotor.setPower(1);
                 }
-            } else if (!gamepad1.x || !intakeToggle) {
+
+            } else if (!intakeToggle && !gamepad1.x) {
                 intakeMotor.setPower(0);
             }
 
             if (outtakeToggle) {
-                outtakeMotor.setVelocity(getTargetTicksPerSec(28, targetRPM));
+                outtakeMotor.setVelocity(targetVelocity);
             } else {
                 outtakeMotor.setVelocity(0);
             }
-            telemetry.addData("Target RPM", targetRPM);
-            telemetry.addData("Measured RPM", outtakeMotor.getVelocity() * 60.0 / 28);
-            telemetry.addData("Ticks/sec", outtakeMotor.getVelocity());
+            telemetry.addData("Target Velocity", targetVelocity);
+//            telemetry.addData("Measured RPM",
+//                    outtakeMotor.getVelocity() * 60.0 / OUTTAKE_TICKS_PER_REV);
+            telemetry.addData("Velocity", outtakeMotor.getVelocity());
 
             // GAMEPAD 2
             if (gamepad2.right_trigger >= .5 && delay(1001)) {
@@ -266,180 +293,150 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 hoodServo.setPosition(hoodServo.getPosition() + .01);
             }
 
-            if (gamepad2.dpad_right && swivelTurretServo.getPosition() > swivelTurret.getPrimaryPos()) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - 0.004);
-            } else if (gamepad2.dpad_left && swivelTurretServo.getPosition() < swivelTurret.getSecondaryPos()) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + 0.004);
-            }
-
             // END OF GAMEPAD 2
 
-            if (id == targetedID) {
-                telemetry.addData("hi", "yes");
-                turretStop = true;
-                double tx = getTX(limelight);
-                if (tx <= -3 && swivelTurretServo.getPosition() >= .57) {
-                    // move turret left
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0001);
-                } else if (tx >= 3 && swivelTurretServo.getPosition() <= .07) {
-                    // move turret right
-                    swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0001);
+            if (rightState == ChamberState.EMPTY) {
+                Colors detected = colorSensing.detectColorRight(telemetry);
+                if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
+                    rightStoredColor = detected;
+                    rightState = ChamberState.LOADED;
                 }
             }
 
-            double TX = getTX(limelight);
-
-            if (TX > 0 && id == targetedID) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() - .0004);
-            } else if (TX < 0 && id == targetedID) {
-                swivelTurretServo.setPosition(swivelTurretServo.getPosition() + .0004);
+            if (leftState == ChamberState.EMPTY) {
+                Colors detected = colorSensing.detectColorLeft(telemetry);
+                if (detected != Colors.UNKNOWN && wiperL.getPosition() != wipersL.getSecondaryPos()) {
+                    leftStoredColor = detected;
+                    leftState = ChamberState.LOADED;
+                }
             }
-            telemetry.addData("TX", TX);
+
+            telemetry.addData("Left Chamber", leftState);
+            telemetry.addData("Left Stored Color", leftStoredColor);
+
+            telemetry.addData("Right Chamber", rightState);
+            telemetry.addData("Right Stored Color", rightStoredColor);
             telemetry.update();
         }
+    }
+
+    private void motifMacroShoot() {
+        final Colors[][] MOTIFS = {
+                {Colors.GREEN, Colors.PURPLE, Colors.PURPLE}, // 21
+                {Colors.PURPLE, Colors.GREEN, Colors.PURPLE}, // 22
+                {Colors.PURPLE, Colors.PURPLE, Colors.GREEN} // 23
+        };
+        gatewayServo.setPosition(.495);
+        new Thread(() -> {
+            if (motifID == 21 || motifID == 22 || motifID == 23) {
+                Colors[] motif = MOTIFS[motifID - 21];
+                for (int i = 0; i < motif.length; i++) {
+                    if (leftStoredColor == motif[i]) {
+                        liftLeftWiperNT();
+                    } else if (rightStoredColor == motif[i]) {
+                        liftRightWiperNT();
+                    } else if (leftStoredColor != Colors.UNKNOWN) {
+                        liftLeftWiperNT();
+                    } else if (rightStoredColor != Colors.UNKNOWN) {
+                        liftRightWiperNT();
+                    }
+                    sleep(300);
+                }
+            } else {
+                // shoot whatever it sees
+                for (int i = 1; i <= 3; i++) {
+                    if (leftStoredColor != Colors.UNKNOWN) {
+                        liftLeftWiperNT();
+                    } else if (rightStoredColor != Colors.UNKNOWN) {
+                        liftRightWiperNT();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private void liftRightWiperNT() {
+        intakeMotor.setPower(-1);
+        wipersR.secondaryPos();
+        rightState = ChamberState.EMPTY;
+        rightStoredColor = Colors.UNKNOWN;
+        sleep(250);
+        wipersR.primaryPos();
+        rightState = ChamberState.EMPTY;
+        rightStoredColor = Colors.UNKNOWN;
+        sleep(500);
+        intakeMotor.setPower(1);
+    }
+
+    private void liftLeftWiperNT() {
+        intakeMotor.setPower(-1);
+        wipersL.secondaryPos();
+        leftState = ChamberState.EMPTY;
+        leftStoredColor = Colors.UNKNOWN;
+        sleep(250);
+        wipersL.primaryPos();
+        leftState = ChamberState.EMPTY;
+        leftStoredColor = Colors.UNKNOWN;
+        sleep(500);
+        intakeMotor.setPower(1);
     }
 
     private void liftRightWiper() {
         new Thread(() -> {
             wipersR.secondaryPos();
-            sleep(1000);
+            rightState = ChamberState.EMPTY;
+            rightStoredColor = Colors.UNKNOWN;
+            sleep(250);
             wipersR.primaryPos();
+            rightState = ChamberState.EMPTY;
+            rightStoredColor = Colors.UNKNOWN;
         }).start();
     }
 
     private void liftLeftWiper() {
         new Thread(() -> {
             wipersL.secondaryPos();
-            sleep(1000);
+            leftState = ChamberState.EMPTY;
+            leftStoredColor = Colors.UNKNOWN;
+            sleep(250);
             wipersL.primaryPos();
+            leftState = ChamberState.EMPTY;
+            leftStoredColor = Colors.UNKNOWN;
         }).start();
     }
 
-    private double getTargetTicksPerSec(double ticksPerRev, double targetRPM) {
-        return (ticksPerRev * targetRPM) / 60;
-    }
-
-    public void PrincessEyesv3() {
-
-        double leftPos  = swivelTurret.getPrimaryPos();
-        double rightPos = swivelTurret.getSecondaryPos();
-        double step = 0.003;   // sweep speed per cycle
-
-        // -------------------------
-        // Initialization (runs once)
-        // -------------------------
-        if (!sweepInit) {
-            sweepInit = true;
-            sweepActive = false;
-            sweepTarget = leftPos;
-        }
-
-        // -------------------------
-        // Handle button press toggle
-        // -------------------------
-        if (gamepad1.share && !sweepActive && delay()) {
-
-            sweepActive = true;
-            double current = swivelTurretServo.getPosition();
-
-            // Choose direction based on current position
-            if (Math.abs(current - leftPos) < 0.1) {
-                sweepTarget = rightPos;
-            } else {
-                sweepTarget = leftPos;
-            }
-
-            time = System.currentTimeMillis();
-        }
-
-        // -------------------------
-        // Perform sweep motion
-        // -------------------------
-        if (sweepActive) {
-
-            // Stop if AprilTag found
-            int tag = detectTag(limelight, telemetry);
-            if (tag == targetedID) {
-                sweepActive = false;
-                telemetry.addLine("Turret stopped: Tag 20 detected");
-                return;
-            }
-
-            double current = swivelTurretServo.getPosition();
-            double next;
-
-            // Move toward target incrementally
-            if (current < sweepTarget) {
-                next = Math.min(current + step, sweepTarget);
-            } else {
-                next = Math.max(current - step, sweepTarget);
-            }
-
-            swivelTurretServo.setPosition(next);
-
-            // End sweep when very close
-            if (Math.abs(next - sweepTarget) < 0.005) {
-                sweepActive = false;
-            }
-        }
-
-        // -------------------------
-        // Telemetry
-        // -------------------------
-        telemetry.addData("TurretPos", swivelTurretServo.getPosition());
-        telemetry.addData("SweepActive", sweepActive);
-    }
-
-
-
-    @Override
-    public void tag20() {
-
+    private double getTargetTicksPerSec(double ticksPerRevolution, double desiredRPM) {
+        return (ticksPerRevolution * desiredRPM) / 60;
     }
 
     @Override
-    public void tag21() {
-
-    }
-
+    public void tag20() {}
     @Override
-    public void tag22() {
-
-    }
-
+    public void tag21() {}
     @Override
-    public void tag23() {
-
-    }
-
+    public void tag22() {}
     @Override
-    public void tag24() {
-
-    }
-
+    public void tag23() {}
     @Override
-    public void nothing() {
-
-    }
+    public void tag24() {}
+    @Override
+    public void nothing() {}
 
     @Override
     protected void turn() {
         final double POWER = .75;
-        final double SPEED = 0.0025;
-        if (gamepad1.right_stick_x < -.3) {
-            FLW.setPower(POWER);
-            FRW.setPower(-POWER);
-            BLW.setPower(POWER);
-            BRW.setPower(-POWER);
-            if (swivelTurretServo.getPosition() >= .07) swivelTurretServo.setPosition(swivelTurretServo.getPosition() - SPEED);
-        } else if (gamepad1.right_stick_x > .3) {
+        if (gamepad1.right_stick_x >= .2) { // turn right
             FLW.setPower(-POWER);
             FRW.setPower(POWER);
             BLW.setPower(-POWER);
             BRW.setPower(POWER);
-            if (swivelTurretServo.getPosition() <= .57) swivelTurretServo.setPosition(swivelTurretServo.getPosition() + SPEED);
-        } else if (gamepad1.right_stick_x >= -.3 && gamepad1.right_stick_x <= .3
-        && gamepad1.left_stick_y == 0 && gamepad1.left_stick_x == 0) {
+        } else if (gamepad1.right_stick_x <= -.2) { // turn left
+            FLW.setPower(POWER);
+            FRW.setPower(-POWER);
+            BLW.setPower(POWER);
+            BRW.setPower(-POWER);
+        } else if (gamepad1.right_stick_x < .2 && gamepad1.right_stick_x > -.2
+                && gamepad1.left_stick_y == 0 && gamepad1.left_stick_x == 0) {
             disablePower();
         }
     }

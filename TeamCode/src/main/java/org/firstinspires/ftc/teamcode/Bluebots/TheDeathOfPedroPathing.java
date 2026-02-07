@@ -6,9 +6,12 @@ import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.ChamberState;
+import org.firstinspires.ftc.teamcode.RobotFunctions.ColorSensing;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Colors;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
@@ -28,8 +31,8 @@ public abstract class TheDeathOfPedroPathing extends Movable {
     protected static boolean turnLeft;
     protected static boolean tracking;
     protected static Servo hoodServo;
-    protected final static double ROBOT_LENGTH = 15.875; // inches
-    protected final static double ROBOT_WIDTH = 17.125; // also inches
+    protected final static double ROBOT_LENGTH = 16; // inches
+    protected final static double ROBOT_WIDTH = 17.25; // also inches
 
     protected static Follower follower;
     protected static int pathState;
@@ -38,7 +41,8 @@ public abstract class TheDeathOfPedroPathing extends Movable {
     protected static Colors rightStoredColor;
     protected static ChamberState leftState;
     protected static ChamberState rightState;
-
+    protected static volatile boolean shooting = false;
+    protected static ColorSensing colorSensing;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -91,27 +95,57 @@ public abstract class TheDeathOfPedroPathing extends Movable {
 
         limelight.pipelineSwitch(3); // motif mode
 
+        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(2, 0, 0, 13.2);
+        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+
+        leftState = ChamberState.EMPTY;
+        rightState = ChamberState.EMPTY;
+        leftStoredColor = Colors.UNKNOWN;
+        rightStoredColor = Colors.UNKNOWN;
+        outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        colorSensing = new ColorSensing(hardwareMap, 18);
+
     }
 
     protected void motifMacroShoot() {
+        // sorry if detectColors() is spammed everywhere
+        shooting = true;
+        detectColors();
         final Colors[][] MOTIFS = {
                 {Colors.GREEN, Colors.PURPLE, Colors.PURPLE}, // 21
                 {Colors.PURPLE, Colors.GREEN, Colors.PURPLE}, // 22
                 {Colors.PURPLE, Colors.PURPLE, Colors.GREEN} // 23
         };
-        new Thread(() -> {
-            if (motifID == 21 || motifID == 22 || motifID == 23) {
-                Colors[] motif = MOTIFS[motifID - 21];
-                for (int i = 0; i < motif.length; i++) {
-                    if (leftStoredColor == motif[i]) {
-                        liftLeftWiperNT();
-                    } else if (rightStoredColor == motif[i]) {
-                        liftRightWiperNT();
-                    }
-                    sleep(300);
+        gatewayServo.setPosition(.495);
+        if (motifID == 21 || motifID == 22 || motifID == 23) {
+            detectColors();
+            Colors[] motif = MOTIFS[motifID - 21];
+            for (int i = 0; i < motif.length; i++) {
+                detectColors();
+                if (leftStoredColor == motif[i]) {
+                    liftLeftWiperNT();
+                } else if (rightStoredColor == motif[i]) {
+                    liftRightWiperNT();
+                } else if (leftStoredColor != Colors.UNKNOWN) {
+                    liftLeftWiperNT();
+                } else if (rightStoredColor != Colors.UNKNOWN) {
+                    liftRightWiperNT();
+                }
+                sleep(250);
+            }
+        } else {
+            // shoot whatever it sees
+            for (int i = 1; i <= 3; i++) {
+                detectColors();
+                if (leftStoredColor != Colors.UNKNOWN) {
+                    liftLeftWiperNT();
+                } else if (rightStoredColor != Colors.UNKNOWN) {
+                    liftRightWiperNT();
                 }
             }
-        }).start();
+        }
+
+        shooting = false;
     }
 
 
@@ -119,24 +153,29 @@ public abstract class TheDeathOfPedroPathing extends Movable {
         wipersR.secondaryPos();
         rightState = ChamberState.EMPTY;
         rightStoredColor = Colors.UNKNOWN;
-        sleep(1000);
+        sleep(500);
         wipersR.primaryPos();
         rightState = ChamberState.EMPTY;
         rightStoredColor = Colors.UNKNOWN;
+        sleep(500);
+        intakeMotor.setPower(1);
     }
 
     protected void liftLeftWiperNT() {
         wipersL.secondaryPos();
         leftState = ChamberState.EMPTY;
         leftStoredColor = Colors.UNKNOWN;
-        sleep(1000);
+        sleep(500);
         wipersL.primaryPos();
         leftState = ChamberState.EMPTY;
         leftStoredColor = Colors.UNKNOWN;
+        sleep(500);
+        intakeMotor.setPower(1);
     }
 
-    protected void liftRightWiper() {
+    private void liftRightWiper() {
         new Thread(() -> {
+            gateways.secondaryPos();
             wipersR.secondaryPos();
             rightState = ChamberState.EMPTY;
             rightStoredColor = Colors.UNKNOWN;
@@ -147,8 +186,9 @@ public abstract class TheDeathOfPedroPathing extends Movable {
         }).start();
     }
 
-    protected void liftLeftWiper() {
+    private void liftLeftWiper() {
         new Thread(() -> {
+            gateways.primaryPos();
             wipersL.secondaryPos();
             leftState = ChamberState.EMPTY;
             leftStoredColor = Colors.UNKNOWN;
@@ -157,5 +197,23 @@ public abstract class TheDeathOfPedroPathing extends Movable {
             leftState = ChamberState.EMPTY;
             leftStoredColor = Colors.UNKNOWN;
         }).start();
+    }
+
+    protected void detectColors() {
+        if (rightState == ChamberState.EMPTY) {
+            Colors detected = colorSensing.detectColorRight(telemetry);
+            if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
+                rightStoredColor = detected;
+                rightState = ChamberState.LOADED;
+            }
+        }
+
+        if (leftState == ChamberState.EMPTY) {
+            Colors detected = colorSensing.detectColorLeft(telemetry);
+            if (detected != Colors.UNKNOWN && wiperL.getPosition() != wipersL.getSecondaryPos()) {
+                leftStoredColor = detected;
+                leftState = ChamberState.LOADED;
+            }
+        }
     }
 }
