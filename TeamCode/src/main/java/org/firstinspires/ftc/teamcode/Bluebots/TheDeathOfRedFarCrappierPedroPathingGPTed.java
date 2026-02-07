@@ -20,22 +20,22 @@ public class TheDeathOfRedFarCrappierPedroPathingGPTed
     private static final Pose startPose =
             new Pose(96 - ROBOT_LENGTH / 2,
                     ROBOT_WIDTH / 2,
-                    Math.toRadians(180));
+                    Math.toRadians(0));
 
     private static final Pose resetStartPose =
             new Pose(96 - ROBOT_LENGTH / 2,
                     ROBOT_WIDTH / 2 + 2,
-                    Math.toRadians(180));
+                    Math.toRadians(0));
 
     private static final Pose startCollectSecondArtifacts =
             new Pose(96 - ROBOT_LENGTH / 2,
                     ROBOT_WIDTH / 2 + 48,
-                    Math.toRadians(180));
+                    Math.toRadians(0));
 
     private static final Pose endCollectSecondArtifacts =
             new Pose(144 - ROBOT_LENGTH / 2,
                     ROBOT_WIDTH / 2 + 48,
-                    Math.toRadians(180));
+                    Math.toRadians(0));
 
     private static final Pose shootClosePos =
             new Pose(96,
@@ -98,15 +98,15 @@ public class TheDeathOfRedFarCrappierPedroPathingGPTed
                 /* ================= PRELOAD ================= */
 
                 case PRELOAD_SPINUP:
-                    outtakeMotor.setVelocity(1825);
-                    hoodServo.setPosition(.4);
-                    moveMotorToPosition(315, .25);
+                    outtakeMotor.setVelocity(1850);
+                    hoodServo.setPosition(.8);
+                    moveMotorToPosition(305, .25);
                     timer.reset();
                     autoState = AutoState.PRELOAD_WAIT;
                     break;
 
                 case PRELOAD_WAIT:
-                    if (rpmReady(1825) && turretReady()) {
+                    if (rpmReady(1850) && turretReady()) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);

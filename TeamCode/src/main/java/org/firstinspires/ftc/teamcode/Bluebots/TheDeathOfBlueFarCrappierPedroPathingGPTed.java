@@ -98,15 +98,15 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
                 /* ================= PRELOAD ================= */
 
                 case PRELOAD_SPINUP:
-                    outtakeMotor.setVelocity(1825);
-                    hoodServo.setPosition(.4);
-                    moveMotorToPosition(-315, .25);
+                    outtakeMotor.setVelocity(1890);
+                    hoodServo.setPosition(.567);
+                    moveMotorToPosition(-305, .25);
                     timer.reset();
                     autoState = AutoState.PRELOAD_WAIT;
                     break;
 
                 case PRELOAD_WAIT:
-                    if (rpmReady(1825) && turretReady()) {
+                    if (rpmReady(1890) && turretReady()) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
@@ -187,8 +187,8 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
     /* ================= TRIPLE SHOT (PRELOAD) ================= */
 
     private void runTripleShot(AutoState nextState) {
-        final double LIFT_TIME = 0.90;
-        final double FEED_TIME = 0.50;
+        final double LIFT_TIME = 1.40;
+        final double FEED_TIME = 1.00;
 
         if (shotCount >= 3) {
             wipersL.primaryPos();
@@ -233,8 +233,8 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
     /* ================= RIGHT-ONLY SHOOT ================= */
 
     private void runTripleShotRightOnly(AutoState nextState) {
-        final double LIFT_TIME = 0.90;
-        final double FEED_TIME = 0.50;
+        final double LIFT_TIME = 1.4;
+        final double FEED_TIME = 1.0;
 
         if (shotCount >= 3) {
             wipersL.primaryPos();
@@ -255,7 +255,7 @@ public class TheDeathOfBlueFarCrappierPedroPathingGPTed
             case DROP:
                 if (timer.seconds() > LIFT_TIME) {
                     wipersR.primaryPos();
-                    intakeMotor.setPower(.55);
+                    intakeMotor.setPower(1);
                     timer.reset();
                     shotPhase = ShotPhase.FEED;
                 }
