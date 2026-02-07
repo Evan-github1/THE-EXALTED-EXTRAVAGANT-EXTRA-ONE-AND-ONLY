@@ -105,6 +105,8 @@ public abstract class TheDeathOfPedroPathing extends Movable {
         outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         colorSensing = new ColorSensing(hardwareMap, 18);
 
+        swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     protected void motifMacroShoot() {

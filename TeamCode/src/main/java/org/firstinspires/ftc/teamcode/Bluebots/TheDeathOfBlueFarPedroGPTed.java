@@ -123,8 +123,8 @@ public class TheDeathOfBlueFarPedroGPTed
                 /* ================= PRELOAD ================= */
 
                 case PRELOAD_SPINUP:
-                    outtakeMotor.setVelocity(1900);
-                    hoodServo.setPosition(.3);
+                    outtakeMotor.setVelocity(1775);
+                    hoodServo.setPosition(.5);
                     moveMotorToPosition(-310, .25);
                     timer.reset();
                     autoState = AutoState.PRELOAD_WAIT;
@@ -176,8 +176,8 @@ public class TheDeathOfBlueFarPedroGPTed
                 /* ================= MID ================= */
 
                 case MID_SPINUP:
-                    outtakeMotor.setVelocity(1900);
-                    hoodServo.setPosition(.2);
+                    outtakeMotor.setVelocity(1775);
+                    hoodServo.setPosition(.4);
                     moveMotorToPosition(-310, .25);
                     timer.reset();
                     autoState = AutoState.MID_WAIT;
@@ -319,7 +319,7 @@ public class TheDeathOfBlueFarPedroGPTed
         if (shotCount >= 3) {
             wipersL.primaryPos();
             wipersR.primaryPos();
-            intakeMotor.setPower(.3);
+            intakeMotor.setPower(.55);
             autoState = nextState;
             return;
         }
@@ -335,7 +335,7 @@ public class TheDeathOfBlueFarPedroGPTed
             case DROP:
                 if (timer.seconds() > LIFT_TIME) {
                     wipersR.primaryPos();
-                    intakeMotor.setPower(.3);
+                    intakeMotor.setPower(.55);
                     timer.reset();
                     shotPhase = ShotPhase.FEED;
                 }
