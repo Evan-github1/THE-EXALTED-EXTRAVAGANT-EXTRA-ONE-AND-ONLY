@@ -158,7 +158,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case COLLECT_FIRST:
-                    follower.followPath(firstCollect, .5, true);
+                    follower.followPath(firstCollect, .75, true);
                     autoState = AutoState.BACK_FROM_FIRST;
                     break;
 
@@ -211,7 +211,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case COLLECT_SECOND:
-                    follower.followPath(secondCollect, .5, true);
+                    follower.followPath(secondCollect, .75, true);
                     autoState = AutoState.PATH_TO_CLOSE;
                     break;
 
