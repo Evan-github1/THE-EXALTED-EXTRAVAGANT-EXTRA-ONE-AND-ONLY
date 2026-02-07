@@ -131,7 +131,8 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case PRELOAD_WAIT:
-                    if (rpmReady(1900) && turretReady()) {
+                    // Wait until RPM stabilizes before shooting
+                    if (Math.abs(-outtakeMotor.getVelocity() - 1900) < 75 && turretReady()) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
@@ -157,7 +158,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case COLLECT_FIRST:
-                    follower.followPath(firstCollect, .5, true);
+                    follower.followPath(firstCollect, .75, true);
                     autoState = AutoState.BACK_FROM_FIRST;
                     break;
 
@@ -184,7 +185,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case MID_WAIT:
-                    if (rpmReady(1900)) {
+                    if (Math.abs(-outtakeMotor.getVelocity() - 1900) < 75) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
@@ -210,7 +211,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case COLLECT_SECOND:
-                    follower.followPath(secondCollect, .5, true);
+                    follower.followPath(secondCollect, .75, true);
                     autoState = AutoState.PATH_TO_CLOSE;
                     break;
 
@@ -237,7 +238,8 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case CLOSE_WAIT:
-                    if (rpmReady(1500)) {
+                    // Wait for RPM to stabilize before feeding balls
+                    if (Math.abs(-outtakeMotor.getVelocity() - 1500) < 75) {
                         shotCount = 0;
                         shotPhase = ShotPhase.LIFT;
                         intakeMotor.setPower(0);
@@ -264,16 +266,14 @@ public class TheDeathOfBlueFarPedroGPTed
         }
     }
 
-    /* ================= TRIPLE SHOT (PRELOAD) ================= */
-
+    /* ================= TRIPLE SHOT (LEFT-RIGHT-LEFT) ================= */
     private void runTripleShot(AutoState nextState) {
-        final double LIFT_TIME = 0.90;
-        final double FEED_TIME = 0.50;
+        final double LIFT_TIME = 1.4; // seconds
 
         if (shotCount >= 3) {
             wipersL.primaryPos();
             wipersR.primaryPos();
-            intakeMotor.setPower(1);
+            intakeMotor.setPower(1); // keep feeding
             autoState = nextState;
             return;
         }
@@ -293,33 +293,26 @@ public class TheDeathOfBlueFarPedroGPTed
                 if (timer.seconds() > LIFT_TIME) {
                     wipersL.primaryPos();
                     wipersR.primaryPos();
-                    intakeMotor.setPower(1);
+                    intakeMotor.setPower(1); // resume feeding
+                    shotCount++;
+                    shotPhase = ShotPhase.LIFT; // back to lift for next shot
                     timer.reset();
-                    shotPhase = ShotPhase.FEED;
                 }
                 break;
 
-            case FEED:
-                if (timer.seconds() > FEED_TIME) {
-                    intakeMotor.setPower(0);
-                    shotCount++;
-                    shotPhase = ShotPhase.LIFT;
-                    timer.reset();
-                }
-                break;
+            default:
+                break; // FEED phase removed
         }
     }
 
-    /* ================= RIGHT-ONLY SHOOT ================= */
-
+    /* ================= RIGHT-ONLY SHOOT (+500ms delay) ================= */
     private void runTripleShotRightOnly(AutoState nextState) {
-        final double LIFT_TIME = 0.90;
-        final double FEED_TIME = 0.50;
+        final double LIFT_TIME = 1.4; // 0.9 + 0.5 extra for right-only
 
         if (shotCount >= 3) {
             wipersL.primaryPos();
             wipersR.primaryPos();
-            intakeMotor.setPower(.55);
+            intakeMotor.setPower(.55); // keep feeding
             autoState = nextState;
             return;
         }
@@ -335,33 +328,22 @@ public class TheDeathOfBlueFarPedroGPTed
             case DROP:
                 if (timer.seconds() > LIFT_TIME) {
                     wipersR.primaryPos();
-                    intakeMotor.setPower(.55);
+                    intakeMotor.setPower(.75); // feed ball
+                    shotCount++;
+                    shotPhase = ShotPhase.LIFT; // ready for next ball
                     timer.reset();
-                    shotPhase = ShotPhase.FEED;
                 }
                 break;
 
-            case FEED:
-                if (timer.seconds() > FEED_TIME) {
-                    intakeMotor.setPower(0);
-                    shotCount++;
-                    shotPhase = ShotPhase.LIFT;
-                    timer.reset();
-                }
-                break;
+            default:
+                break; // FEED phase removed
         }
     }
 
     /* ================= HELPERS ================= */
 
-    private boolean rpmReady(double target) {
-        return Math.abs(outtakeMotor.getVelocity() - target) < 75
-                || timer.seconds() > 2.5;
-    }
-
     private boolean turretReady() {
-        return !swivelTurretMotor.isBusy()
-                || timer.seconds() > 3.5;
+        return !swivelTurretMotor.isBusy();
     }
 
     private void moveMotorToPosition(int target, double power) {
