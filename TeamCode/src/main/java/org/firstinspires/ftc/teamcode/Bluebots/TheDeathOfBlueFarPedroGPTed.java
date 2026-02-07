@@ -158,7 +158,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case COLLECT_FIRST:
-                    follower.followPath(firstCollect, .75, true);
+                    follower.followPath(firstCollect, .5, true);
                     autoState = AutoState.BACK_FROM_FIRST;
                     break;
 
@@ -211,7 +211,7 @@ public class TheDeathOfBlueFarPedroGPTed
                     break;
 
                 case COLLECT_SECOND:
-                    follower.followPath(secondCollect, .75, true);
+                    follower.followPath(secondCollect, .5, true);
                     autoState = AutoState.PATH_TO_CLOSE;
                     break;
 
@@ -268,7 +268,7 @@ public class TheDeathOfBlueFarPedroGPTed
 
     /* ================= TRIPLE SHOT (LEFT-RIGHT-LEFT) ================= */
     private void runTripleShot(AutoState nextState) {
-        final double LIFT_TIME = 1.4; // seconds
+        final double LIFT_TIME = 0.90; // seconds
 
         if (shotCount >= 3) {
             wipersL.primaryPos();
