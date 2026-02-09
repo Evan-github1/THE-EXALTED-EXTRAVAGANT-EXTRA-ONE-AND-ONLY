@@ -1,29 +1,28 @@
 package org.firstinspires.ftc.teamcode.TestTeleOps;
-import static java.lang.Thread.sleep;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
+import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 
 @TeleOp
-public class PIDFTuning extends OpMode {
+public class PIDFTuning extends Movable {
 
     private static DcMotorEx outtakeMotor;
-    private static final double HIGH_VELOCITY = 2000, LOW_VELOCITY = 1500;
-    private static double currentTargetVelocity;
-    private static double F = 0, P = 0;
+    private static final double HIGH_VELOCITY = 4050, LOW_VELOCITY = 2600;
+    private static double rpm, tps, P, F, currentTargetRPM;
     private static double[] stepSizes = {10, 1, .1, .01, .001, .0001};
     private static int stepIndex;
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
 
     @Override
-    public void init() {
-        currentTargetVelocity = HIGH_VELOCITY;
+    public void runOpMode() {
+        currentTargetRPM = HIGH_VELOCITY;
         stepIndex = 1;
         wiperR = hardwareMap.get(Servo.class, "wiperR");
         wiperL = hardwareMap.get(Servo.class, "wiperL");
@@ -36,61 +35,75 @@ public class PIDFTuning extends OpMode {
         outtakeMotor.setDirection(DcMotorEx.Direction.REVERSE);
         PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
         outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-    }
 
-    @Override
-    public void loop() {
-        if (gamepad1.yWasPressed()) {
-            if (currentTargetVelocity == HIGH_VELOCITY) {
-                currentTargetVelocity = LOW_VELOCITY;
-            } else {
-                currentTargetVelocity = HIGH_VELOCITY;
+        waitForStart();
+
+        while (opModeIsActive()) {
+            //F:
+            //P:
+            telemetry.addData("Status", "Running");
+
+            if (gamepad1.yWasPressed()) {
+                if (currentTargetRPM == HIGH_VELOCITY) {
+                    currentTargetRPM = LOW_VELOCITY;
+                } else {
+                    currentTargetRPM = HIGH_VELOCITY;
+                }
+            }
+            if (gamepad1.left_trigger >= .5 && delay(1001)) {
+                liftRightWiper();
+                time = System.currentTimeMillis();
+            } else if (gamepad1.right_trigger >= .5 && delay(1001)) {
+                liftLeftWiper();
+                time = System.currentTimeMillis();
             }
 
+            tps = outtakeMotor.getVelocity();
 
+            rpm = tps * 60 / 28;
+            telemetry.addData("RPM",rpm);
+            telemetry.addData("Target RPM", currentTargetRPM);
+
+            if(gamepad1.leftBumperWasPressed()){
+                stepIndex = (stepIndex - 1) % stepSizes.length;
+            }else if(gamepad1.rightBumperWasPressed()){
+                stepIndex = (stepIndex + 1) % stepSizes.length;
+            }
+
+            if(gamepad1.dpadDownWasPressed()){
+                F -= stepSizes[stepIndex];
+                pidfCoefficients = new PIDFCoefficients(P,0,0,F);
+                outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
+            }else if(gamepad1.dpadUpWasPressed()){
+                F += stepSizes[stepIndex];
+                pidfCoefficients = new PIDFCoefficients(P,0,0,F);
+                outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
+            }else if(gamepad1.dpadLeftWasPressed()){
+                P -= stepSizes[stepIndex];
+                pidfCoefficients = new PIDFCoefficients(P,0,0,F);
+                outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
+            }else if(gamepad1.dpadRightWasPressed()){
+                P += stepSizes[stepIndex];
+                pidfCoefficients = new PIDFCoefficients(P,0,0,F);
+                outtakeMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
+            }
+
+            double error = currentTargetRPM + rpm;
+
+            outtakeMotor.setVelocity(currentTargetRPM / 60 * 28);
+
+            telemetry.addData("Target Velocity", currentTargetRPM);
+            telemetry.addData("Current Velocity", "%.2f", rpm);
+            telemetry.addData("Error", "%.2f", error);
+            telemetry.addLine("------------------------------");
+            telemetry.addData("Tuning P", "%.4f (D-Pad U/D)", P);
+            telemetry.addData("Tuning F", "%.4f (D-Pad L/R)", F);
+            telemetry.addData("Step Size", "%.4f (B Button)", stepSizes[stepIndex]);
+            telemetry.update();
         }
-
-        if (gamepad1.bWasPressed()) {
-            stepIndex = (stepIndex + 1) % stepSizes.length;
-        }
-
-        if (gamepad1.dpadLeftWasPressed()) {
-            F -= stepSizes[stepIndex];
-        }
-        if (gamepad1.dpadRightWasPressed()) {
-            F += stepSizes[stepIndex];
-        }
-
-        if (gamepad1.dpadDownWasPressed()) {
-            P -= stepSizes[stepIndex];
-        }
-        if (gamepad1.dpadUpWasPressed()) {
-            P += stepSizes[stepIndex];
-        }
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(P, 0, 0, F);
-        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
-        outtakeMotor.setVelocity(currentTargetVelocity);
-
-        double currentVelocity = -outtakeMotor.getVelocity();
-        double error = currentTargetVelocity - currentVelocity;
-
-        if (gamepad1.left_trigger >= .5 && delay(1001)) {
-            liftRightWiper();
-            time = System.currentTimeMillis();
-        } else if (gamepad1.right_trigger >= .5 && delay(1001)) {
-            liftLeftWiper();
-            time = System.currentTimeMillis();
-        }
-
-        telemetry.addData("Target Velocity", currentTargetVelocity);
-        telemetry.addData("Current Velocity", "%.2f", currentVelocity);
-        telemetry.addData("Error", "%.2f", error);
-        telemetry.addData("Tuning P", "%.4f (D-Pad U/D)", P);
-        telemetry.addData("Tuning F", "%.4f (D-Pad L/R)", F);
-        telemetry.addData("Step Size", "%.4f (B Button)", stepSizes[stepIndex]);
-
-        telemetry.update();
     }
+
+
 
     public boolean delay() {
         return System.currentTimeMillis() >= time + 250;
@@ -104,11 +117,7 @@ public class PIDFTuning extends OpMode {
     private void liftRightWiper() {
         new Thread(() -> {
             wipersR.secondaryPos();
-            try {
-                sleep(250);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            sleep(250);
             wipersR.primaryPos();
         }).start();
     }
@@ -116,11 +125,7 @@ public class PIDFTuning extends OpMode {
     private void liftLeftWiper() {
         new Thread(() -> {
             wipersL.secondaryPos();
-            try {
-                sleep(250);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            sleep(250);
             wipersL.primaryPos();
         }).start();
     }
