@@ -166,6 +166,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 }
             }
 
+
             if (!sweep) {
                 if (gamepad1.dpad_right && swivelTurretMotor.getCurrentPosition() <= TURRET_LIMIT_RIGHT) {
                     swivelTurretMotor.setPower(POWER);
@@ -198,6 +199,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             } else {
                 light.setPosition(.277);
             }
+
 //            if (id == targetedID) {
 //                double tx = getTX(limelight);
 //                telemetry.addLine("I see the targeted ID at tx = " +tx);
@@ -207,6 +209,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 //                swivelTurretMotor.setPower(smoothedInput);
 //                prevSmooth = smoothedInput;
 //            }
+
             if (gamepad1.b && delay()) {
                 gateways.quickSwitch();
                 time = System.currentTimeMillis();

@@ -17,9 +17,10 @@ public class ColorSensing { // RAHH COMPOSITION (?)
         rightSensor.setGain(gain);
     }
 
+    //TODO: change rgb to hsv
+
     public Colors detectColorLeft(Telemetry t) {
         NormalizedRGBA colors = leftSensor.getNormalizedColors();
-
         float r = colors.red;
         float g = colors.green;
         float b = colors.blue;
