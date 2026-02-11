@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Bluebots;
 import android.graphics.Color;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;

@@ -75,6 +75,14 @@ public interface LimelightTags {
         return Double.NaN;
     }
 
+    default double getTY(Limelight3A limelight) {
+        LLResult result = limelight.getLatestResult();
+        if (result.isValid()) {
+            return result.getTy();
+        }
+        return Double.NaN;
+    }
+
     default double getDistanceFromTag(double ta) { // ta = target area
         double scale = 30665.95;
         double distance = (scale/ ta);
