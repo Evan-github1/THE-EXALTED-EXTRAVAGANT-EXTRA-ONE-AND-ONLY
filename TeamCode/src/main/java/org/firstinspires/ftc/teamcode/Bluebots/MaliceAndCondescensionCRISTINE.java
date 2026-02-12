@@ -308,21 +308,24 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
             // END OF GAMEPAD 2
 
-            if (rightState == ChamberState.EMPTY) {
-                Colors detected = colorSensing.detectColorRight(telemetry);
-                if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
-                    rightStoredColor = detected;
-                    rightState = ChamberState.LOADED;
-                }
-            }
+//            if (rightState == ChamberState.EMPTY) {
+//                Colors detected = colorSensing.detectColorRight(telemetry);
+//                if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
+//                    rightStoredColor = detected;
+//                    rightState = ChamberState.LOADED;
+//                }
+//            }
+//
+//            if (leftState == ChamberState.EMPTY) {
+//                Colors detected = colorSensing.detectColorLeft(telemetry);
+//                if (detected != Colors.UNKNOWN && wiperL.getPosition() != wipersL.getSecondaryPos()) {
+//                    leftStoredColor = detected;
+//                    leftState = ChamberState.LOADED;
+//                }
+//            }
 
-            if (leftState == ChamberState.EMPTY) {
-                Colors detected = colorSensing.detectColorLeft(telemetry);
-                if (detected != Colors.UNKNOWN && wiperL.getPosition() != wipersL.getSecondaryPos()) {
-                    leftStoredColor = detected;
-                    leftState = ChamberState.LOADED;
-                }
-            }
+            leftStoredColor = colorSensing.detectColorLeft(telemetry);
+            rightStoredColor = colorSensing.detectColorRight(telemetry);
 
             telemetry.addData("Left Chamber", leftState);
             telemetry.addData("Left Stored Color", leftStoredColor);

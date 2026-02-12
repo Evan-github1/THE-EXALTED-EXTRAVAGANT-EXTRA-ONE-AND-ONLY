@@ -95,8 +95,7 @@ public abstract class TheDeathOfPedroPathing extends Movable {
 
         limelight.pipelineSwitch(3); // motif mode
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(2, 0, 0, 13.2);
-        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         leftState = ChamberState.EMPTY;
         rightState = ChamberState.EMPTY;
