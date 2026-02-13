@@ -57,7 +57,7 @@ public class PIDFTuning extends Movable implements LimelightTags {
         limelight.start();
         limelight.pipelineSwitch(0);
         motorPowerClose = 2500;
-        motorPowerFar = 4500;
+        motorPowerFar = 3750;
         targetRPM = motorPowerFar;
         stepSizes = new double[]{10, 1, 0.1, 0.01, 0.001,0.0001};
         stepIndex = 1;
@@ -162,7 +162,7 @@ public class PIDFTuning extends Movable implements LimelightTags {
                         lt2.setPosition(.45);
                         forks.setPrimaryPos(.2);
                         forks.setSecondaryPos(.73);
-                        targetRPM = motorPowerFar;
+                        targetRPM = 3750;
                         try {
                             Thread.sleep(700);
                         } catch (InterruptedException e) {

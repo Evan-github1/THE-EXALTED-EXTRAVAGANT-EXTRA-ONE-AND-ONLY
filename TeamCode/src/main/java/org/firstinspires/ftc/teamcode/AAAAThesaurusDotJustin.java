@@ -68,12 +68,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         limelight.start();
         limelight.pipelineSwitch(0);
         motorPowerClose = 2500;
-        motorPowerFar = 3950; //from 4500
+        motorPowerFar = 3750; //from 4500
         targetRPM = motorPowerFar;
         P = 50;
         FClose = 16.8;
-        FFar = 15;
-        pidfCoefficients = new PIDFCoefficients(P,0,0.005,FFar);
+        FFar = 15.8;
+        pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
         follower = createFollower(hardwareMap);
         follower.setStartingPose(new Pose(96, 0 + robotLength()/2, Math.toRadians(-90)));
 
@@ -187,8 +187,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }else{
                     //Set to far pos
                     new Thread(() -> {
-                        lt1.setPosition(.4375);
-                        lt2.setPosition(.4375);
+                        lt1.setPosition(.37);
+                        lt2.setPosition(.37);
                         targetRPM = motorPowerFar;
                         pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
                         launcherMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
@@ -258,12 +258,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 return 0.0;
             }
             return smoothedError;
-
         }else{
             return 0;
         }
 
     }
+
 
 
     @Override
