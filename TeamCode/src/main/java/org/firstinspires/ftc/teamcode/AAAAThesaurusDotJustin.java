@@ -109,7 +109,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             tps2 = launcherMotor2.getVelocity();
 
             rpm = tps * 60 / 28;
-            rpm2 = tps * 60 / 28;
+            rpm2 = tps2 * 60 / 28;
 
             telemetry.addData("RPM1",rpm);
             telemetry.addData("RPM2", rpm2);
