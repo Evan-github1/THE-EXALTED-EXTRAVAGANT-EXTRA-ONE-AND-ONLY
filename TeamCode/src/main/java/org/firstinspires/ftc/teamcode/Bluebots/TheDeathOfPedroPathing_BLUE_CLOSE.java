@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
+
 @Autonomous
 public class TheDeathOfPedroPathing_BLUE_CLOSE
         extends TheDeathOfPedroPathing
@@ -51,33 +52,30 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
     private PathChain goShootFirst, goCollectFirst, collectFirst,
             goShootSecond, goCollectSecond, collectSecond, goShootThird;
 
+    /* ================= SHOOTER ================= */
+
+    private enum ShotPhase { LIFT, DROP, FEED }
+    private ShotPhase shotPhase = ShotPhase.LIFT;
+    private int shotCount = 0;
+
     /* ================= AUTO STATES ================= */
+    private final double UNIVERSAL_SPEED = 1425;
 
     private enum AutoState {
 
-        GO_SHOOT_FIRST,
-        WAIT_SHOOT_FIRST,
+        GO_SHOOT_FIRST, WAIT_SHOOT_FIRST, SPINUP_FIRST, WAIT_SPINUP_FIRST, SHOOT_FIRST,
+        GO_COLLECT_FIRST, WAIT_COLLECT_FIRST, COLLECT_FIRST, WAIT_FINISH_FIRST,
 
-        GO_COLLECT_FIRST,
-        WAIT_COLLECT_FIRST,
-        COLLECT_FIRST,
-        WAIT_FINISH_FIRST,
+        GO_SHOOT_SECOND, WAIT_SHOOT_SECOND, SPINUP_SECOND, WAIT_SPINUP_SECOND, SHOOT_SECOND,
+        GO_COLLECT_SECOND, WAIT_COLLECT_SECOND, COLLECT_SECOND, WAIT_FINISH_SECOND,
 
-        GO_SHOOT_SECOND,
-        WAIT_SHOOT_SECOND,
-
-        GO_COLLECT_SECOND,
-        WAIT_COLLECT_SECOND,
-        COLLECT_SECOND,
-        WAIT_FINISH_SECOND,
-
-        GO_SHOOT_THIRD,
-        WAIT_SHOOT_THIRD,
+        GO_SHOOT_THIRD, WAIT_SHOOT_THIRD, SPINUP_THIRD, WAIT_SPINUP_THIRD, SHOOT_THIRD,
 
         DONE
     }
 
     private AutoState autoState = AutoState.GO_SHOOT_FIRST;
+    private final ElapsedTime timer = new ElapsedTime();
 
     /* ================= RUN ================= */
 
@@ -87,17 +85,21 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
         super.runOpMode();
         buildPaths();
         follower.setStartingPose(startPose);
-
+        swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
 
         intakeMotor.setPower(1);
-        hoodServo.setPosition(.5);
+        hoodServo.setPosition(.65);
+        outtakeMotor.setVelocity(UNIVERSAL_SPEED);
 
         while (opModeIsActive()) {
 
             follower.update();
 
             switch (autoState) {
+
+                /* ========= FIRST CLOSE ========= */
 
                 case GO_SHOOT_FIRST:
                     follower.followPath(goShootFirst);
@@ -106,8 +108,29 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
                 case WAIT_SHOOT_FIRST:
                     if (!follower.isBusy())
-                        autoState = AutoState.GO_COLLECT_FIRST;
+                        autoState = AutoState.SPINUP_FIRST;
                     break;
+
+                case SPINUP_FIRST:
+                    moveMotorToPosition(0, .3);
+                    timer.reset();
+                    autoState = AutoState.WAIT_SPINUP_FIRST;
+                    break;
+
+                case WAIT_SPINUP_FIRST:
+                    if (rpmReady(UNIVERSAL_SPEED) && turretReady()) {
+                        shotCount = 0;
+                        shotPhase = ShotPhase.LIFT;
+                        timer.reset();
+                        autoState = AutoState.SHOOT_FIRST;
+                    }
+                    break;
+
+                case SHOOT_FIRST:
+                    runTripleShot(AutoState.GO_COLLECT_FIRST);
+                    break;
+
+                /* ========= FIRST ROW ========= */
 
                 case GO_COLLECT_FIRST:
                     follower.followPath(goCollectFirst);
@@ -120,7 +143,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case COLLECT_FIRST:
-                    follower.followPath(collectFirst, .75, true);
+                    follower.followPath(collectFirst, true);
                     autoState = AutoState.WAIT_FINISH_FIRST;
                     break;
 
@@ -129,6 +152,8 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                         autoState = AutoState.GO_SHOOT_SECOND;
                     break;
 
+                /* ========= SECOND CLOSE ========= */
+
                 case GO_SHOOT_SECOND:
                     follower.followPath(goShootSecond);
                     autoState = AutoState.WAIT_SHOOT_SECOND;
@@ -136,8 +161,29 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
                 case WAIT_SHOOT_SECOND:
                     if (!follower.isBusy())
-                        autoState = AutoState.GO_COLLECT_SECOND;
+                        autoState = AutoState.SPINUP_SECOND;
                     break;
+
+                case SPINUP_SECOND:
+                    moveMotorToPosition(0, .3);
+                    timer.reset();
+                    autoState = AutoState.WAIT_SPINUP_SECOND;
+                    break;
+
+                case WAIT_SPINUP_SECOND:
+                    if (rpmReady(UNIVERSAL_SPEED) && turretReady()) {
+                        shotCount = 0;
+                        shotPhase = ShotPhase.LIFT;
+                        timer.reset();
+                        autoState = AutoState.SHOOT_SECOND;
+                    }
+                    break;
+
+                case SHOOT_SECOND:
+                    runTripleShot(AutoState.GO_COLLECT_SECOND);
+                    break;
+
+                /* ========= SECOND ROW ========= */
 
                 case GO_COLLECT_SECOND:
                     follower.followPath(goCollectSecond);
@@ -150,7 +196,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case COLLECT_SECOND:
-                    follower.followPath(collectSecond, .75, true);
+                    follower.followPath(collectSecond, true);
                     autoState = AutoState.WAIT_FINISH_SECOND;
                     break;
 
@@ -159,6 +205,8 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                         autoState = AutoState.GO_SHOOT_THIRD;
                     break;
 
+                /* ========= THIRD CLOSE ========= */
+
                 case GO_SHOOT_THIRD:
                     follower.followPath(goShootThird);
                     autoState = AutoState.WAIT_SHOOT_THIRD;
@@ -166,7 +214,26 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
                 case WAIT_SHOOT_THIRD:
                     if (!follower.isBusy())
-                        autoState = AutoState.DONE;
+                        autoState = AutoState.SPINUP_THIRD;
+                    break;
+
+                case SPINUP_THIRD:
+                    moveMotorToPosition(0, .3);
+                    timer.reset();
+                    autoState = AutoState.WAIT_SPINUP_THIRD;
+                    break;
+
+                case WAIT_SPINUP_THIRD:
+                    if (rpmReady(UNIVERSAL_SPEED) && turretReady()) {
+                        shotCount = 0;
+                        shotPhase = ShotPhase.LIFT;
+                        timer.reset();
+                        autoState = AutoState.SHOOT_THIRD;
+                    }
+                    break;
+
+                case SHOOT_THIRD:
+                    runTripleShot(AutoState.DONE);
                     break;
 
                 case DONE:
@@ -175,8 +242,82 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
             }
 
             telemetry.addData("State", autoState);
+            telemetry.addData("RPM", outtakeMotor.getVelocity());
             telemetry.update();
         }
+    }
+
+    /* ================= SHOOT ROUTINE ================= */
+
+    private void runTripleShot(AutoState nextState) { // actually shoots four times, but only 3 balls
+
+        final double LIFT_TIME = 0.5;
+        final double FEED_TIME = 0.4;
+
+        if (shotCount >= 6) {
+            wipersL.primaryPos();
+            wipersR.primaryPos();
+            intakeMotor.setPower(1);
+            autoState = nextState;
+            return;
+        }
+
+        final double REVERSE_POWER = -.3;
+
+        switch (shotPhase) {
+
+            case LIFT:
+                intakeMotor.setPower(REVERSE_POWER);
+
+                // Alternate: even = right, odd = left
+                if (shotCount % 2 == 0) {
+                    wipersR.secondaryPos();
+                } else {
+                    wipersL.secondaryPos();
+                }
+
+                timer.reset();
+                shotPhase = ShotPhase.DROP;
+                break;
+
+            case DROP:
+                if (timer.seconds() > LIFT_TIME) {
+
+                    // Return BOTH to primary (safe reset)
+                    wipersL.primaryPos();
+                    wipersR.primaryPos();
+
+                    intakeMotor.setPower(1);
+                    timer.reset();
+                    shotPhase = ShotPhase.FEED;
+                }
+                break;
+
+            case FEED:
+                if (timer.seconds() > FEED_TIME) {
+                    intakeMotor.setPower(REVERSE_POWER);
+                    shotCount++;
+                    shotPhase = ShotPhase.LIFT;
+                    timer.reset();
+                }
+                break;
+        }
+    }
+
+    private boolean rpmReady(double target) {
+        return Math.abs(outtakeMotor.getVelocity() - target) < 75
+                || timer.seconds() > 2.5;
+    }
+
+    private boolean turretReady() {
+        return !swivelTurretMotor.isBusy()
+                || timer.seconds() > 3.5;
+    }
+
+    private void moveMotorToPosition(int target, double power) {
+        swivelTurretMotor.setTargetPosition(target);
+        swivelTurretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        swivelTurretMotor.setPower(power);
     }
 
     /* ================= PATHS ================= */
@@ -185,44 +326,32 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
         goShootFirst = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootClosePos))
-                .setLinearHeadingInterpolation(
-                        startPose.getHeading(),
-                        shootClosePos.getHeading())
+                .setLinearHeadingInterpolation(startPose.getHeading(), shootClosePos.getHeading())
                 .build();
 
         goCollectFirst = follower.pathBuilder()
                 .addPath(new BezierLine(shootClosePos, startCollectFirstArtifacts))
-                .setLinearHeadingInterpolation(
-                        shootClosePos.getHeading(),
-                        startCollectFirstArtifacts.getHeading())
+                .setLinearHeadingInterpolation(shootClosePos.getHeading(), startCollectFirstArtifacts.getHeading())
                 .build();
 
         collectFirst = follower.pathBuilder()
                 .addPath(new BezierLine(startCollectFirstArtifacts, endCollectFirstArtifacts))
-                .setLinearHeadingInterpolation(
-                        startCollectFirstArtifacts.getHeading(),
-                        endCollectFirstArtifacts.getHeading())
+                .setLinearHeadingInterpolation(startCollectFirstArtifacts.getHeading(), endCollectFirstArtifacts.getHeading())
                 .build();
 
         goShootSecond = follower.pathBuilder()
                 .addPath(new BezierLine(endCollectFirstArtifacts, shootClosePos))
-                .setLinearHeadingInterpolation(
-                        endCollectFirstArtifacts.getHeading(),
-                        shootClosePos.getHeading())
+                .setLinearHeadingInterpolation(endCollectFirstArtifacts.getHeading(), shootClosePos.getHeading())
                 .build();
 
         goCollectSecond = follower.pathBuilder()
                 .addPath(new BezierLine(shootClosePos, startCollectSecondArtifacts))
-                .setLinearHeadingInterpolation(
-                        shootClosePos.getHeading(),
-                        startCollectSecondArtifacts.getHeading())
+                .setLinearHeadingInterpolation(shootClosePos.getHeading(), startCollectSecondArtifacts.getHeading())
                 .build();
 
         collectSecond = follower.pathBuilder()
                 .addPath(new BezierLine(startCollectSecondArtifacts, endCollectSecondArtifacts))
-                .setLinearHeadingInterpolation(
-                        startCollectSecondArtifacts.getHeading(),
-                        endCollectSecondArtifacts.getHeading())
+                .setLinearHeadingInterpolation(startCollectSecondArtifacts.getHeading(), endCollectSecondArtifacts.getHeading())
                 .build();
 
         goShootThird = follower.pathBuilder()
@@ -230,14 +359,9 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                         endCollectSecondArtifacts,
                         new Pose(24 + ROBOT_LENGTH / 2, 5 + 48 + ROBOT_WIDTH / 2),
                         shootClosePos))
-                .setLinearHeadingInterpolation(
-                        endCollectSecondArtifacts.getHeading(),
-                        shootClosePos.getHeading())
+                .setLinearHeadingInterpolation(endCollectSecondArtifacts.getHeading(), shootClosePos.getHeading())
                 .build();
-
     }
-
-    /* ================= LIMELIGHT ================= */
 
     @Override public void tag20() {}
     @Override public void tag21() {}
