@@ -9,9 +9,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
-
 @Autonomous
-public class TheDeathOfPedroPathing_BLUE_CLOSE extends TheDeathOfPedroPathing implements LimelightTags {
+public class TheDeathOfPedroPathing_BLUE_CLOSE
+        extends TheDeathOfPedroPathing
+        implements LimelightTags {
 
     /* ================= POSES ================= */
 
@@ -27,44 +28,58 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE extends TheDeathOfPedroPathing im
 
     private static final Pose startCollectFirstArtifacts =
             new Pose(48 + ROBOT_LENGTH / 2,
-                    (3 * 24) + 12 + (ROBOT_WIDTH/2),
+                    (3 * 24) + 5 + (ROBOT_WIDTH/2),
                     Math.toRadians(180));
 
     private static final Pose endCollectFirstArtifacts =
             new Pose(ROBOT_LENGTH / 2,
-                    (3 * 24) + 12 + (ROBOT_WIDTH/2),
+                    (3 * 24) + 5 + (ROBOT_WIDTH/2),
                     Math.toRadians(180));
 
     private static final Pose startCollectSecondArtifacts =
             new Pose(48 + ROBOT_LENGTH / 2,
-                    ROBOT_WIDTH / 2 + 48,
+                    ROBOT_WIDTH / 2 + 48 + 5,
                     Math.toRadians(180));
 
     private static final Pose endCollectSecondArtifacts =
             new Pose(ROBOT_LENGTH / 2,
-                    ROBOT_WIDTH / 2 + 48,
+                    ROBOT_WIDTH / 2 + 48 + 5,
                     Math.toRadians(180));
 
     /* ================= PATHS ================= */
 
-    private PathChain goShootFirst, goCollectFirst, collectFirst, goShootSecond,
-    goCollectSecond, collectSecond, goShootThird;
+    private PathChain goShootFirst, goCollectFirst, collectFirst,
+            goShootSecond, goCollectSecond, collectSecond, goShootThird;
 
-    /* ================= SHOOTER ================= */
-    private enum ShotPhase { LIFT, DROP, FEED }
-    private ShotPhase shotPhase = ShotPhase.LIFT;
-    private int shotCount = 0;
     /* ================= AUTO STATES ================= */
 
     private enum AutoState {
 
+        GO_SHOOT_FIRST,
+        WAIT_SHOOT_FIRST,
+
+        GO_COLLECT_FIRST,
+        WAIT_COLLECT_FIRST,
+        COLLECT_FIRST,
+        WAIT_FINISH_FIRST,
+
+        GO_SHOOT_SECOND,
+        WAIT_SHOOT_SECOND,
+
+        GO_COLLECT_SECOND,
+        WAIT_COLLECT_SECOND,
+        COLLECT_SECOND,
+        WAIT_FINISH_SECOND,
+
+        GO_SHOOT_THIRD,
+        WAIT_SHOOT_THIRD,
+
+        DONE
     }
 
-    private AutoState autoState;
-    private final ElapsedTime timer = new ElapsedTime();
+    private AutoState autoState = AutoState.GO_SHOOT_FIRST;
 
     /* ================= RUN ================= */
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -74,7 +89,9 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE extends TheDeathOfPedroPathing im
         follower.setStartingPose(startPose);
 
         waitForStart();
-        timer.reset();
+
+        intakeMotor.setPower(1);
+        hoodServo.setPosition(.5);
 
         while (opModeIsActive()) {
 
@@ -82,126 +99,142 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE extends TheDeathOfPedroPathing im
 
             switch (autoState) {
 
+                case GO_SHOOT_FIRST:
+                    follower.followPath(goShootFirst);
+                    autoState = AutoState.WAIT_SHOOT_FIRST;
+                    break;
+
+                case WAIT_SHOOT_FIRST:
+                    if (!follower.isBusy())
+                        autoState = AutoState.GO_COLLECT_FIRST;
+                    break;
+
+                case GO_COLLECT_FIRST:
+                    follower.followPath(goCollectFirst);
+                    autoState = AutoState.WAIT_COLLECT_FIRST;
+                    break;
+
+                case WAIT_COLLECT_FIRST:
+                    if (!follower.isBusy())
+                        autoState = AutoState.COLLECT_FIRST;
+                    break;
+
+                case COLLECT_FIRST:
+                    follower.followPath(collectFirst, .75, true);
+                    autoState = AutoState.WAIT_FINISH_FIRST;
+                    break;
+
+                case WAIT_FINISH_FIRST:
+                    if (!follower.isBusy())
+                        autoState = AutoState.GO_SHOOT_SECOND;
+                    break;
+
+                case GO_SHOOT_SECOND:
+                    follower.followPath(goShootSecond);
+                    autoState = AutoState.WAIT_SHOOT_SECOND;
+                    break;
+
+                case WAIT_SHOOT_SECOND:
+                    if (!follower.isBusy())
+                        autoState = AutoState.GO_COLLECT_SECOND;
+                    break;
+
+                case GO_COLLECT_SECOND:
+                    follower.followPath(goCollectSecond);
+                    autoState = AutoState.WAIT_COLLECT_SECOND;
+                    break;
+
+                case WAIT_COLLECT_SECOND:
+                    if (!follower.isBusy())
+                        autoState = AutoState.COLLECT_SECOND;
+                    break;
+
+                case COLLECT_SECOND:
+                    follower.followPath(collectSecond, .75, true);
+                    autoState = AutoState.WAIT_FINISH_SECOND;
+                    break;
+
+                case WAIT_FINISH_SECOND:
+                    if (!follower.isBusy())
+                        autoState = AutoState.GO_SHOOT_THIRD;
+                    break;
+
+                case GO_SHOOT_THIRD:
+                    follower.followPath(goShootThird);
+                    autoState = AutoState.WAIT_SHOOT_THIRD;
+                    break;
+
+                case WAIT_SHOOT_THIRD:
+                    if (!follower.isBusy())
+                        autoState = AutoState.DONE;
+                    break;
+
+                case DONE:
+                    follower.breakFollowing();
+                    break;
             }
 
             telemetry.addData("State", autoState);
-            telemetry.addData("Shots", shotCount);
-            telemetry.addData("RPM", outtakeMotor.getVelocity());
             telemetry.update();
         }
-    }
-
-    /* ================= SHOOT ROUTINES ================= */
-
-    private void runTripleShot(AutoState nextState) {
-
-        final double LIFT_TIME = 0.9;
-        final double FEED_TIME = 0.5;
-
-        if (shotCount >= 3) {
-            wipersL.primaryPos();
-            wipersR.primaryPos();
-            intakeMotor.setPower(1);
-            autoState = nextState;
-            return;
-        }
-
-        switch (shotPhase) {
-
-            case LIFT:
-                intakeMotor.setPower(0);
-                if (shotCount == 0 || shotCount == 2)
-                    wipersR.secondaryPos();
-                else
-                    wipersL.secondaryPos();
-                timer.reset();
-                shotPhase = ShotPhase.DROP;
-                break;
-
-            case DROP:
-                if (timer.seconds() > LIFT_TIME) {
-                    wipersL.primaryPos();
-                    wipersR.primaryPos();
-                    intakeMotor.setPower(1);
-                    timer.reset();
-                    shotPhase = ShotPhase.FEED;
-                }
-                break;
-
-            case FEED:
-                if (timer.seconds() > FEED_TIME) {
-                    intakeMotor.setPower(0);
-                    shotCount++;
-                    shotPhase = ShotPhase.LIFT;
-                    timer.reset();
-                }
-                break;
-        }
-    }
-
-    /* ================= HELPERS ================= */
-
-    private boolean rpmReady(double target) {
-        return Math.abs(outtakeMotor.getVelocity() - target) < 75
-                || timer.seconds() > 2.5;
-    }
-
-    private boolean turretReady() {
-        return !swivelTurretMotor.isBusy()
-                || timer.seconds() > 3.5;
-    }
-
-    private void moveMotorToPosition(int target, double power) {
-        swivelTurretMotor.setTargetPosition(target);
-        swivelTurretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        swivelTurretMotor.setPower(power);
     }
 
     /* ================= PATHS ================= */
 
     private void buildPaths() {
+
         goShootFirst = follower.pathBuilder()
                 .addPath(new BezierLine(startPose, shootClosePos))
                 .setLinearHeadingInterpolation(
                         startPose.getHeading(),
                         shootClosePos.getHeading())
                 .build();
+
         goCollectFirst = follower.pathBuilder()
                 .addPath(new BezierLine(shootClosePos, startCollectFirstArtifacts))
                 .setLinearHeadingInterpolation(
                         shootClosePos.getHeading(),
                         startCollectFirstArtifacts.getHeading())
                 .build();
+
         collectFirst = follower.pathBuilder()
                 .addPath(new BezierLine(startCollectFirstArtifacts, endCollectFirstArtifacts))
                 .setLinearHeadingInterpolation(
                         startCollectFirstArtifacts.getHeading(),
                         endCollectFirstArtifacts.getHeading())
                 .build();
+
         goShootSecond = follower.pathBuilder()
                 .addPath(new BezierLine(endCollectFirstArtifacts, shootClosePos))
                 .setLinearHeadingInterpolation(
                         endCollectFirstArtifacts.getHeading(),
                         shootClosePos.getHeading())
                 .build();
+
         goCollectSecond = follower.pathBuilder()
                 .addPath(new BezierLine(shootClosePos, startCollectSecondArtifacts))
                 .setLinearHeadingInterpolation(
                         shootClosePos.getHeading(),
                         startCollectSecondArtifacts.getHeading())
                 .build();
+
         collectSecond = follower.pathBuilder()
                 .addPath(new BezierLine(startCollectSecondArtifacts, endCollectSecondArtifacts))
                 .setLinearHeadingInterpolation(
                         startCollectSecondArtifacts.getHeading(),
                         endCollectSecondArtifacts.getHeading())
                 .build();
+
         goShootThird = follower.pathBuilder()
-                .addPath(new BezierLine(endCollectSecondArtifacts, shootClosePos))
+                .addPath(new BezierCurve(
+                        endCollectSecondArtifacts,
+                        new Pose(24 + ROBOT_LENGTH / 2, 5 + 48 + ROBOT_WIDTH / 2),
+                        shootClosePos))
                 .setLinearHeadingInterpolation(
                         endCollectSecondArtifacts.getHeading(),
                         shootClosePos.getHeading())
                 .build();
+
     }
 
     /* ================= LIMELIGHT ================= */
