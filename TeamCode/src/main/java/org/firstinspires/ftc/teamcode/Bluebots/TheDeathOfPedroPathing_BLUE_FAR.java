@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 
 @Autonomous
-public class TheDeathOfBlueFarCrappierPedroPathingGPTed extends TheDeathOfPedroPathing implements LimelightTags {
+public class TheDeathOfPedroPathing_BLUE_FAR extends TheDeathOfPedroPathing implements LimelightTags {
 
     /* ================= POSES ================= */
 
