@@ -50,7 +50,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
     /* ================= PATHS ================= */
 
     private PathChain goShootFirst, goCollectFirst, collectFirst,
-            goShootSecond, goCollectSecond, collectSecond, goShootThird;
+            goShootSecond, goCollectSecond, collectSecond, goShootThird, getOut;
 
     /* ================= SHOOTER ================= */
 
@@ -70,6 +70,8 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
         GO_COLLECT_SECOND, WAIT_COLLECT_SECOND, COLLECT_SECOND, WAIT_FINISH_SECOND,
 
         GO_SHOOT_THIRD, WAIT_SHOOT_THIRD, SPINUP_THIRD, WAIT_SPINUP_THIRD, SHOOT_THIRD,
+
+        GET_OUT,
 
         DONE
     }
@@ -143,7 +145,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case COLLECT_FIRST:
-                    follower.followPath(collectFirst, true);
+                    follower.followPath(collectFirst);
                     autoState = AutoState.WAIT_FINISH_FIRST;
                     break;
 
@@ -196,7 +198,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case COLLECT_SECOND:
-                    follower.followPath(collectSecond, true);
+                    follower.followPath(collectSecond);
                     autoState = AutoState.WAIT_FINISH_SECOND;
                     break;
 
@@ -233,7 +235,12 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case SHOOT_THIRD:
-                    runTripleShot(AutoState.DONE);
+                    runTripleShot(AutoState.GET_OUT);
+                    break;
+
+                case GET_OUT:
+                    follower.followPath(getOut);
+                    autoState = AutoState.DONE;
                     break;
 
                 case DONE:
@@ -254,7 +261,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
         final double LIFT_TIME = 0.5;
         final double FEED_TIME = 0.4;
 
-        if (shotCount >= 6) {
+        if (shotCount >= 4) {
             wipersL.primaryPos();
             wipersR.primaryPos();
             intakeMotor.setPower(1);
@@ -360,6 +367,11 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                         new Pose(24 + ROBOT_LENGTH / 2, 5 + 48 + ROBOT_WIDTH / 2),
                         shootClosePos))
                 .setLinearHeadingInterpolation(endCollectSecondArtifacts.getHeading(), shootClosePos.getHeading())
+                .build();
+
+        getOut = follower.pathBuilder()
+                .addPath(new BezierLine(shootClosePos, startCollectFirstArtifacts))
+                .setLinearHeadingInterpolation(shootClosePos.getHeading(), startCollectFirstArtifacts.getHeading())
                 .build();
     }
 
