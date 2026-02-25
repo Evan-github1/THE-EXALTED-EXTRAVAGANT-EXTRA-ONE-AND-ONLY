@@ -269,7 +269,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
             return;
         }
 
-        final double REVERSE_POWER = -.3;
+        final double REVERSE_POWER = -.276676767;
 
         switch (shotPhase) {
 
