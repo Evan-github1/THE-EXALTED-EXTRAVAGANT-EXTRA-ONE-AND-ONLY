@@ -150,12 +150,12 @@ public class DoomAndDisgust_PEDROBLUEFAR extends Movable {
 
         clearClassifier1 = follower.pathBuilder()
                 .addPath(new BezierCurve(ball3PickupEnd,ball3PickupStart,readyClearClassifier))
-                .setConstantHeadingInterpolation(0)
+                .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
         clearClassifier2 = follower.pathBuilder()
                 .addPath(new BezierLine(readyClearClassifier,clearClassifier))
-                .setConstantHeadingInterpolation(0)
+                .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
 
