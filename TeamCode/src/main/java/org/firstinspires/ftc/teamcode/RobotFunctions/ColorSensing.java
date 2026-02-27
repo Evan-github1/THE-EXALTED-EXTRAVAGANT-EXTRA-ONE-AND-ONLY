@@ -18,23 +18,19 @@ public class ColorSensing { // RAHH COMPOSITION (?)
         leftSensor.setGain(gain);
         rightSensor.setGain(gain);
     }
-
-    //TODO: change rgb to hsv
-
-    public Colors detectColorLeft(Telemetry t) {
+    
+    public Colors detectColorLeft(Telemetry t) { // has higher tolerance
         NormalizedRGBA colors = leftSensor.getNormalizedColors();
 
         float[] hsv = new float[3];
-        Color.RGBToHSV((int) (colors.red*255), (int) (colors.green*225), (int) (colors.blue*225), hsv);
+        Color.RGBToHSV((int) (colors.red*255), (int) (colors.green*255), (int) (colors.blue*255), hsv);
         float h = hsv[0];
         float s = hsv[1];
         float v = hsv[2];
 
-        t.addData("H", h);
-        t.addData("S", s);
-        t.addData("V", v);
+        t.addData("HSV", "%.1f / %.2f / %.2f", h, s, v);
 
-        if (s < .6 || v < .2) {
+        if (v < .15) {
             return Colors.UNKNOWN;
         }
         if (h >= 200) {
@@ -51,57 +47,22 @@ public class ColorSensing { // RAHH COMPOSITION (?)
         NormalizedRGBA colors = rightSensor.getNormalizedColors();
 
         float[] hsv = new float[3];
-        Color.RGBToHSV((int) (colors.red*255), (int) (colors.green*225), (int) (colors.blue*225), hsv);
+        Color.RGBToHSV((int) (colors.red*255), (int) (colors.green*255), (int) (colors.blue*255), hsv);
         float h = hsv[0];
         float s = hsv[1];
         float v = hsv[2];
 
-        t.addData("H", h);
-        t.addData("S", s);
-        t.addData("V", v);
+        t.addData("HSV", "%.1f / %.2f / %.2f", h, s, v);
 
-        if (s < .55 || v < .11) {
+        if (v < .15) {
             return Colors.UNKNOWN;
         }
         if (h >= 220 && h <= 240) {
             return Colors.PURPLE;
-        } else if (h >= 155 && h <= 170) {
+        } else if (h >= 140 && h <= 170) {
             return Colors.GREEN;
         } else {
             return Colors.UNKNOWN;
         }
-
-//        NormalizedRGBA colors = rightSensor.getNormalizedColors();
-//
-//        float r = colors.red;
-//        float g = colors.green;
-//        float b = colors.blue;
-//        float a = colors.alpha;
-//
-////        t.addData("R", r);
-////        t.addData("G", g);
-////        t.addData("B", b);
-////        t.addData("Alpha", a);
-//
-//        if (a <= .2) return Colors.UNKNOWN;
-//
-//        if (a > .9) {
-//            if (r > .12 && r < .20
-//                    && g > .17 && g < .25
-//                    && b > .33 && b < .48) {
-//                return Colors.PURPLE;
-//            } else if (r > .05 && r < .12
-//                    && g > .26 && g < .43
-//                    && b > .18 && b < .33) {
-//                return Colors.GREEN;
-//            }
-//        } else if (a > .2) {
-//            if (g > r && g > b) {
-//                return Colors.GREEN;
-//            } else if (b > r && b > g) {
-//                return Colors.PURPLE;
-//            }
-//        }
-//        return Colors.UNKNOWN;
     }
 }

@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 @TeleOp
 public class MaliceAndCondescensionCRISTINE extends Movable implements LimelightTags { // robot #22335
 
+    //stand l = .25 1, stand r = .75, 0
     private static Limelight3A limelight;
     private static DcMotorEx swivelTurretMotor;
     private static DcMotor intakeMotor;
@@ -31,6 +32,10 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static int targetedID;
     private static double targetVelocity;
     private static Servo hoodServo;
+
+    private static Servo standL, standR;
+    private static DoubleSwitchedServo standsL, standsR;
+
 
     private static ColorSensing colorSensing;
     private static int motifID;
@@ -76,10 +81,16 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         wiperR = hardwareMap.get(Servo.class, "wiperR");
         wiperL = hardwareMap.get(Servo.class, "wiperL");
 
+        standR = hardwareMap.get(Servo.class, "standR");
+        standL = hardwareMap.get(Servo.class, "standL");
+
         gateways = new DoubleSwitchedServo(gatewayServo, .26, .73); // .26: left front
 
         wipersR = new DoubleSwitchedServo(wiperR, 1, .5);
         wipersL = new DoubleSwitchedServo(wiperL, 0, .5);
+
+        standsL = new DoubleSwitchedServo(standR, 0, .75);
+        standsR = new DoubleSwitchedServo(standL, 1, .25);
 
         hoodServo = hardwareMap.get(Servo.class, "hood");
 
@@ -107,6 +118,9 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
         waitForStart();
 
+        standsR.primaryPos();
+        standsL.primaryPos();
+
         wipersL.primaryPos();
         wipersR.primaryPos();
         hoodServo.setPosition(0);
@@ -114,8 +128,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        PIDFCoefficients pidfCoefficients = new PIDFCoefficients(2, 0, 0, 13.2);
-        outtakeMotor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        outtakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
         light = hardwareMap.get(Servo.class, "lights");
 
@@ -212,7 +225,8 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 //            }
 
             if (gamepad1.b && delay()) {
-                gateways.quickSwitch();
+                standsR.quickSwitch();
+                standsL.quickSwitch();
                 time = System.currentTimeMillis();
             }
 
@@ -308,21 +322,21 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
             // END OF GAMEPAD 2
 
-//            if (rightState == ChamberState.EMPTY) {
-//                Colors detected = colorSensing.detectColorRight(telemetry);
-//                if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
-//                    rightStoredColor = detected;
-//                    rightState = ChamberState.LOADED;
-//                }
-//            }
-//
-//            if (leftState == ChamberState.EMPTY) {
-//                Colors detected = colorSensing.detectColorLeft(telemetry);
-//                if (detected != Colors.UNKNOWN && wiperL.getPosition() != wipersL.getSecondaryPos()) {
-//                    leftStoredColor = detected;
-//                    leftState = ChamberState.LOADED;
-//                }
-//            }
+            if (rightState == ChamberState.EMPTY) {
+                Colors detected = colorSensing.detectColorRight(telemetry);
+                if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
+                    rightStoredColor = detected;
+                    rightState = ChamberState.LOADED;
+                }
+            }
+
+            if (leftState == ChamberState.EMPTY) {
+                Colors detected = colorSensing.detectColorLeft(telemetry);
+                if (detected != Colors.UNKNOWN && wiperL.getPosition() != wipersL.getSecondaryPos()) {
+                    leftStoredColor = detected;
+                    leftState = ChamberState.LOADED;
+                }
+            }
 
             leftStoredColor = colorSensing.detectColorLeft(telemetry);
             rightStoredColor = colorSensing.detectColorRight(telemetry);

@@ -71,7 +71,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
         GO_SHOOT_THIRD, WAIT_SHOOT_THIRD, SPINUP_THIRD, WAIT_SPINUP_THIRD, SHOOT_THIRD,
 
-        GET_OUT,
+        GET_OUT, WAIT_GET_OUT,
 
         DONE
     }
@@ -91,8 +91,8 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
 
-        intakeMotor.setPower(1);
-        hoodServo.setPosition(.65);
+        intakeMotor.setPower(.9);
+        hoodServo.setPosition(.82);
         outtakeMotor.setVelocity(UNIVERSAL_SPEED);
 
         while (opModeIsActive()) {
@@ -129,7 +129,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case SHOOT_FIRST:
-                    runTripleShot(AutoState.GO_COLLECT_FIRST);
+                    firstShot(AutoState.GO_COLLECT_FIRST);
                     break;
 
                 /* ========= FIRST ROW ========= */
@@ -173,12 +173,10 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case WAIT_SPINUP_SECOND:
-                    if (rpmReady(UNIVERSAL_SPEED) && turretReady()) {
-                        shotCount = 0;
-                        shotPhase = ShotPhase.LIFT;
-                        timer.reset();
-                        autoState = AutoState.SHOOT_SECOND;
-                    }
+                    shotCount = 0;
+                    shotPhase = ShotPhase.LIFT;
+                    timer.reset();
+                    autoState = AutoState.SHOOT_SECOND;
                     break;
 
                 case SHOOT_SECOND:
@@ -226,12 +224,10 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     break;
 
                 case WAIT_SPINUP_THIRD:
-                    if (rpmReady(UNIVERSAL_SPEED) && turretReady()) {
-                        shotCount = 0;
-                        shotPhase = ShotPhase.LIFT;
-                        timer.reset();
-                        autoState = AutoState.SHOOT_THIRD;
-                    }
+                    shotCount = 0;
+                    shotPhase = ShotPhase.LIFT;
+                    timer.reset();
+                    autoState = AutoState.SHOOT_THIRD;
                     break;
 
                 case SHOOT_THIRD:
@@ -240,11 +236,16 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
                 case GET_OUT:
                     follower.followPath(getOut);
-                    autoState = AutoState.DONE;
+                    autoState = AutoState.WAIT_GET_OUT;
+                    break;
+
+                case WAIT_GET_OUT:
+                    if (!follower.isBusy()) {
+                        autoState = AutoState.DONE;
+                    }
                     break;
 
                 case DONE:
-                    follower.breakFollowing();
                     break;
             }
 
@@ -258,18 +259,18 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
     private void runTripleShot(AutoState nextState) { // actually shoots four times, but only 3 balls
 
-        final double LIFT_TIME = 0.5;
-        final double FEED_TIME = 0.4;
+        final double LIFT_TIME = .5;
+        final double FEED_TIME = .75;
 
         if (shotCount >= 4) {
             wipersL.primaryPos();
             wipersR.primaryPos();
-            intakeMotor.setPower(1);
+            intakeMotor.setPower(.9);
             autoState = nextState;
             return;
         }
 
-        final double REVERSE_POWER = -.276676767;
+        final double REVERSE_POWER = 0;
 
         switch (shotPhase) {
 
@@ -294,7 +295,61 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     wipersL.primaryPos();
                     wipersR.primaryPos();
 
-                    intakeMotor.setPower(1);
+                    intakeMotor.setPower(.9);
+                    timer.reset();
+                    shotPhase = ShotPhase.FEED;
+                }
+                break;
+
+            case FEED:
+                if (timer.seconds() > FEED_TIME) {
+                    intakeMotor.setPower(REVERSE_POWER);
+                    shotCount++;
+                    shotPhase = ShotPhase.LIFT;
+                    timer.reset();
+                }
+                break;
+        }
+    }
+
+    private void firstShot(AutoState nextState) { // actually shoots four times, but only 3 balls
+
+        final double LIFT_TIME = .5;
+        final double FEED_TIME = .75;
+
+        if (shotCount >= 3) {
+            wipersL.primaryPos();
+            wipersR.primaryPos();
+            intakeMotor.setPower(.9);
+            autoState = nextState;
+            return;
+        }
+
+        final double REVERSE_POWER = 0;
+
+        switch (shotPhase) {
+
+            case LIFT:
+                intakeMotor.setPower(REVERSE_POWER);
+
+                if (shotCount % 2 == 0) {
+                    wipersL.secondaryPos();
+                } else {
+                    wipersR.secondaryPos();
+                }
+
+                timer.reset();
+                shotPhase = ShotPhase.DROP;
+                break;
+
+            case DROP:
+                if (timer.seconds() > LIFT_TIME) {
+
+                    // Return BOTH to primary (safe reset)
+                    wipersL.primaryPos();
+                    wipersR.primaryPos();
+
+                    intakeMotor.setPower(.9);
                     timer.reset();
                     shotPhase = ShotPhase.FEED;
                 }
@@ -370,8 +425,8 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                 .build();
 
         getOut = follower.pathBuilder()
-                .addPath(new BezierLine(shootClosePos, startCollectFirstArtifacts))
-                .setLinearHeadingInterpolation(shootClosePos.getHeading(), startCollectFirstArtifacts.getHeading())
+                .addPath(new BezierLine(shootClosePos, endCollectFirstArtifacts))
+                .setLinearHeadingInterpolation(shootClosePos.getHeading(), endCollectFirstArtifacts.getHeading())
                 .build();
     }
 

@@ -268,8 +268,8 @@ public class TheDeathOfPedroPathing_BLUE_FAR extends TheDeathOfPedroPathing impl
 
     private void runTripleShot(AutoState nextState) {
 
-        final double LIFT_TIME = 0.9;
-        final double FEED_TIME = 0.5;
+        final double LIFT_TIME = 0.5;
+        final double FEED_TIME = 0.75;
 
         if (shotCount >= 3) {
             wipersL.primaryPos();
