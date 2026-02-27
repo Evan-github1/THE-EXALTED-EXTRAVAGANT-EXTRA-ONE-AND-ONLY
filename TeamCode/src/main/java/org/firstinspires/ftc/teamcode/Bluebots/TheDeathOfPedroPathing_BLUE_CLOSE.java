@@ -22,6 +22,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
                     (5 * 24) + 3.25,
                     Math.toRadians(-40));
 
+    // the pose to shoot close. the bot should go to this position 3 times during auto.
     private static final Pose shootClosePos =
             new Pose(48,
                     ROBOT_WIDTH / 2 + 96,
@@ -58,8 +59,10 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
     private ShotPhase shotPhase = ShotPhase.LIFT;
     private int shotCount = 0;
 
-    /* ================= AUTO STATES ================= */
+    // speed for the motor
     private final double UNIVERSAL_SPEED = 1425;
+
+    /* ================= AUTO STATES ================= */
 
     private enum AutoState {
 
@@ -92,7 +95,12 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
         waitForStart();
 
         intakeMotor.setPower(.9);
-        hoodServo.setPosition(.82);
+
+        /* hood servo, controls the yellow part.
+           the higher the value, the more the hood gets raised.
+         */
+        hoodServo.setPosition(.76767);
+
         outtakeMotor.setVelocity(UNIVERSAL_SPEED);
 
         while (opModeIsActive()) {

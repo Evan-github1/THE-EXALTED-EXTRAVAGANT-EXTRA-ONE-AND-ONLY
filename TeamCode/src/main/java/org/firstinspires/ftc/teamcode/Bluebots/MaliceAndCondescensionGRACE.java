@@ -200,11 +200,17 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 telemetry.addLine("I see the targeted ID!");
                 sweep = false;
                 double tx = getTX(limelight);
-                // red: .277, green: .444
+
+                if (tx <= -3) {
+                    swivelTurretMotor.setPower(-POWER * 1.75);
+                } else if (tx >= 3) {
+                    swivelTurretMotor.setPower(POWER * 1.75);
+                }
+
                 if (tx <= -1) {
-                    swivelTurretMotor.setPower(-POWER * 1.25);
+                    swivelTurretMotor.setPower(-POWER);
                 } else if (tx >= 1) {
-                    swivelTurretMotor.setPower(POWER * 1.25);
+                    swivelTurretMotor.setPower(POWER);
                 }
 
                 if (tx < 1 && -1 > tx) {
@@ -264,7 +270,7 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.dpad_up && targetVelocity < 4050 && delay(50)) {
+            if (gamepad1.dpad_up && targetVelocity < 4200 && delay(50)) {
                 targetVelocity += 50;
                 time = System.currentTimeMillis();
             } else if (gamepad1.dpad_down && targetVelocity > 2600 &&delay(50)) {
@@ -434,10 +440,6 @@ public class MaliceAndCondescensionGRACE extends Movable implements LimelightTag
             leftState = ChamberState.EMPTY;
             leftStoredColor = Colors.UNKNOWN;
         }).start();
-    }
-
-    private double getTargetTicksPerSec(double ticksPerRevolution, double desiredRPM) {
-        return (ticksPerRevolution * desiredRPM) / 60;
     }
 
     @Override

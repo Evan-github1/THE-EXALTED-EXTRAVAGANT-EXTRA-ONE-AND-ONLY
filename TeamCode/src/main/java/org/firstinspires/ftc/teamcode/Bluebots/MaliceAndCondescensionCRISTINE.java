@@ -195,19 +195,24 @@ steering on right stick
 
             telemetry.addData("Turret Rotate Encoder", swivelTurretMotor.getCurrentPosition());
 
-
             if (id == targetedID) {
                 telemetry.addLine("I see the targeted ID!");
                 sweep = false;
                 double tx = getTX(limelight);
-                // red: .277, green: .444
-                if (tx <= -1) {
-                    swivelTurretMotor.setPower(-POWER * 1.25);
-                } else if (tx >= 1) {
-                    swivelTurretMotor.setPower(POWER * 1.25);
+
+                if (tx <= -3) {
+                    swivelTurretMotor.setPower(-POWER * 1.75);
+                } else if (tx >= 3) {
+                    swivelTurretMotor.setPower(POWER * 1.75);
                 }
 
-                if (tx < 1 && -1 > tx) {
+                if (tx <= -1) {
+                    swivelTurretMotor.setPower(-POWER);
+                } else if (tx >= 1) {
+                    swivelTurretMotor.setPower(POWER);
+                }
+
+                if (tx < 3 && -3 > tx) {
                     light.setPosition(.444);
                 } else {
                     light.setPosition(.277);
@@ -215,6 +220,32 @@ steering on right stick
             } else {
                 light.setPosition(.277);
             }
+
+            /*
+            chat
+
+            if (id == targetedID) {
+                sweep = false;
+
+                double tx = getTX(limelight);   // horizontal offset from Limelight
+                double normalized = tx / 25.0;  // adjust divisor based on your max TX range
+
+                double k = 0.8;                 // overall sensitivity — tune this
+                double power = k * Math.pow(normalized, 3);  // CUBIC
+
+                // Deadband to prevent jitter at center
+                if (Math.abs(tx) < 0.5) {
+                    power = 0;
+                    light.setPosition(.444);  // centered indicator
+                } else {
+                    light.setPosition(.277);
+                }
+
+                swivelTurretMotor.setPower(power);
+            } else {
+                light.setPosition(.277);
+            }
+            */
 
 //            if (id == targetedID) {
 //                double tx = getTX(limelight);
@@ -264,7 +295,7 @@ steering on right stick
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.dpad_up && targetVelocity < 4050 && delay(50)) {
+            if (gamepad1.dpad_up && targetVelocity < 4200 && delay(50)) {
                 targetVelocity += 50;
                 time = System.currentTimeMillis();
             } else if (gamepad1.dpad_down && targetVelocity > 2600 &&delay(50)) {
@@ -434,10 +465,6 @@ steering on right stick
             leftState = ChamberState.EMPTY;
             leftStoredColor = Colors.UNKNOWN;
         }).start();
-    }
-
-    private double getTargetTicksPerSec(double ticksPerRevolution, double desiredRPM) {
-        return (ticksPerRevolution * desiredRPM) / 60;
     }
 
     @Override

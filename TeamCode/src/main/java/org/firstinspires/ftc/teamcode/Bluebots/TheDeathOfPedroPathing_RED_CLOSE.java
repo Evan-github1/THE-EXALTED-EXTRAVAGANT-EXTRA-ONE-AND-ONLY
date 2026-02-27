@@ -92,7 +92,7 @@ public class TheDeathOfPedroPathing_RED_CLOSE
         waitForStart();
 
         intakeMotor.setPower(.9);
-        hoodServo.setPosition(.82);
+        hoodServo.setPosition(.76767);
         outtakeMotor.setVelocity(UNIVERSAL_SPEED);
 
         while (opModeIsActive()) {
