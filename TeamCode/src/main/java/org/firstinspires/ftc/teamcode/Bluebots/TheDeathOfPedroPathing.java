@@ -43,6 +43,8 @@ public abstract class TheDeathOfPedroPathing extends Movable {
     protected static ChamberState rightState;
     protected static volatile boolean shooting = false;
     protected static ColorSensing colorSensing;
+    private static Servo standL, standR;
+    private static DoubleSwitchedServo standsL, standsR;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -84,6 +86,11 @@ public abstract class TheDeathOfPedroPathing extends Movable {
         hoodServo = hardwareMap.get(Servo.class, "hood");
         hoodServo.setPosition(0);
 
+        standR = hardwareMap.get(Servo.class, "standR");
+        standL = hardwareMap.get(Servo.class, "standL");
+        standsL = new DoubleSwitchedServo(standR, 0, .75);
+        standsR = new DoubleSwitchedServo(standL, 1, .25);
+
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);
         FRW.setDirection(DcMotor.Direction.FORWARD);
@@ -106,6 +113,9 @@ public abstract class TheDeathOfPedroPathing extends Movable {
 
         swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        standsL.primaryPos();
+        standsR.primaryPos();
     }
 
     protected void motifMacroShoot() {

@@ -19,6 +19,7 @@ public class PIDFTuning extends Movable {
     private static int stepIndex;
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
+    private static final double TPR = 28;
 
     @Override
     public void runOpMode() {
@@ -60,7 +61,7 @@ public class PIDFTuning extends Movable {
 
             tps = outtakeMotor.getVelocity();
 
-            rpm = tps * 60 / 28;
+            rpm = (tps * 60) / TPR;
             telemetry.addData("RPM",rpm);
             telemetry.addData("Target RPM", currentTargetRPM);
 
@@ -90,7 +91,7 @@ public class PIDFTuning extends Movable {
 
             double error = currentTargetRPM + rpm;
 
-            outtakeMotor.setVelocity(currentTargetRPM / 60 * 28);
+            outtakeMotor.setVelocity((currentTargetRPM / 60) * TPR);
 
             telemetry.addData("Target Velocity", currentTargetRPM);
             telemetry.addData("Current Velocity", "%.2f", rpm);

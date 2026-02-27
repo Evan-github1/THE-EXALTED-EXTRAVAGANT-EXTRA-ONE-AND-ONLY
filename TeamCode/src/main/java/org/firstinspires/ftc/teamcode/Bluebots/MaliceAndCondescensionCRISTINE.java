@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 @TeleOp
 public class MaliceAndCondescensionCRISTINE extends Movable implements LimelightTags { // robot #22335
 
-    //stand l = .25 1, stand r = .75, 0
     private static Limelight3A limelight;
     private static DcMotorEx swivelTurretMotor;
     private static DcMotor intakeMotor;
@@ -48,12 +47,15 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
 
     private static volatile boolean sweep;
     private static volatile boolean moveLeft;
-
+/*
+hood to bumpers (not triggers)
+steering on right stick
+ */
     private static final int TURRET_LIMIT_LEFT = -300;
     private static final int TURRET_LIMIT_RIGHT = 300;
     private static int currentPipeline = -1;
-    private static final double OUTTAKE_TICKS_PER_REV = 28;
     private static Servo light;
+    private static final double TPR = 28;
 
     public double prevSmooth;
     public double alpha = 0.5;
@@ -74,7 +76,7 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         outtakeToggle = false;
         outtakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outtakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        targetVelocity = 2000;
+        targetVelocity = 3000;
 
         gatewayServo = hardwareMap.get(Servo.class, "gateway");
 
@@ -129,13 +131,14 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         outtakeMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        outtakeMotor.setVelocityPIDFCoefficients(0, 0, 0, 20);
 
         light = hardwareMap.get(Servo.class, "lights");
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
             telemetry.addData("Camera is targetting", targetedID);
-            telemetry.addData("Outtake Encoder", outtakeMotor.getCurrentPosition());
+
             omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
             turn();
 
@@ -157,8 +160,8 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 motifID = id;
             }
 
-            telemetry.addData("Motif ID", motifID);
-            telemetry.addLine("I spy with my little eye... " + id);
+            telemetry.addData("Motif ID: ", motifID);
+            telemetry.addLine("Detected ID: " + id);
 
             if (gamepad1.leftStickButtonWasPressed()) {
                 sweep = !sweep;
@@ -179,7 +182,6 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                     moveLeft = true;
                 }
             }
-
 
             if (!sweep) {
                 if (gamepad1.dpad_right && swivelTurretMotor.getCurrentPosition() <= TURRET_LIMIT_RIGHT) {
@@ -262,10 +264,10 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
                 time = System.currentTimeMillis();
             }
 
-            if (gamepad1.dpad_up && targetVelocity < 2000 && delay(100)) {
+            if (gamepad1.dpad_up && targetVelocity < 4050 && delay(50)) {
                 targetVelocity += 50;
                 time = System.currentTimeMillis();
-            } else if (gamepad1.dpad_down && targetVelocity > 1500 && delay(100)) {
+            } else if (gamepad1.dpad_down && targetVelocity > 2600 &&delay(50)) {
                 targetVelocity -= 50;
                 time = System.currentTimeMillis();
             }
@@ -294,12 +296,12 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             }
 
             if (outtakeToggle) {
-                outtakeMotor.setVelocity(targetVelocity);
+                outtakeMotor.setVelocity((targetVelocity * TPR) / 60);
             } else {
                 outtakeMotor.setVelocity(0);
             }
             telemetry.addData("Target Velocity", targetVelocity);
-            telemetry.addData("Velocity", outtakeMotor.getVelocity());
+            telemetry.addData("Velocity", (outtakeMotor.getVelocity() * 60) / TPR);
 
             // GAMEPAD 2
             if (gamepad2.right_trigger >= .5 && delay(1001)) {
@@ -321,7 +323,6 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
             }
 
             // END OF GAMEPAD 2
-
             if (rightState == ChamberState.EMPTY) {
                 Colors detected = colorSensing.detectColorRight(telemetry);
                 if (detected != Colors.UNKNOWN && wiperR.getPosition() != wipersR.getSecondaryPos()) {
