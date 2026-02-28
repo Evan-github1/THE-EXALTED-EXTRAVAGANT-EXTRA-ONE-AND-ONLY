@@ -60,7 +60,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
     private int shotCount = 0;
 
     // speed for the motor
-    private final double UNIVERSAL_SPEED = 1425;
+    private final double UNIVERSAL_SPEED = 950;
 
     /* ================= AUTO STATES ================= */
 
@@ -101,7 +101,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
          */
         hoodServo.setPosition(.76767);
 
-        outtakeMotor.setVelocity(1100);
+        outtakeMotor.setVelocity(UNIVERSAL_SPEED);
 
         while (opModeIsActive()) {
 
