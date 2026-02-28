@@ -23,8 +23,8 @@ public class TheDeathOfPedroPathing_RED_CLOSE
                     Math.toRadians(-40)).mirror();
 
     private static final Pose shootClosePos =
-            new Pose(48,
-                    ROBOT_WIDTH / 2 + 96,
+            new Pose(60,
+                    ROBOT_WIDTH / 2 + 84,
                     Math.toRadians(-40)).mirror();
 
     private static final Pose startCollectFirstArtifacts =
@@ -74,7 +74,7 @@ public class TheDeathOfPedroPathing_RED_CLOSE
         GET_OUT, WAIT_GET_OUT,
 
         DONE
-    }
+        }
 
     private AutoState autoState = AutoState.GO_SHOOT_FIRST;
     private final ElapsedTime timer = new ElapsedTime();
@@ -93,7 +93,7 @@ public class TheDeathOfPedroPathing_RED_CLOSE
 
         intakeMotor.setPower(.9);
         hoodServo.setPosition(.76767);
-        outtakeMotor.setVelocity(UNIVERSAL_SPEED);
+        outtakeMotor.setVelocity(1100);
 
         while (opModeIsActive()) {
 

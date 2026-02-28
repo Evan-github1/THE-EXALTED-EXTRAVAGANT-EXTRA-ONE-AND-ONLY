@@ -24,8 +24,8 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
 
     // the pose to shoot close. the bot should go to this position 3 times during auto.
     private static final Pose shootClosePos =
-            new Pose(48,
-                    ROBOT_WIDTH / 2 + 96,
+            new Pose(60,
+                    ROBOT_WIDTH / 2 + 84,
                     Math.toRadians(-40));
 
     private static final Pose startCollectFirstArtifacts =
@@ -101,7 +101,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
          */
         hoodServo.setPosition(.76767);
 
-        outtakeMotor.setVelocity(UNIVERSAL_SPEED);
+        outtakeMotor.setVelocity(1100);
 
         while (opModeIsActive()) {
 
