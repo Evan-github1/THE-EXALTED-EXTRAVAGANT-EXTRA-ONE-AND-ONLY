@@ -48,6 +48,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static double rpm, rpm2, tps, tps2, targetRPM, P, FClose, FFar, currentTargetRPM;
     private static PIDFCoefficients pidfCoefficients;
     private static Follower follower;
+    private static Pose holdPose;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
@@ -118,6 +119,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
             telemetry.addData("Power",launcherMotor1.getPower());
 
+            if(gamepad1.leftStickButtonWasPressed()){
+                holdPose = follower.getPose();
+            }
+
             if(Math.abs(gamepad1.right_stick_x) > 0.1){
                 FLW.setPower(gamepad1.right_stick_x);
                 FRW.setPower(-gamepad1.right_stick_x);
@@ -143,11 +148,15 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     }
                     iterations++;
                 }catch(Exception ignored){}
+            //}else if(gamepad1.left_stick_button){
+             //   follower.holdPoint(holdPose,true);
+               // telemetry.addLine("Holding!");
             }else{
                 moveWheels(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
                 pastError = 0;
                 iterations = 0;
             }
+
             if (gamepad1.y && delay()) {
                 if(intakeMotor.getPower() == 0){
                     intakeMotor.setPower(1);
@@ -204,6 +213,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }else if(gamepad1.right_trigger > 0.5 /*&& delay(1600)*/ && !fires.isSecondaryPos()){
                 transferMotor.setPower(1);
                 fires.secondaryPos();
+                indL.setPosition(.5);
+                indR.setPosition(.5);
                 /*new Thread(() -> {
                     fires.secondaryPos();
                     try {
@@ -216,6 +227,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
             }else if(gamepad1.right_trigger <= 0.5 && fires.isSecondaryPos()){
                 transferMotor.setPower(0);
+                indL.setPosition(0.1);
+                indR.setPosition(0.1);
                 fires.primaryPos();
             }else if(!loading){
                 intakeMotor.setPower(0);
@@ -244,11 +257,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
             desiredX = 0;
             double smoothCoeff = 0.25;
+            double k = 1.0/20;
             telemetry.addData("Yes is not null",true);
             double tx = yes.getTargetXDegrees();
             double currentError = desiredX - tx;
             double smoothedError = smoothCoeff*currentError + (1-smoothCoeff)*pastError;
-            smoothedError = smoothedError/25;
+            smoothedError = smoothedError*k;
             telemetry.addData(""+currentError,smoothedError);
             if(adjustMotor) {
                 FLW.setPower(-smoothedError);

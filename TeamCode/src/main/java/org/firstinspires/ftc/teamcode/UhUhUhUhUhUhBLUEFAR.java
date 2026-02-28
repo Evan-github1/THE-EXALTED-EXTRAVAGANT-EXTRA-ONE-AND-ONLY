@@ -25,7 +25,6 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 @Autonomous
 public class UhUhUhUhUhUhBLUEFAR extends Movable {
-
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
     private static DcMotorEx intakeMotor, launcherMotor1, launcherMotor2,transferMotor;
@@ -56,7 +55,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
     private final Pose clearClassifier1 = new Pose(141.5-125,72,Math.PI-0);
     private final Pose clearClassifier2 = new Pose(141.5-115,72,Math.PI-0);
     private final Pose pickUpCorner1 = new Pose(robotWidth()/2,30+robotLength()/2,Math.PI-Math.toRadians(-90));
-    private final Pose pickUpCorner2 = new Pose(robotWidth()/2,robotLength()/2+3,Math.PI-Math.toRadians(-90));
+    private final Pose pickUpCorner2 = new Pose(robotWidth()/2,2+robotLength()/2+3,Math.PI-Math.toRadians(-90));
 
     private final Pose closeShoot = new Pose(141.5-85,85,-Math.PI/4);
 
@@ -75,7 +74,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         follower = createFollower(hardwareMap);
         motorPowerClose = 2300;
-        motorPowerFar = 3600; //from 4800
+        motorPowerFar = 3400; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);
@@ -239,7 +238,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
 
                 case 1:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
+                        if(actionTimer.getElapsedTimeSeconds() < 2) {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
@@ -303,7 +302,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                     break;
                 case 5:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
+                        if(actionTimer.getElapsedTimeSeconds() < 2) {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
@@ -351,7 +350,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                     break;
                 case 8:
                     if(!follower.isBusy()){
-                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
+                        if(actionTimer.getElapsedTimeSeconds() < 2) {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
@@ -451,7 +450,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                     break;
                 case 14:
                     if(!follower.isBusy()){
-                        if(actionTimer.getElapsedTimeSeconds() < 2.5) {
+                        if(actionTimer.getElapsedTimeSeconds() < 2) {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
@@ -505,7 +504,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
             double tx = yes.getTargetXDegrees();
             double currentError = desiredX - tx;
             double smoothedError = smoothCoeff*currentError + (1-smoothCoeff)*pastError;
-            smoothedError = smoothedError/15;
+            smoothedError = smoothedError/10;
             telemetry.addData(""+currentError,smoothedError);
             if(adjustMotor) {
                 FLW.setPower(-smoothedError);
