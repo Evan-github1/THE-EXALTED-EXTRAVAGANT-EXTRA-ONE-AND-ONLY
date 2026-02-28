@@ -89,11 +89,12 @@ public class TheDeathOfPedroPathing_RED_CLOSE
         follower.setStartingPose(startPose);
         swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeMotor.setVelocityPIDFCoefficients(0, 0, 0, 20);
         waitForStart();
 
         intakeMotor.setPower(.9);
         hoodServo.setPosition(.76767);
-        outtakeMotor.setVelocity(1100);
+        outtakeMotor.setVelocity(1200);
 
         while (opModeIsActive()) {
 

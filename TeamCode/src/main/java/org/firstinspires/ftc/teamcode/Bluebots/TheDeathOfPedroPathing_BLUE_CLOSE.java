@@ -60,7 +60,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
     private int shotCount = 0;
 
     // speed for the motor
-    private final double UNIVERSAL_SPEED = 950;
+    private final double UNIVERSAL_SPEED = 1200;
 
     /* ================= AUTO STATES ================= */
 
@@ -82,6 +82,7 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
     private AutoState autoState = AutoState.GO_SHOOT_FIRST;
     private final ElapsedTime timer = new ElapsedTime();
 
+
     /* ================= RUN ================= */
 
     @Override
@@ -92,6 +93,8 @@ public class TheDeathOfPedroPathing_BLUE_CLOSE
         follower.setStartingPose(startPose);
         swivelTurretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         swivelTurretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeMotor.setVelocityPIDFCoefficients(0, 0, 0, 20);
+
         waitForStart();
 
         intakeMotor.setPower(.9);
