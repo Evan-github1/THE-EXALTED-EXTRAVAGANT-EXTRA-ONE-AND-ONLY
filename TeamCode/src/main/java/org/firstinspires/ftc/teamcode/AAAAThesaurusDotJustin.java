@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
+import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;

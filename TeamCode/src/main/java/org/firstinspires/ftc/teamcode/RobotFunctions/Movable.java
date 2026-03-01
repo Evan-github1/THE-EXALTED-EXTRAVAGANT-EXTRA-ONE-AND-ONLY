@@ -25,8 +25,6 @@ public abstract class Movable extends LinearOpMode implements LimelightTags,Lime
         BLW = hardwareMap.get(DcMotor.class, "BLW");
         FRW = hardwareMap.get(DcMotor.class, "FRW");
         BRW = hardwareMap.get(DcMotor.class, "BRW");
-        motorPowerClose = .5185;
-        motorPowerFar = .888;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

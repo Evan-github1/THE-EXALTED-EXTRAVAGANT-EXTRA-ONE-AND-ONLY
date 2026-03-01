@@ -174,8 +174,8 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
         pathState = 0;
 
         waitForStart();
-        launcherMotor1.setVelocity(motorPowerFar / 60 * 28);
-        launcherMotor2.setVelocity(motorPowerFar / 60 * 28);
+        launcherMotor1.setVelocity((motorPowerFar+225) / 60 * 28);
+        launcherMotor2.setVelocity((225+motorPowerFar) / 60 * 28);
         launcherMotor1.setPIDFCoefficients(RUN_USING_ENCODER,new PIDFCoefficients(P,0,0.01,FFar));
         launcherMotor2.setPIDFCoefficients(RUN_USING_ENCODER,new PIDFCoefficients(P,0,0.01,FFar));
         lt1.setPosition(.37);
