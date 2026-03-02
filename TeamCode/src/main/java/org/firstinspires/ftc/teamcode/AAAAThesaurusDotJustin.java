@@ -152,11 +152,11 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
 
             if(isAimed){
-                indL.setPosition(.9);
-                indR.setPosition(.9);
+                indL.setPosition(.8);
+                indR.setPosition(.8);
             } else if(AutoConfig.isRed){
-                indL.setPosition(0.277);
-                indR.setPosition(0.277);
+                indL.setPosition(0.31);
+                indR.setPosition(0.31);
             } else{
                 indL.setPosition(0.611);
                 indR.setPosition(0.611);
@@ -295,7 +295,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         double forward = transY;
         double strafe = transX;
         double turn;
-        double targetAngle = 100000; //big number to signify not set yet
+        double error = 100000;
         if(autoAim){
             double goalX;
             double goalY = 144;
@@ -305,10 +305,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 goalX=0;
             }
             //calculate angle from robot to target, add pi to get angle robot needs to face to aim at target (since launcher is on back of robot)
-            targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
+            double targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
 
             //calculate error between target angle and current angle
-            double error = targetAngle - follower.getPose().getHeading();
+            error = targetAngle - follower.getPose().getHeading();
 
             //convert error to range [-pi, pi] so that robot turns the shortest distance to target
             while(error>Math.PI){error-=2*Math.PI;}
@@ -326,7 +326,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
         //isAimed check basically
         //checks for is within 0.05 degrees of target angle and not rotating too fast
-        return autoAim && Math.abs(targetAngle - follower.getPose().getHeading()) < Math.toRadians(0.05) && Math.abs(follower.getAngularVelocity()) < Math.toRadians(0.2);
+        return autoAim && Math.abs(error) < Math.toRadians(0.5) && Math.abs(follower.getAngularVelocity()) < Math.toRadians(0.5);
     }
     @Override
     public void tag20() {
