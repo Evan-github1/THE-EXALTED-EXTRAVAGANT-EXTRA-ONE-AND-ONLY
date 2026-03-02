@@ -311,7 +311,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         }
         follower.setTeleOpDrive(forward,strafe,turn);
 
-        return autoAim && Math.abs(targetAngle - follower.getPose().getHeading()) < Math.toRadians(0.05);
+        return autoAim && Math.abs(targetAngle - follower.getPose().getHeading()) < Math.toRadians(0.05) && Math.abs(follower.getAngularVelocity()) < Math.toRadians(0.2);
     }
     @Override
     public void tag20() {
