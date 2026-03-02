@@ -92,53 +92,53 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                 .build();
 
         PathChain goToPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_SCORE,BLUE_FAR_BALL3_START))
-                .setLinearHeadingInterpolation(BLUE_FAR_SCORE.getHeading(),BLUE_FAR_BALL3_START.getHeading())
+                .addPath(new BezierLine(BLUE_FAR_SCORE,BLUE_BALL3_START))
+                .setLinearHeadingInterpolation(BLUE_FAR_SCORE.getHeading(),BLUE_BALL3_START.getHeading())
                 .build();
 
         PathChain grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_BALL3_START,BLUE_FAR_BALL3_END))
-                .setLinearHeadingInterpolation(BLUE_FAR_BALL3_START.getHeading(),BLUE_FAR_BALL3_END.getHeading())
+                .addPath(new BezierLine(BLUE_BALL3_START,BLUE_BALL3_END))
+                .setLinearHeadingInterpolation(BLUE_BALL3_START.getHeading(),BLUE_BALL3_END.getHeading())
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_CLEAR,BLUE_FAR_CLOSE_SHOOT))
-                .setLinearHeadingInterpolation(BLUE_FAR_CLEAR.getHeading(),BLUE_FAR_CLOSE_SHOOT.getHeading())
+                .addPath(new BezierLine(BLUE_FAR_CLEAR,BLUE_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(BLUE_FAR_CLEAR.getHeading(),BLUE_CLOSE_SCORE.getHeading())
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(BLUE_FAR_BALL3_END, BLUE_FAR_CLEAR2, BLUE_FAR_CLEAR))
+                .addPath(new BezierCurve(BLUE_BALL3_END, BLUE_FAR_CLEAR2, BLUE_FAR_CLEAR))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
         PathChain goToPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_SCORE,BLUE_FAR_BALL2_START))
-                .setLinearHeadingInterpolation(BLUE_FAR_SCORE.getHeading(),BLUE_FAR_BALL2_START.getHeading())
+                .addPath(new BezierLine(BLUE_FAR_SCORE,BLUE_BALL2_START))
+                .setLinearHeadingInterpolation(BLUE_FAR_SCORE.getHeading(),BLUE_BALL2_START.getHeading())
                 .build();
 
         PathChain grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_BALL2_START,BLUE_FAR_BALL2_END))
-                .setLinearHeadingInterpolation(BLUE_FAR_BALL2_START.getHeading(),BLUE_FAR_BALL2_END.getHeading())
+                .addPath(new BezierLine(BLUE_BALL2_START,BLUE_BALL2_END))
+                .setLinearHeadingInterpolation(BLUE_BALL2_START.getHeading(),BLUE_BALL2_END.getHeading())
                 .build();
 
         PathChain scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_BALL2_END,BLUE_FAR_CLOSE_SHOOT))
-                .setLinearHeadingInterpolation(BLUE_FAR_BALL2_END.getHeading(),BLUE_FAR_CLOSE_SHOOT.getHeading())
+                .addPath(new BezierLine(BLUE_BALL2_END,BLUE_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(BLUE_BALL2_END.getHeading(),BLUE_CLOSE_SCORE.getHeading())
                 .build();
 
         PathChain goToPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_SCORE,BLUE_FAR_BALL1_START))
-                .setLinearHeadingInterpolation(BLUE_FAR_SCORE.getHeading(),BLUE_FAR_BALL1_START.getHeading())
+                .addPath(new BezierLine(BLUE_FAR_SCORE,BLUE_BALL1_START))
+                .setLinearHeadingInterpolation(BLUE_FAR_SCORE.getHeading(),BLUE_BALL1_START.getHeading())
                 .build();
 
         PathChain grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_BALL1_START,BLUE_FAR_BALL1_END))
-                .setLinearHeadingInterpolation(BLUE_FAR_BALL1_START.getHeading(),BLUE_FAR_BALL1_END.getHeading())
+                .addPath(new BezierLine(BLUE_BALL1_START,BLUE_BALL1_END))
+                .setLinearHeadingInterpolation(BLUE_BALL1_START.getHeading(),BLUE_BALL1_END.getHeading())
                 .build();
 
         PathChain scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_BALL1_END,BLUE_FAR_SCORE))
-                .setLinearHeadingInterpolation(BLUE_FAR_BALL1_END.getHeading(),BLUE_FAR_SCORE.getHeading())
+                .addPath(new BezierLine(BLUE_BALL1_END,BLUE_FAR_SCORE))
+                .setLinearHeadingInterpolation(BLUE_BALL1_END.getHeading(),BLUE_FAR_SCORE.getHeading())
                 .build();
 
         PathChain getCorner = follower.pathBuilder()
@@ -159,6 +159,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
         follower.setStartingPose(BLUE_FAR_START);
 
         pathState = 0;
+        AutoConfig.isRed = false;
 
         waitForStart();
         launcherMotor1.setVelocity(motorPowerFar / 60 * 28);
@@ -459,6 +460,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
 
                 case 15:
                     if(!follower.isBusy()){
+                        AutoConfig.isRed = false;
                         AutoConfig.lastAutoEndPose = follower.getPose();
                         breaked = true;
                     }

@@ -90,52 +90,52 @@ public class DoomAndDisgust_PEDROREDFAR extends Movable {
                 .setLinearHeadingInterpolation(RED_FAR_START.getHeading(),RED_FAR_SCORE.getHeading())
                 .build();
         goToPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_SCORE, RED_FAR_BALL1_START))
-                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(), RED_FAR_BALL1_START.getHeading())
+                .addPath(new BezierLine(RED_FAR_SCORE, RED_BALL1_START))
+                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(), RED_BALL1_START.getHeading())
                 .build();
 
         grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_BALL1_START,RED_FAR_BALL1_END))
-                .setConstantHeadingInterpolation(RED_FAR_BALL1_START.getHeading())
+                .addPath(new BezierLine(RED_BALL1_START,RED_BALL1_END))
+                .setConstantHeadingInterpolation(RED_BALL1_START.getHeading())
                 .build();
 
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_BALL1_END, RED_FAR_SCORE))
-                .setLinearHeadingInterpolation(RED_FAR_BALL1_END.getHeading(), RED_FAR_SCORE.getHeading())
+                .addPath(new BezierLine(RED_BALL1_END, RED_FAR_SCORE))
+                .setLinearHeadingInterpolation(RED_BALL1_END.getHeading(), RED_FAR_SCORE.getHeading())
                 .build();
 
         goToPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_CLOSE_SHOOT,RED_FAR_BALL2_START))
-                .setLinearHeadingInterpolation(RED_FAR_CLOSE_SHOOT.getHeading(),RED_FAR_BALL2_START.getHeading())
+                .addPath(new BezierLine(RED_CLOSE_SCORE,RED_BALL2_START))
+                .setLinearHeadingInterpolation(RED_CLOSE_SCORE.getHeading(),RED_BALL2_START.getHeading())
                 .build();
 
         grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_BALL2_START, RED_FAR_BALL2_END))
-                .setLinearHeadingInterpolation(RED_FAR_BALL2_START.getHeading(), RED_FAR_BALL2_END.getHeading())
+                .addPath(new BezierLine(RED_BALL2_START, RED_BALL2_END))
+                .setLinearHeadingInterpolation(RED_BALL2_START.getHeading(), RED_BALL2_END.getHeading())
                 .build();
 
         scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierCurve(RED_FAR_BALL2_END, RED_FAR_BALL2_START,RED_FAR_SCORE))
-                .setLinearHeadingInterpolation(RED_FAR_BALL2_END.getHeading(), RED_FAR_SCORE.getHeading())
+                .addPath(new BezierCurve(RED_BALL2_END, RED_BALL2_START,RED_FAR_SCORE))
+                .setLinearHeadingInterpolation(RED_BALL2_END.getHeading(), RED_FAR_SCORE.getHeading())
                 .build();
 
         goToPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_SCORE, RED_FAR_BALL3_START))
-                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(), RED_FAR_BALL3_START.getHeading())
+                .addPath(new BezierLine(RED_FAR_SCORE, RED_BALL3_START))
+                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(), RED_BALL3_START.getHeading())
                 .build();
 
         grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_BALL3_START,RED_FAR_BALL3_END))
-                .setConstantHeadingInterpolation(RED_FAR_BALL3_END.getHeading())
+                .addPath(new BezierLine(RED_BALL3_START,RED_BALL3_END))
+                .setConstantHeadingInterpolation(RED_BALL3_END.getHeading())
                 .build();
 
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_CLEAR, RED_FAR_CLOSE_SHOOT))
-                .setLinearHeadingInterpolation(RED_FAR_BALL3_END.getHeading(),RED_FAR_SCORE.getHeading())
+                .addPath(new BezierLine(RED_FAR_CLEAR, RED_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(RED_BALL3_END.getHeading(),RED_FAR_SCORE.getHeading())
                 .build();
 
         clearClassifier1 = follower.pathBuilder()
-                .addPath(new BezierCurve(RED_FAR_BALL3_END,RED_FAR_BALL3_START,DOOM_RED_FAR_CLEAR_READY))
+                .addPath(new BezierCurve(RED_BALL3_END,RED_BALL3_START,DOOM_RED_FAR_CLEAR_READY))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
@@ -148,6 +148,7 @@ public class DoomAndDisgust_PEDROREDFAR extends Movable {
         follower.setStartingPose(RED_FAR_START);
 
         pathState = 0;
+        AutoConfig.isRed = true;
 
         waitForStart();
         launcherMotor1.setVelocity(motorPowerFar / 60 * 28);
@@ -370,6 +371,7 @@ public class DoomAndDisgust_PEDROREDFAR extends Movable {
                     break;
                 case 14:
                     if(!follower.isBusy()) {
+                        AutoConfig.isRed = true;
                         AutoConfig.lastAutoEndPose = follower.getPose();
                         breaked = true;
                     }

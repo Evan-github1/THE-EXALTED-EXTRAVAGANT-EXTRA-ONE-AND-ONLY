@@ -111,6 +111,7 @@ public class DoomAndDisgust_PEDROREDCLOSE extends Movable {
         follower.setStartingPose(DOOM_RED_CLOSE_START);
 
         pathState = 0;
+        AutoConfig.isRed = true;
 
         waitForStart();
         launcherMotor1.setVelocity(motorPowerClose / 60 * 28);
@@ -168,6 +169,7 @@ public class DoomAndDisgust_PEDROREDCLOSE extends Movable {
                     break;
                 case 2:
                     if (!follower.isBusy()) {
+                        AutoConfig.isRed = true;
                         AutoConfig.lastAutoEndPose = follower.getPose();
                         breaked = true;
                     }

@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
+import org.firstinspires.ftc.teamcode.RobotFunctions.HeadingPID;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
@@ -40,6 +42,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static DoubleSwitchedServo fires;
     private static boolean loading;
     private static boolean shooting;
+    private static boolean isAimed;
     private static Limelight3A limelight;
     private static Thread orientRobot;
     private static boolean tracking;
@@ -48,6 +51,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static double motorPowerFar, motorPowerClose;
     private static double rpm, rpm2, tps, tps2, targetRPM, P, FClose, FFar, currentTargetRPM;
     private static PIDFCoefficients pidfCoefficients;
+    private static PIDFController aimPID;
     private static Follower follower;
     private static Pose holdPose;
 
@@ -66,6 +70,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         loading = false;
         shooting = false;
+        isAimed = false;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(0);
@@ -76,6 +81,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         FClose = 16.8;
         FFar = 15.8;
         pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
+        aimPID = new PIDFController(new com.pedropathing.control.PIDFCoefficients(1.2,0,0.05,0.025));
         follower = createFollower(hardwareMap);
         follower.setStartingPose(
             AutoConfig.lastAutoEndPose != null
@@ -124,45 +130,34 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
             telemetry.addData("Power",launcherMotor1.getPower());
 
-            if(gamepad1.leftStickButtonWasPressed()){
-                holdPose = follower.getPose();
-            }
-
-            if(Math.abs(gamepad1.right_stick_x) > 0.1){
-                FLW.setPower(gamepad1.right_stick_x);
-                FRW.setPower(-gamepad1.right_stick_x);
-                BLW.setPower(gamepad1.right_stick_x);
-                BRW.setPower(-gamepad1.right_stick_x);
-            }else if(gamepad1.dpad_up) {
+            if(gamepad1.dpad_up) {
                 moveWheels(0,0.33f);
+                isAimed = false;
             }else if(gamepad1.dpad_down){
                 moveWheels(0,-0.33f);
+                isAimed = false;
             }else if(gamepad1.dpad_left){
                 moveWheels(0.33f,0);
+                isAimed = false;
             }else if(gamepad1.dpad_right){
                 moveWheels(-0.33f,0);
-            }else if(gamepad1.right_stick_button){
-                try {
-                    if (iterations == 0) {
-                        pastError = 0;
-                        LeBotsEyes(pastError, true);
-                    } else {
-                        pastError = LeBotsEyes(pastError, false);
-                        LeBotsEyes(pastError, true);
-
-                    }
-                    iterations++;
-                }catch(Exception ignored){}
-            //}else if(gamepad1.left_stick_button){
-             //   follower.holdPoint(holdPose,true);
-               // telemetry.addLine("Holding!");
-            }else{
-                moveWheels(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
-                pastError = 0;
-                iterations = 0;
+                isAimed = false;
+            }else {
+                isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_trigger>0.5);
             }
 
-            if (gamepad1.y && delay()) {
+            if(isAimed){
+                indL.setPosition(.9);
+                indR.setPosition(.9);
+            } else if(AutoConfig.isRed){
+                indL.setPosition(0.277);
+                indR.setPosition(0.277);
+            } else{
+                indL.setPosition(0.611);
+                indR.setPosition(0.611);
+            }
+
+            if (gamepad1.yWasPressed()) {
                 if(intakeMotor.getPower() == 0){
                     intakeMotor.setPower(1);
                     loading = true;
@@ -171,7 +166,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     loading = false;
                 }
                 setTime();
-            }else if (gamepad1.a && delay()) {
+            }
+            if (gamepad1.aWasPressed()) {
                 if(intakeMotor.getPower() == 0){
                     intakeMotor.setPower(-.5);
                     loading = true;
@@ -179,10 +175,15 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     intakeMotor.setPower(0);
                 }
                 setTime();
-            }else if(gamepad1.x && delay()){
+            }
+            if(gamepad1.guideWasPressed()){
+                AutoConfig.isRed = !AutoConfig.isRed;
+            }
+            if(gamepad1.xWasPressed()){
                 shooting = !shooting;
                 setTime();
-            }else if(gamepad1.b && delay()){
+            }
+            if(gamepad1.bWasPressed()){
                 if(targetRPM == motorPowerFar) {//If far
                     //Set to close pos
                     new Thread(() -> {
@@ -215,11 +216,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     }).start();
                 }
                 setTime();
-            }else if(gamepad1.right_trigger > 0.5 /*&& delay(1600)*/ && !fires.isSecondaryPos()){
+            }
+            if(gamepad1.right_trigger > 0.5 /*&& delay(1600)*/ && !fires.isSecondaryPos()){
                 transferMotor.setPower(1);
                 fires.secondaryPos();
-                indL.setPosition(.5);
-                indR.setPosition(.5);
                 /*new Thread(() -> {
                     fires.secondaryPos();
                     try {
@@ -230,12 +230,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     fires.primaryPos();
                 }).start();*/
 
-            }else if(gamepad1.right_trigger <= 0.5 && fires.isSecondaryPos()){
+            }
+            if(gamepad1.right_trigger <= 0.5 && fires.isSecondaryPos()){
                 transferMotor.setPower(0);
-                indL.setPosition(0.1);
-                indR.setPosition(0.1);
                 fires.primaryPos();
-            }else if(!loading){
+            }
+            if(!loading){
                 intakeMotor.setPower(0);
             }
 
@@ -254,7 +254,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.update();
         }
     }
-
+    //not used atm
     private double LeBotsEyes(double pastError, boolean adjustMotor){
         double desiredX;
         telemetry.addData("D", true);
@@ -283,8 +283,36 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
     }
 
+    //drives robot with given translational and rotational inputs(translational stick, rotational stick) and takes a boolean for if it is auto aiming or not (if auto aiming, it will ignore rotational inputs and instead calculate the rotation needed to face the target and rotate the robot accordingly)
+    //uses Pedro drive algorithm
+    //uses alliance based on auto setting it
+    private boolean robotDrive(double transX, double transY, double turnX, boolean autoAim) {
+        double forward = -transY;
+        double strafe = transX;
+        double turn;
+        double targetAngle = 100000; //big number to signify not set yet
+        if(autoAim){
+            double goalX;
+            double goalY = 144;
+            if(AutoConfig.isRed){
+                goalX=0;
+            } else{
+                goalX=141.5;
+            }
+            targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX());
 
+            aimPID.setTargetPosition(targetAngle);
+            aimPID.updatePosition(follower.getPose().getHeading());
 
+            turn = aimPID.run();
+
+        } else{
+            turn = turnX;
+        }
+        follower.setTeleOpDrive(forward,strafe,turn);
+
+        return autoAim && Math.abs(targetAngle - follower.getPose().getHeading()) < Math.toRadians(0.05);
+    }
     @Override
     public void tag20() {
 

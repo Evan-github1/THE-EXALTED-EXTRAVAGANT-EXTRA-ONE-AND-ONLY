@@ -111,6 +111,7 @@ public class DoomAndDisgust_PEDROBLUECLOSE extends Movable {
         follower.setStartingPose(DOOM_BLUE_CLOSE_START);
 
         pathState = 0;
+        AutoConfig.isRed = false;
 
         waitForStart();
         launcherMotor1.setVelocity(motorPowerClose / 60 * 28);
