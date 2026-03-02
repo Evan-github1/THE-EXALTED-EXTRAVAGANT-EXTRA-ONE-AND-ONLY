@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
 
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.HeadingPID;
@@ -37,8 +39,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static Servo lt1;
     private static Servo lt2;
     private static Servo fire;
-    private static Servo indR;
-    private static Servo indL; //front indicator lights
+    private static ServoImplEx indR;
+    private static ServoImplEx indL; //front indicator lights
     private static DoubleSwitchedServo fires;
     private static boolean loading;
     private static boolean shooting;
@@ -64,8 +66,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         lt2 = hardwareMap.get(Servo.class,"LT2");
         fire = hardwareMap.get(Servo.class, "FIRE");
         fires = new DoubleSwitchedServo(fire,.8,.4);
-        indR = hardwareMap.get(Servo.class, "INDR");
-        indL = hardwareMap.get(Servo.class, "INDL");
+        indR = hardwareMap.get(ServoImplEx.class, "INDR");
+        indL = hardwareMap.get(ServoImplEx.class, "INDL");
+        indR.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        indL.setPwmRange(new PwmControl.PwmRange(500, 2500));
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         loading = false;
@@ -86,13 +90,14 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         follower.setStartingPose(
             AutoConfig.lastAutoEndPose != null
                 ? AutoConfig.lastAutoEndPose
-                : AutoConfig.RED_FAR_START   // fallback if no auto ran
+                : AutoConfig.RED_FAR_START
         );
+        AutoConfig.lastAutoEndPose = null;
 
-        FLW.setDirection(DcMotor.Direction.REVERSE);
-        BLW.setDirection(DcMotor.Direction.REVERSE);
-        FRW.setDirection(DcMotor.Direction.FORWARD);
-        BRW.setDirection(DcMotor.Direction.FORWARD);
+        FLW.setDirection(DcMotor.Direction.FORWARD);
+        BLW.setDirection(DcMotor.Direction.FORWARD);
+        FRW.setDirection(DcMotor.Direction.REVERSE);
+        BRW.setDirection(DcMotor.Direction.REVERSE);
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         transferMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -108,8 +113,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         enableEncoders();
 
         waitForStart();
-
-
+        follower.startTeleopDrive();
 
         fires.primaryPos();
 
@@ -127,7 +131,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("RPM2", rpm2);
             telemetry.addData("Target RPM",targetRPM);
             telemetry.addData("Position", follower.getPose().getX() + " " + follower.getPose().getY());
-            telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
+            //telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
             telemetry.addData("Power",launcherMotor1.getPower());
 
             if(gamepad1.dpad_up) {
@@ -143,8 +147,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 moveWheels(-0.33f,0);
                 isAimed = false;
             }else {
-                isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.right_trigger>0.5);
+                isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger>0.5);
             }
+
 
             if(isAimed){
                 indL.setPosition(.9);
@@ -287,7 +292,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     //uses Pedro drive algorithm
     //uses alliance based on auto setting it
     private boolean robotDrive(double transX, double transY, double turnX, boolean autoAim) {
-        double forward = -transY;
+        double forward = transY;
         double strafe = transX;
         double turn;
         double targetAngle = 100000; //big number to signify not set yet
@@ -295,9 +300,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             double goalX;
             double goalY = 144;
             if(AutoConfig.isRed){
-                goalX=0;
-            } else{
                 goalX=141.5;
+            } else{
+                goalX=0;
             }
             //calculate angle from robot to target, add pi to get angle robot needs to face to aim at target (since launcher is on back of robot)
             targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
@@ -314,7 +319,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             turn = aimPID.run();
 
         } else{
-            turn = turnX;
+            turn = -turnX;
         }
         //drive wheels
         follower.setTeleOpDrive(forward,strafe,turn);
