@@ -26,6 +26,7 @@ public class AutoConfig {
     public static final Pose RED_BALL3_END       = new Pose(128, 79, 0);
     public static final Pose RED_FAR_CLEAR           = new Pose(128, 67, 0);
     public static final Pose RED_CLOSE_SCORE     = new Pose(85, 85, Math.PI + Math.PI/4);
+    public static final Pose RED_PARK = new Pose(40.7,32,-Math.PI);
 
     // ── UHUH RED FAR only ─────────────────────────────────────────────
     public static final Pose RED_FAR_CLEAR2          = new Pose(118, 67, 0);
@@ -58,6 +59,7 @@ public class AutoConfig {
     public static final Pose BLUE_BALL3_END      = RED_BALL3_END.mirror();
     public static final Pose BLUE_FAR_CLEAR          = RED_FAR_CLEAR.mirror();
     public static final Pose BLUE_CLOSE_SCORE    = RED_CLOSE_SCORE.mirror();
+    public static final Pose BLUE_PARK = RED_PARK.mirror();
 
     // ── UHUH BLUE FAR only ────────────────────────────────────────────
     // Old manual definitions:

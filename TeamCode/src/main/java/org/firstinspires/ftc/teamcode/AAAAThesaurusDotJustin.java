@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -17,10 +18,13 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.HeadingPID;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
+
+import static org.firstinspires.ftc.teamcode.AutoConfig.BLUE_PARK;
+import static org.firstinspires.ftc.teamcode.AutoConfig.RED_PARK;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
-import org.firstinspires.ftc.teamcode.AutoConfig;
+import org.firstinspires.ftc.teamcode.AutoConfig.*;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -131,20 +135,24 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("RPM2", rpm2);
             telemetry.addData("Target RPM",targetRPM);
             telemetry.addData("Position", follower.getPose().getX() + " " + follower.getPose().getY());
-            //telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
+            telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
             telemetry.addData("Power",launcherMotor1.getPower());
 
+            if(!follower.isBusy()&&!follower.isTeleopDrive()){
+                follower.startTeleopDrive();
+            }
+
             if(gamepad1.dpad_up) {
-                moveWheels(0,0.33f);
+                moveWheels(0,0.25f);
                 isAimed = false;
             }else if(gamepad1.dpad_down){
-                moveWheels(0,-0.33f);
+                moveWheels(0,-0.25f);
                 isAimed = false;
             }else if(gamepad1.dpad_left){
-                moveWheels(0.33f,0);
+                moveWheels(0.25f,0);
                 isAimed = false;
             }else if(gamepad1.dpad_right){
-                moveWheels(-0.33f,0);
+                moveWheels(-0.25f,0);
                 isAimed = false;
             }else {
                 isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger>0.5);
@@ -181,9 +189,40 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }
                 setTime();
             }
-            if(gamepad1.guideWasPressed()){
+            if(gamepad2.dpadUpWasPressed()){
                 AutoConfig.isRed = !AutoConfig.isRed;
             }
+            if(gamepad2.guideWasPressed()){
+                if(AutoConfig.isRed){
+                    follower.setPose(new Pose(8.25,robotLength()/2,-(Math.PI/2)));
+                } else{
+                    follower.setPose(new Pose(144-8.25,robotLength()/2,-(Math.PI/2)));
+                }
+            }
+            if(gamepad1.guideWasPressed()){
+                if(AutoConfig.isRed){
+                    if(!follower.isBusy()) {
+                        follower.followPath(follower.pathBuilder()
+                                .addPath(new BezierLine(follower.getPose(),RED_PARK))
+                                .setLinearHeadingInterpolation(follower.getHeading(),RED_PARK.getHeading())
+                                .build());
+                    }
+                    else{
+                        follower.startTeleopDrive();
+                    }
+                } else{
+                    if(!follower.isBusy()) {
+                        follower.followPath(follower.pathBuilder()
+                                .addPath(new BezierLine(follower.getPose(),BLUE_PARK))
+                                .setLinearHeadingInterpolation(follower.getHeading(),BLUE_PARK.getHeading())
+                                .build());
+                    }
+                    else{
+                        follower.startTeleopDrive();
+                    }
+                }
+            }
+
             if(gamepad1.xWasPressed()){
                 shooting = !shooting;
                 setTime();
@@ -300,7 +339,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             double goalX;
             double goalY = 144;
             if(AutoConfig.isRed){
-                goalX=141.5;
+                goalX=144;
             } else{
                 goalX=0;
             }
