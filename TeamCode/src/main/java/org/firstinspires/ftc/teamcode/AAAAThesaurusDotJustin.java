@@ -299,18 +299,28 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             } else{
                 goalX=141.5;
             }
-            targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX());
+            //calculate angle from robot to target, add pi to get angle robot needs to face to aim at target (since launcher is on back of robot)
+            targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
 
-            aimPID.setTargetPosition(targetAngle);
-            aimPID.updatePosition(follower.getPose().getHeading());
+            //calculate error between target angle and current angle
+            double error = targetAngle - follower.getPose().getHeading();
 
+            //convert error to range [-pi, pi] so that robot turns the shortest distance to target
+            while(error>Math.PI){error-=2*Math.PI;}
+            while(error<-Math.PI){error+=2*Math.PI;}
+
+            //run PID
+            aimPID.updateError(error);
             turn = aimPID.run();
 
         } else{
             turn = turnX;
         }
+        //drive wheels
         follower.setTeleOpDrive(forward,strafe,turn);
 
+        //isAimed check basically
+        //checks for is within 0.05 degrees of target angle and not rotating too fast
         return autoAim && Math.abs(targetAngle - follower.getPose().getHeading()) < Math.toRadians(0.05) && Math.abs(follower.getAngularVelocity()) < Math.toRadians(0.2);
     }
     @Override
