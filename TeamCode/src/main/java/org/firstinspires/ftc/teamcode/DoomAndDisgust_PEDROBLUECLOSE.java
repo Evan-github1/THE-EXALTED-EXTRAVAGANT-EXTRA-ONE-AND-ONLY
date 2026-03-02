@@ -127,6 +127,7 @@ public class DoomAndDisgust_PEDROBLUECLOSE extends Movable {
             if(followerActive) {
                 follower.update();
             }
+            AutoConfig.lastAutoEndPose = follower.getPose();
             telemetry.addData("Elapsed time:",actionTimer.getElapsedTimeSeconds());
             telemetry.update();
             switch (pathState) {

@@ -179,6 +179,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
             if(followerActive) {
                 follower.update();
             }
+            AutoConfig.lastAutoEndPose = follower.getPose();
             telemetry.addData("Elapsed time:",actionTimer.getElapsedTimeSeconds());
             telemetry.addLine(""+pathState);
             telemetry.update();

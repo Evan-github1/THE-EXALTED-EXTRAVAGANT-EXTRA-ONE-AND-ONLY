@@ -168,6 +168,7 @@ public class DoomAndDisgust_PEDROBLUEFAR extends Movable {
             if(followerActive) {
                 follower.update();
             }
+            AutoConfig.lastAutoEndPose = follower.getPose();
             telemetry.addData("Elapsed time:",actionTimer.getElapsedTimeSeconds());
             telemetry.update();
             switch (pathState) {
