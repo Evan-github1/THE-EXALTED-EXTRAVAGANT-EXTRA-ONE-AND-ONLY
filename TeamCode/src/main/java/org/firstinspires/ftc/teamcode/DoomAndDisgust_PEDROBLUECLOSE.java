@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
+import static org.firstinspires.ftc.teamcode.AutoConfig.*;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -42,9 +43,6 @@ public class DoomAndDisgust_PEDROBLUECLOSE extends Movable {
     private static boolean followerActive;
 
 
-    private final Pose startPose = new Pose(48, 144-robotLength()/2, Math.PI/2); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(60,144-60,-Math.PI/4);
-    private final Pose leavePose = new Pose(12,144-48,0);
     private PathChain scorePreload, goToLeavePose;
 
     public void runOpMode() throws InterruptedException{
@@ -101,16 +99,16 @@ public class DoomAndDisgust_PEDROBLUECLOSE extends Movable {
         launcherMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         scorePreload = follower.pathBuilder()
-                .addPath(new BezierLine(startPose,scorePose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),scorePose.getHeading())
+                .addPath(new BezierLine(DOOM_BLUE_CLOSE_START,DOOM_BLUE_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(DOOM_BLUE_CLOSE_START.getHeading(),DOOM_BLUE_CLOSE_SCORE.getHeading())
                 .build();
         goToLeavePose = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,leavePose))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),leavePose.getHeading())
+                .addPath(new BezierLine(DOOM_BLUE_CLOSE_SCORE,DOOM_BLUE_CLOSE_LEAVE))
+                .setLinearHeadingInterpolation(DOOM_BLUE_CLOSE_SCORE.getHeading(),DOOM_BLUE_CLOSE_LEAVE.getHeading())
                 .build();
 
 
-        follower.setStartingPose(startPose);
+        follower.setStartingPose(DOOM_BLUE_CLOSE_START);
 
         pathState = 0;
 
@@ -170,6 +168,7 @@ public class DoomAndDisgust_PEDROBLUECLOSE extends Movable {
                     break;
                 case 2:
                     if (!follower.isBusy()) {
+                        AutoConfig.lastAutoEndPose = follower.getPose();
                         breaked = true;
                     }
                     actionTimer.resetTimer();

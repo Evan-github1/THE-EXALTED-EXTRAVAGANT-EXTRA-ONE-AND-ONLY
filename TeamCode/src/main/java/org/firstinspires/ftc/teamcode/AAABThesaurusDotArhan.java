@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
+import org.firstinspires.ftc.teamcode.AutoConfig;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -75,7 +76,11 @@ public class AAABThesaurusDotArhan extends Movable implements LimelightTags {
         FFar = 15.8;
         pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
         follower = createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(96, 0 + robotLength()/2, Math.toRadians(-90)));
+        follower.setStartingPose(
+            AutoConfig.lastAutoEndPose != null
+                ? AutoConfig.lastAutoEndPose
+                : AutoConfig.RED_FAR_START   // fallback if no auto ran
+        );
 
         FLW.setDirection(DcMotor.Direction.REVERSE);
         BLW.setDirection(DcMotor.Direction.REVERSE);

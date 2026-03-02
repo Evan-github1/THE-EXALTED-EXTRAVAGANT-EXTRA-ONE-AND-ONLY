@@ -1,0 +1,84 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.pedropathing.geometry.Pose;
+import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
+import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
+
+public class AutoConfig {
+
+    /**
+     * Set by any autonomous OpMode before it ends.
+     * TeleOp reads this to continue from where auto left off.
+     * Null if no auto has run this session.
+     */
+    public static Pose lastAutoEndPose = null;
+
+    // ── SHARED RED FAR (UhUhREDFAR + DoomREDFAR) ─────────────────────
+    public static final Pose RED_FAR_START           = new Pose(96, robotLength()/2, Math.toRadians(-90));
+    public static final Pose RED_FAR_SCORE           = new Pose(88.6, 11.7, Math.toRadians(-115.5));
+    public static final Pose RED_FAR_BALL1_START     = new Pose(98, 31, 0);
+    public static final Pose RED_FAR_BALL1_END       = new Pose(133, 31, 0);
+    public static final Pose RED_FAR_BALL2_START     = new Pose(98, 55, 0);
+    public static final Pose RED_FAR_BALL2_END       = new Pose(130, 55, 0);
+    public static final Pose RED_FAR_BALL3_START     = new Pose(98, 79, 0);
+    public static final Pose RED_FAR_BALL3_END       = new Pose(128, 79, 0);
+    public static final Pose RED_FAR_CLEAR           = new Pose(128, 67, 0);
+    public static final Pose RED_FAR_CLOSE_SHOOT     = new Pose(85, 85, Math.PI + Math.PI/4);
+
+    // ── UHUH RED FAR only ─────────────────────────────────────────────
+    public static final Pose RED_FAR_CLEAR2          = new Pose(118, 67, 0);
+    public static final Pose RED_FAR_CORNER1         = new Pose(141.5 - robotWidth()/2, 30 + robotLength()/2, Math.toRadians(-90));
+    public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2, 2 + robotLength()/2 + 3, Math.toRadians(-90));
+
+    // ── DOOM RED FAR only ─────────────────────────────────────────────
+    public static final Pose DOOM_RED_FAR_CLEAR_READY = new Pose(100, 67, 0);
+
+    // ── SHARED BLUE FAR (UhUhBLUEFAR + FarOnlyBLUE + DoomBLUEFAR) ───
+    // Now derived as mirrors of RED FAR poses.
+    // Old manual definitions (for reference / rollback):
+    // public static final Pose BLUE_FAR_START       = new Pose(141.5 - 96, robotLength()/2, Math.PI - Math.toRadians(-90));
+    // public static final Pose BLUE_FAR_SCORE       = new Pose(141.5 - 88.6, 11.7, Math.PI - Math.toRadians(-115.5));
+    // public static final Pose BLUE_FAR_BALL1_START = new Pose(141.5 - 95, 36, Math.PI);
+    // public static final Pose BLUE_FAR_BALL1_END   = new Pose(141.5 - 130, 36, Math.PI);
+    // public static final Pose BLUE_FAR_BALL2_START = new Pose(141.5 - 95, 60, Math.PI);
+    // public static final Pose BLUE_FAR_BALL2_END   = new Pose(141.5 - 130, 60, Math.PI);
+    // public static final Pose BLUE_FAR_BALL3_START = new Pose(141.5 - 95, 84, Math.PI);
+    // public static final Pose BLUE_FAR_BALL3_END   = new Pose(141.5 - 125, 84, Math.PI);
+    // public static final Pose BLUE_FAR_CLEAR       = new Pose(141.5 - 125, 72, Math.PI);
+    // public static final Pose BLUE_FAR_CLOSE_SHOOT = new Pose(141.5 - 85, 85, -Math.PI/4);
+    public static final Pose BLUE_FAR_START          = RED_FAR_START.mirror();
+    public static final Pose BLUE_FAR_SCORE          = RED_FAR_SCORE.mirror();
+    public static final Pose BLUE_FAR_BALL1_START    = RED_FAR_BALL1_START.mirror();
+    public static final Pose BLUE_FAR_BALL1_END      = RED_FAR_BALL1_END.mirror();
+    public static final Pose BLUE_FAR_BALL2_START    = RED_FAR_BALL2_START.mirror();
+    public static final Pose BLUE_FAR_BALL2_END      = RED_FAR_BALL2_END.mirror();
+    public static final Pose BLUE_FAR_BALL3_START    = RED_FAR_BALL3_START.mirror();
+    public static final Pose BLUE_FAR_BALL3_END      = RED_FAR_BALL3_END.mirror();
+    public static final Pose BLUE_FAR_CLEAR          = RED_FAR_CLEAR.mirror();
+    public static final Pose BLUE_FAR_CLOSE_SHOOT    = RED_FAR_CLOSE_SHOOT.mirror();
+
+    // ── UHUH BLUE FAR only ────────────────────────────────────────────
+    // Old manual definitions:
+    // public static final Pose BLUE_FAR_CLEAR2      = new Pose(141.5 - 115, 72, Math.PI);
+    // public static final Pose BLUE_FAR_CORNER1     = new Pose(robotWidth()/2, 30 + robotLength()/2, Math.PI - Math.toRadians(-90));
+    // public static final Pose BLUE_FAR_CORNER2     = new Pose(robotWidth()/2, 2 + robotLength()/2 + 3, Math.PI - Math.toRadians(-90));
+    public static final Pose BLUE_FAR_CLEAR2         = RED_FAR_CLEAR2.mirror();
+    public static final Pose BLUE_FAR_CORNER1        = RED_FAR_CORNER1.mirror();
+    public static final Pose BLUE_FAR_CORNER2        = RED_FAR_CORNER2.mirror();
+
+    // ── DOOM BLUE FAR only ────────────────────────────────────────────
+    // Old manual definition:
+    // public static final Pose DOOM_BLUE_FAR_CLEAR_READY = new Pose(141.5 - 100, 67, Math.PI);
+    public static final Pose DOOM_BLUE_FAR_CLEAR_READY = DOOM_RED_FAR_CLEAR_READY.mirror();
+    public static final Pose DOOM_BLUE_FAR_SCORE3_PIVOT = new Pose(141.5 - 90, 67, Math.PI);
+
+    // ── DOOM RED CLOSE (DoomAndDisgust_PEDROREDCLOSE) ─────────────────
+    public static final Pose DOOM_RED_CLOSE_START     = new Pose(180 - 48, 144 - robotLength()/2, Math.PI/2);
+    public static final Pose DOOM_RED_CLOSE_SCORE     = new Pose(180 - 60, 144 - 60, -3 * Math.PI/4);
+    public static final Pose DOOM_RED_CLOSE_LEAVE     = new Pose(180 - 12, 144 - 48, 0);
+
+    // ── DOOM BLUE CLOSE (DoomAndDisgust_PEDROBLUECLOSE) ───────────────
+    public static final Pose DOOM_BLUE_CLOSE_START    = new Pose(48, 144 - robotLength()/2, Math.PI/2);
+    public static final Pose DOOM_BLUE_CLOSE_SCORE    = new Pose(60, 144 - 60, -Math.PI/4);
+    public static final Pose DOOM_BLUE_CLOSE_LEAVE    = new Pose(12, 144 - 48, 0);
+}

@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
+import static org.firstinspires.ftc.teamcode.AutoConfig.*;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -36,29 +37,15 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
     private static Servo fork;
     private static DoubleSwitchedServo forks;
     private Follower follower;
-    private static int iterations;
+    private int iterations;
     private static Limelight3A limelight;
     private static double motorPowerFar, motorPowerClose;
     private static double rpm, tps, targetRPM, P, FClose, FFar, currentTargetRPM;
     private static PIDFCoefficients pidfCoefficients;
     private static double pastError;
-    private static boolean followerActive;
+    private boolean followerActive;
 
 
-    private final Pose startPose = new Pose(96, 0 + robotLength()/2, Math.toRadians(-90)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(88.6,11.7,Math.toRadians(-115.5));
-    private final Pose ball1PickupStart = new Pose(98,31,0);
-    private final Pose ball1PickupEnd = new Pose(133,31,0);
-    private final Pose ball2PickupStart = new Pose(98,55,0);
-    private final Pose ball2PickupEnd = new Pose(130,55,0);
-    private final Pose ball3PickupStart = new Pose(98,79,0);
-    private final Pose ball3PickupEnd = new Pose(128,79,0);
-    private final Pose clearClassifier1 = new Pose(128,67,0);
-    private final Pose clearClassifier2 = new Pose(118,67,0);
-    private final Pose pickUpCorner1 = new Pose(141.5-robotWidth()/2,30+robotLength()/2,Math.toRadians(-90));
-    private final Pose pickUpCorner2 = new Pose(141.5-robotWidth()/2,2+robotLength()/2+3,Math.toRadians(-90));
-
-    private final Pose closeShoot = new Pose(85,85,Math.PI+Math.PI/4);
 
 
     public void runOpMode() throws InterruptedException{
@@ -101,76 +88,76 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
         launcherMotor2.setPIDFCoefficients(RUN_USING_ENCODER,pidfCoefficients);
 
         PathChain scorePreload = follower.pathBuilder()
-                .addPath(new BezierLine(startPose,scorePose))
-                .setLinearHeadingInterpolation(startPose.getHeading(),scorePose.getHeading())
+                .addPath(new BezierLine(RED_FAR_START,RED_FAR_SCORE))
+                .setLinearHeadingInterpolation(RED_FAR_START.getHeading(),RED_FAR_SCORE.getHeading())
                 .build();
 
         PathChain goToPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,ball3PickupStart))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),ball3PickupStart.getHeading())
+                .addPath(new BezierLine(RED_FAR_SCORE,RED_FAR_BALL3_START))
+                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(),RED_FAR_BALL3_START.getHeading())
                 .build();
 
         PathChain grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(ball3PickupStart,ball3PickupEnd))
-                .setLinearHeadingInterpolation(ball3PickupStart.getHeading(),ball3PickupEnd.getHeading())
+                .addPath(new BezierLine(RED_FAR_BALL3_START,RED_FAR_BALL3_END))
+                .setLinearHeadingInterpolation(RED_FAR_BALL3_START.getHeading(),RED_FAR_BALL3_END.getHeading())
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(clearClassifier1,closeShoot))
-                .setLinearHeadingInterpolation(clearClassifier1.getHeading(),closeShoot.getHeading())
+                .addPath(new BezierLine(RED_FAR_CLEAR,RED_FAR_CLOSE_SHOOT))
+                .setLinearHeadingInterpolation(RED_FAR_CLEAR.getHeading(),RED_FAR_CLOSE_SHOOT.getHeading())
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(ball3PickupEnd, clearClassifier2, clearClassifier1))
+                .addPath(new BezierCurve(RED_FAR_BALL3_END, RED_FAR_CLEAR2, RED_FAR_CLEAR))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
         PathChain goToPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,ball2PickupStart))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),ball2PickupStart.getHeading())
+                .addPath(new BezierLine(RED_FAR_SCORE,RED_FAR_BALL2_START))
+                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(),RED_FAR_BALL2_START.getHeading())
                 .build();
 
         PathChain grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(ball2PickupStart,ball2PickupEnd))
-                .setLinearHeadingInterpolation(ball2PickupStart.getHeading(),ball2PickupEnd.getHeading())
+                .addPath(new BezierLine(RED_FAR_BALL2_START,RED_FAR_BALL2_END))
+                .setLinearHeadingInterpolation(RED_FAR_BALL2_START.getHeading(),RED_FAR_BALL2_END.getHeading())
                 .build();
 
         PathChain scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(ball2PickupEnd,closeShoot))
-                .setLinearHeadingInterpolation(ball2PickupEnd.getHeading(),scorePose.getHeading())
+                .addPath(new BezierLine(RED_FAR_BALL2_END,RED_FAR_CLOSE_SHOOT))
+                .setLinearHeadingInterpolation(RED_FAR_BALL2_END.getHeading(),RED_FAR_CLOSE_SHOOT.getHeading())
                 .build();
 
         PathChain goToPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose,ball1PickupStart))
-                .setLinearHeadingInterpolation(scorePose.getHeading(),ball1PickupStart.getHeading())
+                .addPath(new BezierLine(RED_FAR_SCORE,RED_FAR_BALL1_START))
+                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(),RED_FAR_BALL1_START.getHeading())
                 .build();
 
         PathChain grabPickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(ball1PickupStart,ball1PickupEnd))
-                .setLinearHeadingInterpolation(ball1PickupStart.getHeading(),ball1PickupEnd.getHeading())
+                .addPath(new BezierLine(RED_FAR_BALL1_START,RED_FAR_BALL1_END))
+                .setLinearHeadingInterpolation(RED_FAR_BALL1_START.getHeading(),RED_FAR_BALL1_END.getHeading())
                 .build();
 
         PathChain scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(ball1PickupEnd,scorePose))
-                .setLinearHeadingInterpolation(ball1PickupEnd.getHeading(),scorePose.getHeading())
+                .addPath(new BezierLine(RED_FAR_BALL1_END,RED_FAR_SCORE))
+                .setLinearHeadingInterpolation(RED_FAR_BALL1_END.getHeading(),RED_FAR_SCORE.getHeading())
                 .build();
 
         PathChain getCorner = follower.pathBuilder()
-                .addPath(new BezierLine(scorePose, pickUpCorner1))
-                .setLinearHeadingInterpolation(scorePose.getHeading(), pickUpCorner1.getHeading())
+                .addPath(new BezierLine(RED_FAR_SCORE, RED_FAR_CORNER1))
+                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(), RED_FAR_CORNER1.getHeading())
                 .build();
 
         PathChain scoreCorner1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickUpCorner2,scorePose))
-                .setLinearHeadingInterpolation(pickUpCorner2.getHeading(), scorePose.getHeading())
+                .addPath(new BezierLine(RED_FAR_CORNER2,RED_FAR_SCORE))
+                .setLinearHeadingInterpolation(RED_FAR_CORNER2.getHeading(), RED_FAR_SCORE.getHeading())
                 .build();
 
         PathChain getCorner2 = follower.pathBuilder()
-                .addPath(new BezierLine(pickUpCorner1,pickUpCorner2))
-                .setConstantHeadingInterpolation(pickUpCorner1.getHeading())
+                .addPath(new BezierLine(RED_FAR_CORNER1,RED_FAR_CORNER2))
+                .setConstantHeadingInterpolation(RED_FAR_CORNER1.getHeading())
                 .build();
 
-        follower.setStartingPose(startPose);
+        follower.setStartingPose(RED_FAR_START);
 
         pathState = 0;
 
@@ -200,11 +187,9 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
-                                    LeBotsEyes(pastError, true);
-                                } else {
-                                    pastError = LeBotsEyes(pastError, false);
-                                    LeBotsEyes(pastError, true);
                                 }
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
                                 iterations++;
                             }catch(Exception ignored){};
                         }else {
@@ -243,11 +228,9 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
-                                    LeBotsEyes(pastError, true);
-                                } else {
-                                    pastError = LeBotsEyes(pastError, false);
-                                    LeBotsEyes(pastError, true);
                                 }
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
                                 iterations++;
                             }catch(Exception ignored){};
                         }else {
@@ -307,11 +290,9 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
-                                    LeBotsEyes(pastError, true);
-                                } else {
-                                    pastError = LeBotsEyes(pastError, false);
-                                    LeBotsEyes(pastError, true);
                                 }
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
                                 iterations++;
                             }catch(Exception ignored){};
                         }else {
@@ -355,11 +336,9 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
-                                    LeBotsEyes(pastError, true);
-                                } else {
-                                    pastError = LeBotsEyes(pastError, false);
-                                    LeBotsEyes(pastError, true);
                                 }
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
                                 iterations++;
                             }catch(Exception ignored){};
                         }else {
@@ -408,11 +387,9 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
-                                    LeBotsEyes(pastError, true);
-                                } else {
-                                    pastError = LeBotsEyes(pastError, false);
-                                    LeBotsEyes(pastError, true);
                                 }
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
                                 iterations++;
                             }catch(Exception ignored){};
                         }else {
@@ -455,11 +432,9 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
-                                    LeBotsEyes(pastError, true);
-                                } else {
-                                    pastError = LeBotsEyes(pastError, false);
-                                    LeBotsEyes(pastError, true);
                                 }
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
                                 iterations++;
                             }catch(Exception ignored){};
                         }else {
@@ -485,6 +460,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
 
                 case 15:
                     if(!follower.isBusy()){
+                        AutoConfig.lastAutoEndPose = follower.getPose();
                         breaked = true;
                     }
                     break;
@@ -497,8 +473,8 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
     private double LeBotsEyes(double pastError, boolean adjustMotor){
         double desiredX;
         telemetry.addData("D", true);
-        if(detectTagSelective(limelight,telemetry) != null){
-            LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
+        LLResultTypes.FiducialResult yes = detectTagSelective(limelight,telemetry);
+        if(yes != null){
             desiredX = 0;
             double smoothCoeff = 0.6;
             telemetry.addData("Yes is not null",true);

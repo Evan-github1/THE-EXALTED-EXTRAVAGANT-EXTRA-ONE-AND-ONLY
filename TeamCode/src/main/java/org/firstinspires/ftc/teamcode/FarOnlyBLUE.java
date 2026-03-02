@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
+import static org.firstinspires.ftc.teamcode.AutoConfig.*;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -41,20 +42,6 @@ public class FarOnlyBLUE extends Movable {
     private static boolean followerActive;
 
 
-    private final Pose startPose = new Pose(141.5-96, 0 + robotLength()/2, Math.PI-Math.toRadians(-90)); // Start Pose of our robot.
-    private final Pose scorePose = new Pose(141.5-88.6,11.7,Math.PI-Math.toRadians(-115.5)); //TODO: UPDATE THIS
-    private final Pose ball1PickupStart = new Pose(141.5-95,36,Math.PI-0);
-    private final Pose ball1PickupEnd = new Pose(141.5-130,36,Math.PI-0);
-    private final Pose ball2PickupStart = new Pose(141.5-95,60,Math.PI-0);
-    private final Pose ball2PickupEnd = new Pose(141.5-130,60,Math.PI-0);
-    private final Pose ball3PickupStart = new Pose(141.5-95,84,Math.PI-0);
-    private final Pose ball3PickupEnd = new Pose(141.5-125,84,Math.PI-0);
-    private final Pose clearClassifier1 = new Pose(141.5-125,72,Math.PI-0);
-    private final Pose clearClassifier2 = new Pose(141.5-115,72,Math.PI-0);
-    private final Pose pickUpCorner1 = new Pose(robotWidth()/2,30+robotLength()/2,Math.PI-Math.toRadians(-90));
-    private final Pose pickUpCorner2 = new Pose(robotWidth()/2,2+robotLength()/2+3,Math.PI-Math.toRadians(-90));
-
-    private final Pose closeShoot = new Pose(141.5-85,85,-Math.PI/4);
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
