@@ -29,11 +29,11 @@ public class Constants {
             .centripetalScaling(0.0005)
             ;
 
-    // TODO: PathConstraints params are (tValue, velocity, translational, heading, timeout, brakingStrength, bezierSearchLimit, brakingStart).
-    //  Current 4-param values are far too loose — velocity=100 and heading=1rad mean isBusy() returns false before settling.
-    //  Switch to full constructor: new PathConstraints(0.995, 0.1, 0.1, 0.009, 50, 1.25, 10, 1)
-    //  Or tune incrementally. For specific problem paths, also try path.setTimeoutConstraint(ms).
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    // TODO: 4-param PathConstraints is (tValue, timeout, brakingStrength, brakingStart).
+    //  Defaults for omitted params: velocity=0.1, translational=0.1, heading=0.007, bezierSearchLimit=10.
+    //  Current values (0.995, 100, 1, 1) use defaults for settling constraints — tune timeout or
+    //  use the full 8-param constructor if finer control is needed. Per-path: path.setTimeoutConstraint(ms).
+    public static PathConstraints pathConstraints = new PathConstraints(0.995, 100, 1.25, 10);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
