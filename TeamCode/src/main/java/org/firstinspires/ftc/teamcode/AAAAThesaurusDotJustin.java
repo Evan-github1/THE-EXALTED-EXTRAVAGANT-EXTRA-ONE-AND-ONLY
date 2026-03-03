@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,12 +28,20 @@ import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
 import org.firstinspires.ftc.teamcode.AutoConfig.*;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ftc.PoseConverter;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 
 @TeleOp
@@ -81,7 +90,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         isAimed = false;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(2);
         motorPowerClose = 2500;
         motorPowerFar = 3750; //from 4500
         targetRPM = motorPowerFar;
@@ -117,7 +126,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         enableEncoders();
 
         waitForStart();
-        follower.startTeleopDrive();
+        follower.startTeleopDrive(true);
 
         fires.primaryPos();
 
@@ -139,7 +148,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("Power",launcherMotor1.getPower());
 
             if(!follower.isBusy()&&!follower.isTeleopDrive()){
-                follower.startTeleopDrive();
+                follower.startTeleopDrive(true);
             }
 
             if(gamepad1.dpad_up) {
@@ -192,6 +201,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             if(gamepad2.dpadUpWasPressed()){
                 AutoConfig.isRed = !AutoConfig.isRed;
             }
+            if(gamepad2.dpadDownWasPressed()){
+                relocalize();
+            }
             if(gamepad2.guideWasPressed()){
                 if(AutoConfig.isRed){
                     follower.setPose(new Pose(8.25,robotLength()/2,-(Math.PI/2)));
@@ -205,20 +217,22 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                         follower.followPath(follower.pathBuilder()
                                 .addPath(new BezierLine(follower.getPose(),RED_PARK))
                                 .setLinearHeadingInterpolation(follower.getHeading(),RED_PARK.getHeading())
+                                .setConstraints(new PathConstraints(0.995,300))
                                 .build());
                     }
                     else{
-                        follower.startTeleopDrive();
+                        follower.startTeleopDrive(true);
                     }
                 } else{
                     if(!follower.isBusy()) {
                         follower.followPath(follower.pathBuilder()
                                 .addPath(new BezierLine(follower.getPose(),BLUE_PARK))
                                 .setLinearHeadingInterpolation(follower.getHeading(),BLUE_PARK.getHeading())
+                                .setConstraints(new PathConstraints(0.995,300))
                                 .build());
                     }
                     else{
-                        follower.startTeleopDrive();
+                        follower.startTeleopDrive(true);
                     }
                 }
             }
@@ -298,6 +312,32 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.update();
         }
     }
+    private boolean relocalize() {
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            Pose3D botpose = result.getBotpose();
+            Pose2D ftcPose = new Pose2D(
+                DistanceUnit.METER,
+                botpose.getPosition().x,
+                botpose.getPosition().y,
+                AngleUnit.DEGREES,
+                botpose.getOrientation().getYaw(AngleUnit.DEGREES)
+            );
+            Pose pedroPose = PoseConverter.pose2DToPose(ftcPose, InvertedFTCCoordinates.INSTANCE)
+                .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+            follower.setPose(pedroPose);
+            telemetry.addData("Reloc Raw", "x=%.2f y=%.2f yaw=%.1f",
+                botpose.getPosition().x, botpose.getPosition().y,
+                botpose.getOrientation().getYaw(AngleUnit.DEGREES));
+            telemetry.addData("Reloc Pedro", "x=%.2f y=%.2f h=%.1f",
+                pedroPose.getX(), pedroPose.getY(),
+                Math.toDegrees(pedroPose.getHeading()));
+            return true;
+        }
+        telemetry.addData("Reloc", "No valid result");
+        return false;
+    }
+
     //not used atm
     private double LeBotsEyes(double pastError, boolean adjustMotor){
         double desiredX;
