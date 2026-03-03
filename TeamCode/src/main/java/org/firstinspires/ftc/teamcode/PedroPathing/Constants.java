@@ -20,12 +20,19 @@ public class Constants {
             .mass(13.28)
             .forwardZeroPowerAcceleration(-25.3459)
             .lateralZeroPowerAcceleration(-64.70768)
+            // TODO: Tune translational PID to reduce endpoint overshoot.
+            //  Try increasing D from 0.02 toward 0.03-0.05. On problem paths, also try
+            //  path.setTimeoutConstraint(ms) to give the follower more correction time.
             .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.02,0.018))
             .headingPIDFCoefficients(new PIDFCoefficients(1.2,0,0.05,0.025))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015,0.001,0.00002,0.5,0.01))
             .centripetalScaling(0.0005)
             ;
 
+    // TODO: PathConstraints params are (tValue, velocity, translational, heading, timeout, brakingStrength, bezierSearchLimit, brakingStart).
+    //  Current 4-param values are far too loose — velocity=100 and heading=1rad mean isBusy() returns false before settling.
+    //  Switch to full constructor: new PathConstraints(0.995, 0.1, 0.1, 0.009, 50, 1.25, 10, 1)
+    //  Or tune incrementally. For specific problem paths, also try path.setTimeoutConstraint(ms).
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
@@ -37,12 +44,13 @@ public class Constants {
     }
 
     public static double robotWidth(){
-        return 15.25;
+        return 16.48;
     }
 
     public static double robotLength(){
-        return 16.5;
-    }
+        return 18.24;
+    } //is double length from intake to center of rotation, actual length is a little shorter but this is the distance that matters for calculating
+    //the distance from things because the intake is the usual reference point
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
