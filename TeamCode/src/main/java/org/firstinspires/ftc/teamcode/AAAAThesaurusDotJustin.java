@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ftc.FTCCoordinates;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -202,9 +203,13 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 AutoConfig.isRed = !AutoConfig.isRed;
             }
             if(gamepad2.dpadDownWasPressed()){
-                relocalize();
+                boolean isLocalized = relocalize();
+                if(isLocalized){
+                    gamepad2.rumbleBlips(3);
+                }
             }
             if(gamepad2.guideWasPressed()){
+                gamepad2.rumbleBlips(3);
                 if(AutoConfig.isRed){
                     follower.setPose(new Pose(8.25,robotLength()/2,-(Math.PI/2)));
                 } else{
@@ -323,7 +328,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 AngleUnit.DEGREES,
                 botpose.getOrientation().getYaw(AngleUnit.DEGREES)
             );
-            Pose pedroPose = PoseConverter.pose2DToPose(ftcPose, InvertedFTCCoordinates.INSTANCE)
+            Pose pedroPose = PoseConverter.pose2DToPose(ftcPose, FTCCoordinates.INSTANCE)
                 .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
             follower.setPose(pedroPose);
             telemetry.addData("Reloc Raw", "x=%.2f y=%.2f yaw=%.1f",
