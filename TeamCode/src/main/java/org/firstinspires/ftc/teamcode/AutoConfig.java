@@ -6,14 +6,14 @@ import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
 
 public class AutoConfig {
 
-    /**
-     * Set by any autonomous OpMode before it ends.
-     * TeleOp reads this to continue from where auto left off.
-     * Null if no auto has run this session.
-     */
+//    /**
+//     * Set by any autonomous OpMode before it ends.
+//     * TeleOp reads this to continue from where auto left off.
+//     * Null if no auto has run this session.
+//     */
     public static Pose lastAutoEndPose = null;
 
-    public static boolean isRed = true; // Set by auto, read by teleop to determine alliance color for teleop. Assume red alliance.
+   public static boolean isRed = true; // Set by auto, read by teleop to determine alliance color for teleop. Assume red alliance.
 
     // ── SHARED RED (UhUhREDFAR + DoomREDFAR) ─────────────────────
     public static final Pose RED_FAR_START           = new Pose(96, robotLength()/2, Math.toRadians(-90));
