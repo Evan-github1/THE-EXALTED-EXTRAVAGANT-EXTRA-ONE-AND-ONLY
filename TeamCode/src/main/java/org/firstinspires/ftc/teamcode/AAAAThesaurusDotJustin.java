@@ -386,7 +386,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             if(AutoConfig.isRed){
                 goalX=144;
             } else{
-                goalX=0;
+                goalX=3.5;//for better aiming?
             }
             //calculate angle from robot to target, add pi to get angle robot needs to face to aim at target (since launcher is on back of robot)
             double targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
