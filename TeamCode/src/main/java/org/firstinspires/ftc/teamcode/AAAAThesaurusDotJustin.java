@@ -175,15 +175,15 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 closeDist = Math.hypot(BLUE_CLOSE_SCORE.getPose().getX() - 0, BLUE_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
             }
 
-            // Normalized interpolation value
+            // No clamping
             double t = (distFromGoal - closeDist) / (farDist - closeDist);
-            t = Math.max(0, Math.min(1, t));
 
+            // Servo scaling
             raisePosition = 0.25 + t * (0.37 - 0.25);
             lt1.setPosition(raisePosition);
             lt2.setPosition(raisePosition);
 
-            // 🔥 RPM scaling
+            // RPM scaling
             targetRPM = motorPowerClose + t * (motorPowerFar - motorPowerClose);
 
 
