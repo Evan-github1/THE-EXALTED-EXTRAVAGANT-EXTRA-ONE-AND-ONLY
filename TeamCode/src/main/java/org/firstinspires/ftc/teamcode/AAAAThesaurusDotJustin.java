@@ -21,7 +21,11 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 
+import static org.firstinspires.ftc.teamcode.AutoConfig.BLUE_CLOSE_SCORE;
+import static org.firstinspires.ftc.teamcode.AutoConfig.BLUE_FAR_SCORE;
 import static org.firstinspires.ftc.teamcode.AutoConfig.BLUE_PARK;
+import static org.firstinspires.ftc.teamcode.AutoConfig.RED_CLOSE_SCORE;
+import static org.firstinspires.ftc.teamcode.AutoConfig.RED_FAR_SCORE;
 import static org.firstinspires.ftc.teamcode.AutoConfig.RED_PARK;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
@@ -71,8 +75,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static Follower follower;
     private static Pose holdPose;
 
+    private double raisePosition;
+
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
+
+        raisePosition = 0;
 
         intakeMotor = hardwareMap.get(DcMotor.class,"INT");
         transferMotor = hardwareMap.get(DcMotor.class, "INT2");
@@ -132,6 +140,27 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         fires.primaryPos();
 
         while (opModeIsActive()) {
+            final double MAX_BORDER = 141.5;
+
+            double farDist, closeDist;
+            double distFromGoal;
+            if (AutoConfig.isRed) {
+                distFromGoal = Math.hypot(follower.getPose().getX() - MAX_BORDER, follower.getPose().getY() - MAX_BORDER);
+                farDist = Math.hypot(RED_FAR_SCORE.getPose().getX() - MAX_BORDER, RED_FAR_SCORE.getPose().getY() - MAX_BORDER);;
+                closeDist = Math.hypot(RED_CLOSE_SCORE.getPose().getX() - MAX_BORDER, RED_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
+            } else {
+                distFromGoal = Math.hypot(follower.getPose().getX() - 0, follower.getPose().getY() - MAX_BORDER);
+                farDist = Math.hypot(BLUE_FAR_SCORE.getPose().getX() - 0, BLUE_FAR_SCORE.getPose().getY() - MAX_BORDER);
+                closeDist = Math.hypot(BLUE_CLOSE_SCORE.getPose().getX() - 0, BLUE_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
+            }
+            raisePosition = 0.25 +
+                    Math.max(0, Math.min(1,
+                            (distFromGoal - closeDist) / (farDist - closeDist)
+                    )) * (0.37 - 0.25);
+
+            lt1.setPosition(raisePosition);
+            lt2.setPosition(raisePosition);
+
             follower.update();
             telemetry.addData("Status", "Running");
 
@@ -309,6 +338,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 launcherMotor1.setVelocity(0);
                 launcherMotor2.setVelocity(0);
             }
+
+
+
 
             telemetry.addData("FLW encoder",FLW.getCurrentPosition());
             telemetry.addData("FRW encoder",FRW.getCurrentPosition());
