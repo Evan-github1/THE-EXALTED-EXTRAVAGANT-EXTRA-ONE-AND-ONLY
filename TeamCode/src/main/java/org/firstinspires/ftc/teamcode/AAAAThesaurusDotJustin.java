@@ -175,16 +175,21 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 closeDist = Math.hypot(BLUE_CLOSE_SCORE.getPose().getX() - 0, BLUE_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
             }
 
-            // Normalized interpolation value
+            // No clamping
             double t = (distFromGoal - closeDist) / (farDist - closeDist);
-            t = Math.max(0, Math.min(1, t));
 
+            // Servo scaling
             raisePosition = 0.25 + t * (0.37 - 0.25);
             lt1.setPosition(raisePosition);
             lt2.setPosition(raisePosition);
 
-            // 🔥 RPM scaling
+<<<<<<< HEAD
+            //RPM scaling
+            targetRPM = motorPowerClose + t * (motorPowerFar - motorPowerClose) - 100;
+=======
+            // RPM scaling
             targetRPM = motorPowerClose + t * (motorPowerFar - motorPowerClose);
+>>>>>>> fe8ef4799c8753ed91cf85d1094c78777795724c
 
 
             follower.update();
@@ -440,11 +445,11 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         double error = 100000;
         if(autoAim){
             double goalX;
-            double goalY = 144;
+            double goalY = 140;
             if(AutoConfig.isRed){
                 goalX=144;
             } else{
-                goalX=3.5;//for better aiming?
+                goalX=7;//for better aiming?
             }
             //calculate angle from robot to target, add pi to get angle robot needs to face to aim at target (since launcher is on back of robot)
             double targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
