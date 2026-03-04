@@ -382,9 +382,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         double error = 100000;
         if(autoAim){
             double goalX;
-            double goalY = 144;
+            double goalY = 141.5;
             if(AutoConfig.isRed){
-                goalX=144;
+                goalX=141.5;
             } else{
                 goalX=3.5;//for better aiming?
             }
