@@ -33,6 +33,8 @@ public class AutoConfig {
     public static final Pose RED_FAR_CORNER1         = new Pose(141.5 - robotWidth()/2, 30 + robotLength()/2, Math.toRadians(-90));
     public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2, 2 + robotLength()/2 + 3, Math.toRadians(-90));
 
+    public static final Pose RED_FAR_CORNER_DIRECT   = new Pose(141.5-robotWidth()/2,robotLength()/2,Math.toRadians(0));
+
     // ── DOOM RED FAR only ─────────────────────────────────────────────
     public static final Pose DOOM_RED_FAR_CLEAR_READY = new Pose(100, 67, 0);
 
@@ -69,6 +71,7 @@ public class AutoConfig {
     public static final Pose BLUE_FAR_CLEAR2         = RED_FAR_CLEAR2.mirror();
     public static final Pose BLUE_FAR_CORNER1        = RED_FAR_CORNER1.mirror();
     public static final Pose BLUE_FAR_CORNER2        = RED_FAR_CORNER2.mirror();
+    public static final Pose BLUE_FAR_CORNER_DIRECT  = RED_FAR_CORNER_DIRECT.mirror();
 
     // ── DOOM BLUE FAR only ────────────────────────────────────────────
     // Old manual definition:
