@@ -277,7 +277,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                         follower.followPath(follower.pathBuilder()
                                 .addPath(new BezierLine(follower.getPose(),RED_PARK))
                                 .setLinearHeadingInterpolation(follower.getHeading(),RED_PARK.getHeading())
-                                .setConstraints(new PathConstraints(0.995,300))
+                                .setConstraints(new PathConstraints(0.995,1000))
                                 .build());
                     }
                     else{
@@ -288,7 +288,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                         follower.followPath(follower.pathBuilder()
                                 .addPath(new BezierLine(follower.getPose(),BLUE_PARK))
                                 .setLinearHeadingInterpolation(follower.getHeading(),BLUE_PARK.getHeading())
-                                .setConstraints(new PathConstraints(0.995,300))
+                                .setConstraints(new PathConstraints(0.995,1000))
                                 .build());
                     }
                     else{
