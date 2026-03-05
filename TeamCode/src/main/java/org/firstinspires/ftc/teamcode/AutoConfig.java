@@ -6,25 +6,36 @@ import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
 
 public class AutoConfig {
 
-    /**
-     * Set by any autonomous OpMode before it ends.
-     * TeleOp reads this to continue from where auto left off.
-     * Null if no auto has run this session.
-     */
+//    /**
+//     * Set by any autonomous OpMode before it ends.
+//     * TeleOp reads this to continue from where auto left off.
+//     * Null if no auto has run this session.
+//     */
     public static Pose lastAutoEndPose = null;
 
     public static boolean isRed = true; // Set by auto, read by teleop to determine alliance color for teleop. Assume red alliance.
 
+    //-- Blue Alliance Stuff ----
+    public static final Pose BLUE_FAR_START = new Pose(46.75, robotLength()/2, Math.toRadians(-90));
+    public static final Pose BLUE_BALL1_START     = new Pose(42, 36, -Math.PI);
+    public static final Pose BLUE_BALL1_END       = new Pose(13, 36, -Math.PI);
+    public static final Pose BLUE_BALL2_START     = new Pose(42, 60, -Math.PI);
+    public static final Pose BLUE_BALL2_END       = new Pose(13, 60, -Math.PI);
+    public static final Pose BLUE_BALL3_START     = new Pose(42, 84, -Math.PI);
+    public static final Pose BLUE_BALL3_END       = new Pose(13, 84, -Math.PI);
+    public static final Pose BLUE_FAR_SCORE       = new Pose(53,16,Math.atan2(16-141.5,53-0));
+    public static final Pose BLUE_FAR_CLEAR       = new Pose(42,72,-Math.PI);
+
     // ── SHARED RED (UhUhREDFAR + DoomREDFAR) ─────────────────────
-    public static final Pose RED_FAR_START           = new Pose(96, robotLength()/2, Math.toRadians(-90));
-    public static final Pose RED_FAR_SCORE           = new Pose(88.6, 11.7, Math.toRadians(-115.5));
-    public static final Pose RED_BALL1_START     = new Pose(98, 31, 0);
-    public static final Pose RED_BALL1_END       = new Pose(133, 31, 0);
-    public static final Pose RED_BALL2_START     = new Pose(98, 55, 0);
-    public static final Pose RED_BALL2_END       = new Pose(130, 55, 0);
-    public static final Pose RED_BALL3_START     = new Pose(98, 79, 0);
-    public static final Pose RED_BALL3_END       = new Pose(128, 79, 0);
-    public static final Pose RED_FAR_CLEAR           = new Pose(128, 67, 0);
+    public static final Pose RED_FAR_START     =      BLUE_FAR_START.mirror();
+    public static final Pose RED_FAR_SCORE           = BLUE_FAR_SCORE.mirror();
+    public static final Pose RED_BALL1_START     = BLUE_BALL1_START.mirror();
+    public static final Pose RED_BALL1_END       = BLUE_BALL1_END.mirror();
+    public static final Pose RED_BALL2_START     = BLUE_BALL2_START.mirror();
+    public static final Pose RED_BALL2_END       = BLUE_BALL2_END.mirror();
+    public static final Pose RED_BALL3_START     = BLUE_BALL3_START.mirror();
+    public static final Pose RED_BALL3_END       = BLUE_BALL3_END.mirror();
+    public static final Pose RED_FAR_CLEAR           = BLUE_FAR_CLEAR.mirror();
     public static final Pose RED_CLOSE_SCORE     = new Pose(85, 85, Math.PI + Math.PI/4);
     public static final Pose RED_PARK = new Pose(40.7,32,-Math.PI);
 
@@ -51,15 +62,6 @@ public class AutoConfig {
     // public static final Pose BLUE_BALL3_END   = new Pose(141.5 - 125, 84, Math.PI);
     // public static final Pose BLUE_FAR_CLEAR       = new Pose(141.5 - 125, 72, Math.PI);
     // public static final Pose BLUE_CLOSE_SCORE = new Pose(141.5 - 85, 85, -Math.PI/4);
-    public static final Pose BLUE_FAR_START          = RED_FAR_START.mirror();
-    public static final Pose BLUE_FAR_SCORE          = RED_FAR_SCORE.mirror();
-    public static final Pose BLUE_BALL1_START    = RED_BALL1_START.mirror();
-    public static final Pose BLUE_BALL1_END      = RED_BALL1_END.mirror();
-    public static final Pose BLUE_BALL2_START    = RED_BALL2_START.mirror();
-    public static final Pose BLUE_BALL2_END      = RED_BALL2_END.mirror();
-    public static final Pose BLUE_BALL3_START    = RED_BALL3_START.mirror();
-    public static final Pose BLUE_BALL3_END      = RED_BALL3_END.mirror();
-    public static final Pose BLUE_FAR_CLEAR          = RED_FAR_CLEAR.mirror();
     public static final Pose BLUE_CLOSE_SCORE    = RED_CLOSE_SCORE.mirror();
     public static final Pose BLUE_PARK = RED_PARK.mirror();
 

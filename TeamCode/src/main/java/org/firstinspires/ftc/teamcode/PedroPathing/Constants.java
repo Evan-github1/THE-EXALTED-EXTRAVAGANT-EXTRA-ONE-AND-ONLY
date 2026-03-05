@@ -44,7 +44,7 @@ public class Constants {
     }
 
     public static double robotWidth(){
-        return 16.48;
+        return 16.4375;
     }
 
     public static double robotLength(){
