@@ -160,32 +160,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             lt1.setPosition(raisePosition);
             lt2.setPosition(raisePosition);*/
 
-            final double MAX_BORDER = 141.5;
-
-            double farDist, closeDist;
-            double distFromGoal;
-
-            if (AutoConfig.isRed) {
-                distFromGoal = Math.hypot(follower.getPose().getX() - MAX_BORDER, follower.getPose().getY() - MAX_BORDER);
-                farDist = Math.hypot(RED_FAR_SCORE.getPose().getX() - MAX_BORDER, RED_FAR_SCORE.getPose().getY() - MAX_BORDER);
-                closeDist = Math.hypot(RED_CLOSE_SCORE.getPose().getX() - MAX_BORDER, RED_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
-            } else {
-                distFromGoal = Math.hypot(follower.getPose().getX() - 0, follower.getPose().getY() - MAX_BORDER);
-                farDist = Math.hypot(BLUE_FAR_SCORE.getPose().getX() - 0, BLUE_FAR_SCORE.getPose().getY() - MAX_BORDER);
-                closeDist = Math.hypot(BLUE_CLOSE_SCORE.getPose().getX() - 0, BLUE_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
-            }
-
-            // No clamping
-            double t = (distFromGoal - closeDist) / (farDist - closeDist);
-
-            // Servo scaling
-            raisePosition = 0.25 + t * (0.37 - 0.25);
-            lt1.setPosition(raisePosition);
-            lt2.setPosition(raisePosition);
-
-            // RPM scaling
-            targetRPM = motorPowerClose + t * (motorPowerFar - motorPowerClose);
-
 
             follower.update();
             telemetry.addData("Status", "Running");
@@ -223,6 +197,33 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger>0.5);
             }
 
+            if(gamepad1.left_trigger > .5){
+                final double MAX_BORDER = 141.5;
+
+                double farDist, closeDist;
+                double distFromGoal;
+
+                if (AutoConfig.isRed) {
+                    distFromGoal = Math.hypot(follower.getPose().getX() - MAX_BORDER, follower.getPose().getY() - MAX_BORDER);
+                    farDist = Math.hypot(RED_FAR_SCORE.getPose().getX() - MAX_BORDER, RED_FAR_SCORE.getPose().getY() - MAX_BORDER);
+                    closeDist = Math.hypot(RED_CLOSE_SCORE.getPose().getX() - MAX_BORDER, RED_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
+                } else {
+                    distFromGoal = Math.hypot(follower.getPose().getX() - 0, follower.getPose().getY() - MAX_BORDER);
+                    farDist = Math.hypot(BLUE_FAR_SCORE.getPose().getX() - 0, BLUE_FAR_SCORE.getPose().getY() - MAX_BORDER);
+                    closeDist = Math.hypot(BLUE_CLOSE_SCORE.getPose().getX() - 0, BLUE_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
+                }
+
+                // No clamping
+                double t = (distFromGoal - closeDist) / (farDist - closeDist);
+
+                // Servo scaling
+                raisePosition = 0.25 + t * (0.37 - 0.25);
+                lt1.setPosition(raisePosition);
+                lt2.setPosition(raisePosition);
+
+                // RPM scaling
+                targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-100;
+            }
 
             if(isAimed){
                 indL.setPosition(.8);
@@ -237,7 +238,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
             if (gamepad1.yWasPressed()) {
                 if(intakeMotor.getPower() == 0){
-                    intakeMotor.setPower(1);
+                    intakeMotor.setPower(.75);
                     loading = true;
                 }else {
                     intakeMotor.setPower(0);
@@ -248,6 +249,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             if (gamepad1.aWasPressed()) {
                 if(intakeMotor.getPower() == 0){
                     intakeMotor.setPower(-.5);
+                    transferMotor.setPower(-1);
                     loading = true;
                 }else {
                     intakeMotor.setPower(0);
