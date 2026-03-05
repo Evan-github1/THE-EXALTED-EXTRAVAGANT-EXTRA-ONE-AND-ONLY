@@ -17,15 +17,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(13.28)
-            .forwardZeroPowerAcceleration(-25.3459)
-            .lateralZeroPowerAcceleration(-64.70768)
+            .mass(13.377)
+            .forwardZeroPowerAcceleration(-30.7537)
+            .lateralZeroPowerAcceleration(-75.1541)
             // TODO: Tune translational PID to reduce endpoint overshoot.
             //  Try increasing D from 0.02 toward 0.03-0.05. On problem paths, also try
             //  path.setTimeoutConstraint(ms) to give the follower more correction time.
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.02,0.018))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.2,0,0.05,0.025))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015,0.001,0.00002,0.5,0.01))
+            .useSecondaryTranslationalPIDF(true)
+            .useSecondaryHeadingPIDF(true)
+            .useSecondaryDrivePIDF(false)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.03,0.018))
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.3,0,0.025,0.015))
+            .headingPIDFCoefficients(new PIDFCoefficients(1,0,0.03,0.02))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.2,0,0,0.02))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(1,0.001,0.00002,0.5,0.01))
             .centripetalScaling(0.0005)
             ;
 
@@ -62,8 +67,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotor.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotor.Direction.FORWARD)
             .rightRearMotorDirection(DcMotor.Direction.FORWARD)
-            .xVelocity(76.391)
-            .yVelocity(61.93);
+            .xVelocity(77.676)
+            .yVelocity(61.626);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .distanceUnit(DistanceUnit.INCH)
