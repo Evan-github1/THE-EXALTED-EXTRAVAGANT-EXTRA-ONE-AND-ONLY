@@ -207,7 +207,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                         } else {
                             pastError = LeBotsEyes(pastError, false);
                             LeBotsEyes(pastError, true);
-
                         }
                         iterations++;
                     }catch(Exception ignored){}
@@ -275,6 +274,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     loading = true;
                 }else {
                     intakeMotor.setPower(0);
+                    transferMotor.setPower(0);
                 }
                 setTime();
             }
