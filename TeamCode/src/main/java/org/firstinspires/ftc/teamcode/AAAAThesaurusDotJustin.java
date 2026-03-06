@@ -66,6 +66,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static Limelight3A limelight;
     private static Thread orientRobot;
     private static boolean tracking;
+    private boolean useOldAiming;
     private static double pastError;
     private static int iterations;
     private static double motorPowerFar, motorPowerClose;
@@ -97,6 +98,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         loading = false;
         shooting = false;
         isAimed = false;
+        useOldAiming = false;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(2);
@@ -194,7 +196,23 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 moveWheels(-0.25f,0);
                 isAimed = false;
             }else {
-                isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger>0.5);
+                if(!useOldAiming) {
+                    isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger > 0.5);
+                } else if(gamepad1.left_trigger>0.5){
+                    try {
+                        if (iterations == 0) {
+                            pastError = 0;
+                            LeBotsEyes(pastError, true);
+                        } else {
+                            pastError = LeBotsEyes(pastError, false);
+                            LeBotsEyes(pastError, true);
+
+                        }
+                        iterations++;
+                    }catch(Exception ignored){}
+                } else{
+                    robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, false);
+                }
             }
 
             if(gamepad1.left_trigger > .5){
@@ -225,7 +243,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-100;
             }
 
-            if(isAimed){
+            if(useOldAiming){
+                indL.setPosition(0);
+                indR.setPosition(0);
+            }else if(isAimed){
                 indL.setPosition(.8);
                 indR.setPosition(.8);
             } else if(AutoConfig.isRed){
@@ -258,6 +279,11 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }
             if(gamepad2.dpadUpWasPressed()){
                 AutoConfig.isRed = !AutoConfig.isRed;
+            }
+            if(gamepad2.dpadRightWasPressed()){
+                useOldAiming = !useOldAiming;
+                int pipeline = (useOldAiming) ? 0 : 2; //sets pipeline to correct one based on current mode(0 = aiming, 2 = localization)
+                limelight.pipelineSwitch(pipeline);
             }
             if(gamepad2.dpadDownWasPressed()){
                 boolean isLocalized = relocalize();
