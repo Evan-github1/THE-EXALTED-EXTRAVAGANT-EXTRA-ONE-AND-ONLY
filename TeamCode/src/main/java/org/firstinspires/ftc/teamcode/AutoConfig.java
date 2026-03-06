@@ -25,7 +25,9 @@ public class AutoConfig {
     public static final Pose BLUE_BALL3_END       = new Pose(18, 84, -Math.PI);
     public static final Pose BLUE_FAR_SCORE       = new Pose(53,16,Math.atan2(16-141.5,53-0));
     public static final Pose BLUE_FAR_CLEAR       = new Pose(42,72,-Math.PI);
+    public static final Pose BLUE_FAR_CLEAR2 = new Pose(16,72,-Math.PI);
     public static final Pose BLUE_CLOSE_START = new Pose(37.3,131,Math.PI/2);
+    public static final Pose BLUE_CLOSE_SCORE = new Pose(60,84,-Math.PI/4);
 
 
     // ── SHARED RED (UhUhREDFAR + DoomREDFAR) ─────────────────────
@@ -39,15 +41,14 @@ public class AutoConfig {
     public static final Pose RED_BALL3_START     = BLUE_BALL3_START.mirror().plus(RED_OFFSET);
     public static final Pose RED_BALL3_END       = BLUE_BALL3_END.mirror().plus(RED_OFFSET);
     public static final Pose RED_FAR_CLEAR           = BLUE_FAR_CLEAR.mirror().plus(RED_OFFSET);
-    public static final Pose RED_CLOSE_SCORE     = new Pose(85, 85, Math.PI + Math.PI/4);
+    public static final Pose RED_CLOSE_SCORE     = BLUE_CLOSE_SCORE.mirror();
     public static final Pose RED_PARK = new Pose(40.7,32,-Math.PI);
     public static final Pose RED_CLOSE_START = BLUE_CLOSE_START.mirror();
 
     // ── UHUH RED FAR only ─────────────────────────────────────────────
-    public static final Pose RED_FAR_CLEAR2          = new Pose(121, 67, 0);
+    public static final Pose RED_FAR_CLEAR2          = BLUE_FAR_CLEAR2.mirror().plus(RED_OFFSET);
     public static final Pose RED_FAR_CORNER1         = new Pose(141.5 - robotWidth()/2, 30 + robotLength()/2, Math.toRadians(-90));
     public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2, 2 + robotLength()/2 + 3, Math.toRadians(-90));
-
     public static final Pose RED_FAR_CORNER_DIRECT   = new Pose(141.5-robotWidth()/2,robotLength()/2,Math.toRadians(0));
 
     // ── DOOM RED FAR only ─────────────────────────────────────────────
@@ -66,7 +67,6 @@ public class AutoConfig {
     // public static final Pose BLUE_BALL3_END   = new Pose(141.5 - 125, 84, Math.PI);
     // public static final Pose BLUE_FAR_CLEAR       = new Pose(141.5 - 125, 72, Math.PI);
     // public static final Pose BLUE_CLOSE_SCORE = new Pose(141.5 - 85, 85, -Math.PI/4);
-    public static final Pose BLUE_CLOSE_SCORE    = RED_CLOSE_SCORE.mirror();
     public static final Pose BLUE_PARK = RED_PARK.mirror();
 
     // ── UHUH BLUE FAR only ────────────────────────────────────────────
@@ -74,7 +74,6 @@ public class AutoConfig {
     // public static final Pose BLUE_FAR_CLEAR2      = new Pose(141.5 - 115, 72, Math.PI);
     // public static final Pose BLUE_FAR_CORNER1     = new Pose(robotWidth()/2, 30 + robotLength()/2, Math.PI - Math.toRadians(-90));
     // public static final Pose BLUE_FAR_CORNER2     = new Pose(robotWidth()/2, 2 + robotLength()/2 + 3, Math.PI - Math.toRadians(-90));
-    public static final Pose BLUE_FAR_CLEAR2         = RED_FAR_CLEAR2.mirror();
     public static final Pose BLUE_FAR_CORNER1        = RED_FAR_CORNER1.mirror();
     public static final Pose BLUE_FAR_CORNER2        = RED_FAR_CORNER2.mirror();
     public static final Pose BLUE_FAR_CORNER_DIRECT  = RED_FAR_CORNER_DIRECT.mirror();
