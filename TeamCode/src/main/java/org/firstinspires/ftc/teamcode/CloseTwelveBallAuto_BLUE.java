@@ -376,7 +376,7 @@ public class CloseTwelveBallAuto_BLUE extends Movable {
 
     private boolean autoAim(){
         double goalX = 0;
-        double goalY = 144;
+        double goalY = 141.5;
         double targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
         double error = targetAngle - follower.getPose().getHeading();
         while(error > Math.PI){ error -= 2*Math.PI; }

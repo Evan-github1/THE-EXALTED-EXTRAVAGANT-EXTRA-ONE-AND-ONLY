@@ -29,15 +29,16 @@ public class AutoConfig {
 
 
     // ── SHARED RED (UhUhREDFAR + DoomREDFAR) ─────────────────────
-    public static final Pose RED_FAR_START     =      BLUE_FAR_START.mirror();
-    public static final Pose RED_FAR_SCORE           = BLUE_FAR_SCORE.mirror();
-    public static final Pose RED_BALL1_START     = BLUE_BALL1_START.mirror();
-    public static final Pose RED_BALL1_END       = BLUE_BALL1_END.mirror();
-    public static final Pose RED_BALL2_START     = BLUE_BALL2_START.mirror();
-    public static final Pose RED_BALL2_END       = BLUE_BALL2_END.mirror();
-    public static final Pose RED_BALL3_START     = BLUE_BALL3_START.mirror();
-    public static final Pose RED_BALL3_END       = BLUE_BALL3_END.mirror();
-    public static final Pose RED_FAR_CLEAR           = BLUE_FAR_CLEAR.mirror();
+    public static final Pose RED_OFFSET = new Pose(0,-3);
+    public static final Pose RED_FAR_START     =      BLUE_FAR_START.mirror().plus(RED_OFFSET);
+    public static final Pose RED_FAR_SCORE           = BLUE_FAR_SCORE.mirror().plus(RED_OFFSET);
+    public static final Pose RED_BALL1_START     = BLUE_BALL1_START.mirror().plus(RED_OFFSET);
+    public static final Pose RED_BALL1_END       = BLUE_BALL1_END.mirror().plus(RED_OFFSET);
+    public static final Pose RED_BALL2_START     = BLUE_BALL2_START.mirror().plus(RED_OFFSET);
+    public static final Pose RED_BALL2_END       = BLUE_BALL2_END.mirror().plus(RED_OFFSET);
+    public static final Pose RED_BALL3_START     = BLUE_BALL3_START.mirror().plus(RED_OFFSET);
+    public static final Pose RED_BALL3_END       = BLUE_BALL3_END.mirror().plus(RED_OFFSET);
+    public static final Pose RED_FAR_CLEAR           = BLUE_FAR_CLEAR.mirror().plus(RED_OFFSET);
     public static final Pose RED_CLOSE_SCORE     = new Pose(85, 85, Math.PI + Math.PI/4);
     public static final Pose RED_PARK = new Pose(40.7,32,-Math.PI);
     public static final Pose RED_CLOSE_START = BLUE_CLOSE_START.mirror();

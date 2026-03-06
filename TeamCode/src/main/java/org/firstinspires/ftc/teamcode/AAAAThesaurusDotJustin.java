@@ -70,6 +70,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static double pastError;
     private static int iterations;
     private static double motorPowerFar, motorPowerClose;
+    private static double DEADZONE = 0.05;
     private static double rpm, rpm2, tps, tps2, targetRPM, P, FClose, FFar, currentTargetRPM;
     private static PIDFCoefficients pidfCoefficients;
     private static PIDFController aimPID;
@@ -222,13 +223,13 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 double distFromGoal;
 
                 if (AutoConfig.isRed) {
-                    distFromGoal = Math.hypot(follower.getPose().getX() - MAX_BORDER, follower.getPose().getY() - MAX_BORDER);
-                    farDist = Math.hypot(RED_FAR_SCORE.getPose().getX() - MAX_BORDER, RED_FAR_SCORE.getPose().getY() - MAX_BORDER);
-                    closeDist = Math.hypot(RED_CLOSE_SCORE.getPose().getX() - MAX_BORDER, RED_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
+                    distFromGoal = Math.hypot(follower.getPose().getX() - 140, follower.getPose().getY() - MAX_BORDER);
+                    farDist = Math.hypot(RED_FAR_SCORE.getPose().getX() - 140, RED_FAR_SCORE.getPose().getY() - MAX_BORDER);
+                    closeDist = Math.hypot(RED_CLOSE_SCORE.getPose().getX() - 140, RED_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
                 } else {
-                    distFromGoal = Math.hypot(follower.getPose().getX() - 0, follower.getPose().getY() - MAX_BORDER);
-                    farDist = Math.hypot(BLUE_FAR_SCORE.getPose().getX() - 0, BLUE_FAR_SCORE.getPose().getY() - MAX_BORDER);
-                    closeDist = Math.hypot(BLUE_CLOSE_SCORE.getPose().getX() - 0, BLUE_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
+                    distFromGoal = Math.hypot(follower.getPose().getX() - 7, follower.getPose().getY() - MAX_BORDER);
+                    farDist = Math.hypot(BLUE_FAR_SCORE.getPose().getX() - 7, BLUE_FAR_SCORE.getPose().getY() - MAX_BORDER);
+                    closeDist = Math.hypot(BLUE_CLOSE_SCORE.getPose().getX() - 7, BLUE_CLOSE_SCORE.getPose().getY() - MAX_BORDER);
                 }
 
                 // No clamping
@@ -240,7 +241,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 lt2.setPosition(raisePosition);
 
                 // RPM scaling
-                targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-100;
+                targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-150;
             }
 
             if(useOldAiming){
@@ -463,7 +464,13 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     //uses alliance based on auto setting it
     private boolean robotDrive(double transX, double transY, double turnX, boolean autoAim) {
         double forward = transY;
+        if(Math.abs(forward) < DEADZONE){
+            forward = 0;
+        }
         double strafe = transX;
+        if(Math.abs(strafe) < DEADZONE){
+            strafe = 0;
+        }
         double turn;
         double error = 100000;
         if(autoAim){
@@ -490,6 +497,9 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
         } else{
             turn = -turnX;
+            if(Math.abs(turn) < DEADZONE){
+                turn = 0;
+            }
         }
         //drive wheels
         follower.setTeleOpDrive(forward,strafe,turn);
