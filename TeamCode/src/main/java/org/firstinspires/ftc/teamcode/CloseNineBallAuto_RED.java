@@ -9,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.PathConstraints;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -80,12 +81,12 @@ public class CloseNineBallAuto_RED extends Movable {
         launcherMotor2.setPIDFCoefficients(RUN_USING_ENCODER,pidfCoefficients);
 
         PathChain scorePreload = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_START,RED_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(RED_FAR_START.getHeading(),RED_FAR_SCORE.getHeading())
+                .addPath(new BezierLine(RED_CLOSE_START,RED_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(RED_CLOSE_START.getHeading(),RED_CLOSE_SCORE.getHeading())
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(RED_BALL3_END, RED_FAR_CLEAR2, RED_FAR_CLEAR))
+                .addPath(new BezierCurve(RED_BALL2_END, RED_FAR_CLEAR, RED_FAR_CLEAR2))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
@@ -110,7 +111,7 @@ public class CloseNineBallAuto_RED extends Movable {
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_CLEAR,RED_CLOSE_SCORE))
+                .addPath(new BezierLine(RED_BALL3_END,RED_CLOSE_SCORE))
                 .setLinearHeadingInterpolation(RED_BALL3_END.getHeading(), RED_CLOSE_SCORE.getHeading())
                 .build();
 
@@ -125,22 +126,24 @@ public class CloseNineBallAuto_RED extends Movable {
                 .build();
 
         PathChain scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_BALL2_END,RED_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(RED_BALL2_END.getHeading(), RED_CLOSE_SCORE.getHeading())
+                .addPath(new BezierLine(RED_FAR_CLEAR2,RED_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(RED_FAR_CLEAR2.getHeading(), RED_CLOSE_SCORE.getHeading())
                 .build();
+
 
         follower.setStartingPose(RED_CLOSE_START);
 
         pathState = 0;
         AutoConfig.isRed = true;
+        AutoConfig.lastAutoEndPose = RED_CLOSE_START;
 
         waitForStart();
-        launcherMotor1.setVelocity(motorPowerFar / 60 * 28);
-        launcherMotor2.setVelocity(motorPowerFar / 60 * 28);
+        launcherMotor1.setVelocity(motorPowerClose / 60 * 28);
+        launcherMotor2.setVelocity(motorPowerClose / 60 * 28);
         launcherMotor1.setPIDFCoefficients(RUN_USING_ENCODER,new PIDFCoefficients(P,0,0.01,FFar));
         launcherMotor2.setPIDFCoefficients(RUN_USING_ENCODER,new PIDFCoefficients(P,0,0.01,FFar));
-        lt1.setPosition(.37);
-        lt2.setPosition(.37); //.37 for far, .25 for close
+        lt1.setPosition(.25);
+        lt2.setPosition(.25); //.37 for far, .25 for close
         intakeMotor.setPower(1);
         sleep(500);
         boolean breaked = false;
@@ -228,21 +231,21 @@ public class CloseNineBallAuto_RED extends Movable {
                     }
                     actionTimer.resetTimer();
                     break;
-                case 9:
+                case 12:
                     if(!follower.isBusy()){
                         follower.followPath(clearClassifier);
                         pathState++;
                     }
                     actionTimer.resetTimer();
                     break;
-                case 10:
+                case 9:
                     if(!follower.isBusy()){
                         follower.followPath(scorePickup3);
                         pathState++;
                     }
                     actionTimer.resetTimer();
                     break;
-                case 11:
+                case 10:
                     if(!follower.isBusy()){
                         if(iterations == 0){
                             follower.startTeleopDrive(true);
@@ -268,7 +271,7 @@ public class CloseNineBallAuto_RED extends Movable {
                         }
                     }
                     break;
-                case 12:
+                case 11:
                     if(!follower.isBusy()){
                         follower.followPath(grabPickup2);
                         pathState++;
@@ -302,7 +305,7 @@ public class CloseNineBallAuto_RED extends Movable {
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
-                            follower.followPath(goToPickup3);
+                            follower.followPath(goToPickup2);
                             pathState++;
                             actionTimer.resetTimer();
                         }
@@ -311,7 +314,7 @@ public class CloseNineBallAuto_RED extends Movable {
 
                 case 19:
                     if(!follower.isBusy()){
-                        AutoConfig.isRed = false;
+                        AutoConfig.isRed = true;
                         AutoConfig.lastAutoEndPose = follower.getPose();
                         breaked = true;
                     }

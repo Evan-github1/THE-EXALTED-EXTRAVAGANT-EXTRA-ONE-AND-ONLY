@@ -22,7 +22,7 @@ public class AutoConfig {
     public static final Pose BLUE_BALL2_START     = new Pose(50, 60, -Math.PI);
     public static final Pose BLUE_BALL2_END       = new Pose(13, 60, -Math.PI);
     public static final Pose BLUE_BALL3_START     = new Pose(50, 84, -Math.PI);
-    public static final Pose BLUE_BALL3_END       = new Pose(16, 84, -Math.PI);
+    public static final Pose BLUE_BALL3_END       = new Pose(18, 84, -Math.PI);
     public static final Pose BLUE_FAR_SCORE       = new Pose(53,16,Math.atan2(16-141.5,53-0));
     public static final Pose BLUE_FAR_CLEAR       = new Pose(42,72,-Math.PI);
     public static final Pose BLUE_CLOSE_START = new Pose(37.3,131,Math.PI/2);

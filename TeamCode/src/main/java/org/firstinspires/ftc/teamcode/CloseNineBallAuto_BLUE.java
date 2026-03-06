@@ -111,7 +111,7 @@ public class CloseNineBallAuto_BLUE extends Movable {
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_CLEAR,BLUE_CLOSE_SCORE))
+                .addPath(new BezierLine(BLUE_BALL3_END,BLUE_CLOSE_SCORE))
                 .setLinearHeadingInterpolation(BLUE_BALL3_END.getHeading(), BLUE_CLOSE_SCORE.getHeading())
                 .build();
 
@@ -126,15 +126,16 @@ public class CloseNineBallAuto_BLUE extends Movable {
                 .build();
 
         PathChain scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_BALL2_END,BLUE_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(BLUE_BALL2_END.getHeading(), BLUE_CLOSE_SCORE.getHeading())
+                .addPath(new BezierLine(BLUE_FAR_CLEAR2,BLUE_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(BLUE_FAR_CLEAR2.getHeading(), BLUE_CLOSE_SCORE.getHeading())
                 .build();
 
 
         follower.setStartingPose(BLUE_CLOSE_START);
 
         pathState = 0;
-        AutoConfig.isRed = true;
+        AutoConfig.isRed = false;
+        AutoConfig.lastAutoEndPose = BLUE_CLOSE_START;
 
         waitForStart();
         launcherMotor1.setVelocity(motorPowerClose / 60 * 28);
