@@ -179,6 +179,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("Position", follower.getPose().getX() + " " + follower.getPose().getY());
             telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
             telemetry.addData("Power",launcherMotor1.getPower());
+            telemetry.addData("GP2DPDown", gamepad2.dpad_down);
 
             if(!follower.isBusy()&&!follower.isTeleopDrive()){
                 follower.startTeleopDrive(true);
@@ -215,8 +216,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }
             }
 
-            if(gamepad1.left_trigger > .5){
-                final double MAX_BORDER = 141.5;
+            if(gamepad1.left_trigger > .5 && !useOldAiming){
+                final double MAX_BORDER = 140;
 
                 double farDist, closeDist;
                 double distFromGoal;
@@ -244,8 +245,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }
 
             if(useOldAiming){
-                indL.setPosition(0);
-                indR.setPosition(0);
+                indL.setPosition(0.2);
+                indR.setPosition(0.2);
             }else if(isAimed){
                 indL.setPosition(.8);
                 indR.setPosition(.8);
@@ -290,6 +291,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 boolean isLocalized = relocalize();
                 if(isLocalized){
                     gamepad2.rumbleBlips(3);
+                }else{
+                    gamepad2.rumbleBlips(2);
                 }
             }
             if(gamepad2.guideWasPressed()){
@@ -426,7 +429,13 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 Math.toDegrees(pedroPose.getHeading()));
             return true;
         }
-        telemetry.addData("Reloc", "No valid result");
+        telemetry.addData("Reloc", "FAILED");
+        telemetry.addData("Reloc result null", result == null);
+        if (result != null) {
+            telemetry.addData("Reloc valid", result.isValid());
+            telemetry.addData("Reloc staleness", result.getStaleness());
+            telemetry.addData("Reloc pipeline", result.getPipelineIndex());
+        }
         return false;
     }
 
@@ -479,7 +488,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             if(AutoConfig.isRed){
                 goalX=141.5;
             } else{
-                goalX=7;//for better aiming?
+                goalX=6;//for better aiming?
             }
             //calculate angle from robot to target, add pi to get angle robot needs to face to aim at target (since launcher is on back of robot)
             double targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;

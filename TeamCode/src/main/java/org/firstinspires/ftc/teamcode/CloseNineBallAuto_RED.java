@@ -87,7 +87,7 @@ public class CloseNineBallAuto_RED extends Movable {
 
         PathChain clearClassifier = follower.pathBuilder()
                 .addPath(new BezierCurve(RED_BALL2_END, RED_FAR_CLEAR, RED_FAR_CLEAR2))
-                .setConstantHeadingInterpolation(Math.PI)
+                .setConstantHeadingInterpolation(0)
                 .build();
 
         PathChain cornerDirect = follower.pathBuilder()

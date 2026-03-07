@@ -102,12 +102,12 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_CLEAR,BLUE_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(BLUE_FAR_CLEAR.getHeading(),BLUE_CLOSE_SCORE.getHeading())
+                .addPath(new BezierLine(BLUE_FAR_CLEAR2,BLUE_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(BLUE_FAR_CLEAR2.getHeading(),BLUE_CLOSE_SCORE.getHeading())
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(BLUE_BALL3_END, BLUE_FAR_CLEAR2, BLUE_FAR_CLEAR))
+                .addPath(new BezierCurve(BLUE_BALL3_END, BLUE_FAR_CLEAR, BLUE_FAR_CLEAR2))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
@@ -244,7 +244,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -306,7 +306,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -352,7 +352,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -403,7 +403,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -414,11 +414,11 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                     }
                     break;
                 case 12:
-                    if(!follower.isBusy()){
+                    if(!follower.isBusy() || actionTimer.getElapsedTimeSeconds() > 3){
                         follower.followPath(getCorner2);
                         pathState++;
+                        actionTimer.resetTimer();
                     }
-                    actionTimer.resetTimer();
                     break;
                 case 13:
                     if(!follower.isBusy()){
@@ -448,7 +448,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);

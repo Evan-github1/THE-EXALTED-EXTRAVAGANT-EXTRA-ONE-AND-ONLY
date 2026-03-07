@@ -32,7 +32,7 @@ public class AutoConfig {
 
     // ── SHARED RED (UhUhREDFAR + DoomREDFAR) ─────────────────────
     public static final Pose RED_OFFSET = new Pose(0,-3);
-    public static final Pose RED_FAR_START     =      BLUE_FAR_START.mirror().plus(RED_OFFSET);
+    public static final Pose RED_FAR_START     =      BLUE_FAR_START.mirror();
     public static final Pose RED_FAR_SCORE           = BLUE_FAR_SCORE.mirror().plus(RED_OFFSET);
     public static final Pose RED_BALL1_START     = BLUE_BALL1_START.mirror().plus(RED_OFFSET);
     public static final Pose RED_BALL1_END       = BLUE_BALL1_END.mirror().plus(RED_OFFSET);

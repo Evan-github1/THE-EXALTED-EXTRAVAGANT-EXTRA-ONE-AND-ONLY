@@ -328,12 +328,14 @@ public class CloseTwelveBallAuto_BLUE extends Movable {
                         pathState++;
                     }
                     actionTimer.resetTimer();
+                    break;
                 case 16:
                     if(!follower.isBusy()){
                         follower.followPath(scorePickup1);
                         pathState+=2;
                     }
                     actionTimer.resetTimer();
+                    break;
                 case 18:
                     if(!follower.isBusy()){
                         if(iterations == 0){

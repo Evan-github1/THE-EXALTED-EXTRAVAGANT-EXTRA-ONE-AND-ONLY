@@ -103,12 +103,12 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_CLEAR,RED_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(RED_FAR_CLEAR.getHeading(),RED_CLOSE_SCORE.getHeading())
+                .addPath(new BezierLine(RED_FAR_CLEAR2,RED_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(RED_FAR_CLEAR2.getHeading(),RED_CLOSE_SCORE.getHeading())
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(RED_BALL3_END, RED_FAR_CLEAR2, RED_FAR_CLEAR))
+                .addPath(new BezierCurve(RED_BALL3_END, RED_FAR_CLEAR, RED_FAR_CLEAR2))
                 .setConstantHeadingInterpolation(0)
                 .build();
 
@@ -179,6 +179,9 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
             if(followerActive) {
                 follower.update();
             }
+            telemetry.addData("X:", follower.getPose().getX());
+            telemetry.addData("Y:",follower.getPose().getY());
+            telemetry.update();
             AutoConfig.lastAutoEndPose = follower.getPose();
             telemetry.addData("Elapsed time:",actionTimer.getElapsedTimeSeconds());
             telemetry.addLine(""+pathState);
@@ -245,7 +248,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -307,7 +310,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -353,7 +356,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -404,7 +407,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -449,7 +452,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);

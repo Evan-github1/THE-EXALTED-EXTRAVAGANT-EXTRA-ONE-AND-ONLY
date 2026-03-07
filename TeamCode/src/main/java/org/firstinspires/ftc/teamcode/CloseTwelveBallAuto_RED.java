@@ -84,7 +84,7 @@ public class CloseTwelveBallAuto_RED extends Movable {
 
         PathChain clearClassifier = follower.pathBuilder()
                 .addPath(new BezierCurve(RED_BALL2_END, RED_FAR_CLEAR, RED_FAR_CLEAR2))
-                .setConstantHeadingInterpolation(Math.PI)
+                .setConstantHeadingInterpolation(0)
                 .build();
 
         PathChain cornerDirect = follower.pathBuilder()
@@ -161,7 +161,9 @@ public class CloseTwelveBallAuto_RED extends Movable {
 
 
         while (opModeIsActive()) {
-
+            telemetry.addData("X:", follower.getPose().getX());
+            telemetry.addData("Y:",follower.getPose().getY());
+            telemetry.update();
             if(followerActive) {
                 follower.update();
             }
@@ -328,12 +330,14 @@ public class CloseTwelveBallAuto_RED extends Movable {
                         pathState++;
                     }
                     actionTimer.resetTimer();
+                    break;
                 case 16:
                     if(!follower.isBusy()){
                         follower.followPath(scorePickup1);
                         pathState+=2;
                     }
                     actionTimer.resetTimer();
+                    break;
                 case 18:
                     if(!follower.isBusy()){
                         if(iterations == 0){
