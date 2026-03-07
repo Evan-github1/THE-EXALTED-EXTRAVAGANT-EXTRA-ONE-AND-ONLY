@@ -469,7 +469,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
             }
             if(breaked) break;
         }
-
+        AutoConfig.lastAutoEndPose = follower.getPose();
     }
 
     private double LeBotsEyes(double pastError, boolean adjustMotor){

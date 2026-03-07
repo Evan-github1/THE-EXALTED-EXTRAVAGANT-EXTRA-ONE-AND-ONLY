@@ -181,8 +181,6 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
             }
             telemetry.addData("X:", follower.getPose().getX());
             telemetry.addData("Y:",follower.getPose().getY());
-            telemetry.update();
-            AutoConfig.lastAutoEndPose = follower.getPose();
             telemetry.addData("Elapsed time:",actionTimer.getElapsedTimeSeconds());
             telemetry.addLine(""+pathState);
             telemetry.update();
@@ -473,7 +471,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
             }
             if(breaked) break;
         }
-
+        AutoConfig.lastAutoEndPose = follower.getPose();
     }
 
     private double LeBotsEyes(double pastError, boolean adjustMotor){

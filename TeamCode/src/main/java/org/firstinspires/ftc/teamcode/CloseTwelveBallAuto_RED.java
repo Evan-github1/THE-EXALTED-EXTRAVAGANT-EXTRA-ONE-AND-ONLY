@@ -163,11 +163,9 @@ public class CloseTwelveBallAuto_RED extends Movable {
         while (opModeIsActive()) {
             telemetry.addData("X:", follower.getPose().getX());
             telemetry.addData("Y:",follower.getPose().getY());
-            telemetry.update();
             if(followerActive) {
                 follower.update();
             }
-            AutoConfig.lastAutoEndPose = follower.getPose();
             telemetry.addData("Elapsed time:",actionTimer.getElapsedTimeSeconds());
             telemetry.addLine(""+pathState);
             telemetry.update();
@@ -375,6 +373,7 @@ public class CloseTwelveBallAuto_RED extends Movable {
             }
             if(breaked) break;
         }
+        AutoConfig.lastAutoEndPose = follower.getPose();
 
     }
 

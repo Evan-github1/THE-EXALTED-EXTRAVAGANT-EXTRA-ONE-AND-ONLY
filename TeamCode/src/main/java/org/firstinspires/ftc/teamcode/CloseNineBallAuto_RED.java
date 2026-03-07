@@ -322,6 +322,7 @@ public class CloseNineBallAuto_RED extends Movable {
             }
             if(breaked) break;
         }
+        AutoConfig.lastAutoEndPose = follower.getPose();
 
     }
 
