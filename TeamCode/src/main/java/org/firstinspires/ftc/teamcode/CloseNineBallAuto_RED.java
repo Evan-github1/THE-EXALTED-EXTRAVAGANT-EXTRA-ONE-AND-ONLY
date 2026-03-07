@@ -57,8 +57,8 @@ public class CloseNineBallAuto_RED extends Movable {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         follower = createFollower(hardwareMap);
-        motorPowerClose = 2300;
-        motorPowerFar = 3400; //from 4800
+        motorPowerClose = AutoConfig.motorPowerClose;
+        motorPowerFar = AutoConfig.motorPowerFar; //from 4800
         followerActive = true;
         aimPID = new PIDFController(new com.pedropathing.control.PIDFCoefficients(1.2,0,0.05,0.025));
         targetRPM = motorPowerFar;
@@ -87,7 +87,7 @@ public class CloseNineBallAuto_RED extends Movable {
 
         PathChain clearClassifier = follower.pathBuilder()
                 .addPath(new BezierCurve(RED_BALL2_END, RED_FAR_CLEAR, RED_FAR_CLEAR2))
-                .setConstantHeadingInterpolation(0)
+                .setLinearHeadingInterpolation(RED_BALL2_END.getHeading(),RED_FAR_CLEAR2.getHeading(),0.7)
                 .build();
 
         PathChain cornerDirect = follower.pathBuilder()
@@ -179,7 +179,7 @@ public class CloseNineBallAuto_RED extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -214,7 +214,7 @@ public class CloseNineBallAuto_RED extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -261,7 +261,7 @@ public class CloseNineBallAuto_RED extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -301,7 +301,7 @@ public class CloseNineBallAuto_RED extends Movable {
                             transferMotor.setPower(1);
                             fires.secondaryPos();
                             disablePower();
-                            sleep(700);
+                            sleep(1000);
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
@@ -327,8 +327,8 @@ public class CloseNineBallAuto_RED extends Movable {
     }
 
     private boolean autoAim(){
-        double goalX = 140;
-        double goalY = 141.5;
+        double goalX = 141.5;
+        double goalY = 140;
         double targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
         double error = targetAngle - follower.getPose().getHeading();
         while(error > Math.PI){ error -= 2*Math.PI; }

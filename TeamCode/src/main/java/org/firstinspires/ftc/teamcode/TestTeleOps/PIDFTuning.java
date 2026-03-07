@@ -274,8 +274,8 @@ public class PIDFTuning extends Movable implements LimelightTags {
             telemetry.addData("Current Velocity", "%.2f", rpm);
             telemetry.addData("Error", "%.2f", error);
             telemetry.addLine("------------------------------");
-            telemetry.addData("Tuning P", "%.4f (D-Pad U/D)", P);
-            telemetry.addData("Tuning F", "%.4f (D-Pad L/R)", F);
+            telemetry.addData("NewLauncherTuning P", "%.4f (D-Pad U/D)", P);
+            telemetry.addData("NewLauncherTuning F", "%.4f (D-Pad L/R)", F);
             telemetry.addData("Step Size", "%.4f (B Button)", stepSizes[stepIndex]);
             telemetry.update();
         }

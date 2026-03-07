@@ -12,6 +12,8 @@ public class AutoConfig {
 //     * Null if no auto has run this session.
 //     */
     public static Pose lastAutoEndPose = null;
+    public static int motorPowerFar = 3800;
+    public static int motorPowerClose = 2500;
 
     public static boolean isRed = true; // Set by auto, read by teleop to determine alliance color for teleop. Assume red alliance.
 
@@ -25,16 +27,16 @@ public class AutoConfig {
     public static final Pose BLUE_BALL3_END       = new Pose(18, 84, -Math.PI);
     public static final Pose BLUE_FAR_SCORE       = new Pose(53,16,Math.atan2(16-141.5,53-0));
     public static final Pose BLUE_FAR_CLEAR       = new Pose(42,72,-Math.PI);
-    public static final Pose BLUE_FAR_CLEAR2 = new Pose(16,72,-Math.PI);
+    public static final Pose BLUE_FAR_CLEAR2 = new Pose(16,72,-Math.PI/2);
     public static final Pose BLUE_CLOSE_START = new Pose(37.3,131,Math.PI/2);
     public static final Pose BLUE_CLOSE_SCORE = new Pose(60,84,-Math.PI/4);
 
 
     // ── SHARED RED (UhUhREDFAR + DoomREDFAR) ─────────────────────
-    public static final Pose RED_OFFSET = new Pose(0,-3);
+    public static final Pose RED_OFFSET = new Pose(-3,-3);
     public static final Pose RED_FAR_START     =      BLUE_FAR_START.mirror();
     public static final Pose RED_FAR_SCORE           = BLUE_FAR_SCORE.mirror().plus(RED_OFFSET);
-    public static final Pose RED_BALL1_START     = BLUE_BALL1_START.mirror().plus(RED_OFFSET);
+    public static final Pose RED_BALL1_START     = BLUE_BALL1_START.mirror().plus(RED_OFFSET).minus(new Pose(3,0,0));
     public static final Pose RED_BALL1_END       = BLUE_BALL1_END.mirror().plus(RED_OFFSET);
     public static final Pose RED_BALL2_START     = BLUE_BALL2_START.mirror().plus(RED_OFFSET);
     public static final Pose RED_BALL2_END       = BLUE_BALL2_END.mirror().plus(RED_OFFSET);
@@ -47,8 +49,8 @@ public class AutoConfig {
 
     // ── UHUH RED FAR only ─────────────────────────────────────────────
     public static final Pose RED_FAR_CLEAR2          = BLUE_FAR_CLEAR2.mirror().plus(RED_OFFSET);
-    public static final Pose RED_FAR_CORNER1         = new Pose(141.5 - robotWidth()/2, 30 + robotLength()/2, Math.toRadians(-90));
-    public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2, 2 + robotLength()/2 + 3, Math.toRadians(-90));
+    public static final Pose RED_FAR_CORNER1         = new Pose(135 - robotWidth()/2, 30 + robotLength()/2, Math.toRadians(-75));
+    public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2,  robotLength()/2 + 3, Math.toRadians(-90));
     public static final Pose RED_FAR_CORNER_DIRECT   = new Pose(141.5-robotWidth()/2,robotLength()/2,Math.toRadians(0));
 
     // ── DOOM RED FAR only ─────────────────────────────────────────────

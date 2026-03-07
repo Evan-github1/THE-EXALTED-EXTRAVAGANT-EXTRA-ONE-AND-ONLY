@@ -61,8 +61,8 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         follower = createFollower(hardwareMap);
-        motorPowerClose = 2300;
-        motorPowerFar = 3400; //from 4800
+        motorPowerClose = AutoConfig.motorPowerClose;
+        motorPowerFar = AutoConfig.motorPowerFar; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);

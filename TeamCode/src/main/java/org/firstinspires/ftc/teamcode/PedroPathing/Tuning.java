@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is the Tuning class. It contains a selection menu for various tuning OpModes.
+ * This is the NewLauncherTuning class. It contains a selection menu for various tuning OpModes.
  *
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 6/26/2025
  */
 @Configurable
-@TeleOp(name = "Tuning", group = "Pedro Pathing")
+@TeleOp(name = "NewLauncherTuning", group = "Pedro Pathing")
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
 
@@ -49,7 +49,7 @@ public class Tuning extends SelectableOpMode {
     static ArrayList<String> changes = new ArrayList<>();
 
     public Tuning() {
-        super("Select a Tuning OpMode", s -> {
+        super("Select a NewLauncherTuning OpMode", s -> {
             s.folder("Localization", l -> {
                 l.add("Localization Test", LocalizationTest::new);
                 l.add("Forward Tuner", ForwardTuner::new);
