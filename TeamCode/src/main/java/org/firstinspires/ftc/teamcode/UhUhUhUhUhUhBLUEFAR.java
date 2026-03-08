@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
-@Autonomous
+@Autonomous(preselectTeleOp = "AAAAThesaurusDotJustin")
 public class UhUhUhUhUhUhBLUEFAR extends Movable {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
