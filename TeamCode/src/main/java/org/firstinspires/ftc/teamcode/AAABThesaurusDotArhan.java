@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -28,6 +29,7 @@ import com.pedropathing.util.Timer;
 
 
 @TeleOp
+@Disabled
 public class AAABThesaurusDotArhan extends Movable implements LimelightTags {
 
     private static DcMotor intakeMotor, transferMotor;

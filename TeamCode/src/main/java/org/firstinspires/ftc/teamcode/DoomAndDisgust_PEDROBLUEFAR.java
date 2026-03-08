@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 @Autonomous
+@Disabled
 public class DoomAndDisgust_PEDROBLUEFAR extends Movable {
 
     private Timer pathTimer, actionTimer, opmodeTimer;

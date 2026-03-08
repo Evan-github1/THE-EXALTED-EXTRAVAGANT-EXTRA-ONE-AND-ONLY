@@ -20,6 +20,7 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -39,6 +40,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 
 @TeleOp
+@Disabled
 public class AAAAThesaurusDotJustinAUTOLOCALIZEBROKEN extends Movable implements LimelightTags {
 
     private static DcMotor intakeMotor, transferMotor;
@@ -419,7 +421,7 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEBROKEN extends Movable implements
 
     private boolean relocalize() {
         LLResult result = limelight.getLatestResult();
-        boolean isStill = (follower.getVelocity().getXComponent()<0.025 && follower.getVelocity().getYComponent()<0.025 && follower.getAngularVelocity() < 0.025);
+        boolean isStill;
         if (result != null && result.isValid() && detectTag(limelight, telemetry) > 0) {
             Pose3D botpose = result.getBotpose();
             Pose2D ftcPose = new Pose2D(

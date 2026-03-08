@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 
 @Autonomous
+@Disabled
 public class DoomAndDisgust_CLOSE extends Movable implements LimelightTags {
     private static DcMotor intakeMotor, launcherMotor1, launcherMotor2;
     private static Servo lt1;
