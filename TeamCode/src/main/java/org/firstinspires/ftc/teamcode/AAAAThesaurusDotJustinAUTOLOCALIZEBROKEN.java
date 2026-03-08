@@ -1,25 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import com.pedropathing.control.PIDFController;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.ftc.FTCCoordinates;
-import com.pedropathing.paths.PathConstraints;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.hardware.PwmControl;
-
-import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
-import org.firstinspires.ftc.teamcode.RobotFunctions.HeadingPID;
-import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
-import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-import org.firstinspires.ftc.teamcode.RobotFunctions.TripleSwitchedServo;
 
 import static org.firstinspires.ftc.teamcode.AutoConfig.BLUE_CLOSE_SCORE;
 import static org.firstinspires.ftc.teamcode.AutoConfig.BLUE_FAR_SCORE;
@@ -29,28 +8,38 @@ import static org.firstinspires.ftc.teamcode.AutoConfig.RED_FAR_SCORE;
 import static org.firstinspires.ftc.teamcode.AutoConfig.RED_PARK;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
-import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
-import org.firstinspires.ftc.teamcode.AutoConfig.*;
 
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.ftc.FTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.util.Timer;
+import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
+import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
+import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 
 @TeleOp
-public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
+public class AAAAThesaurusDotJustinAUTOLOCALIZEBROKEN extends Movable implements LimelightTags {
 
     private static DcMotor intakeMotor, transferMotor;
     private static DcMotorEx launcherMotor1, launcherMotor2;
@@ -101,7 +90,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         shooting = false;
         isAimed = false;
         useOldAiming = false;
-        autoLocalize = false;
+        autoLocalize = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(2);
@@ -175,7 +164,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             rpm = tps * 60 / 28;
             rpm2 = tps2 * 60 / 28;
 
-            //telemetry.addData("Automatically Localizing:", autoLocalize);
+            telemetry.addData("Automatically Localizing:", autoLocalize);
             telemetry.addData("RPM1",rpm);
             telemetry.addData("RPM2", rpm2);
             telemetry.addData("Target RPM",targetRPM);
@@ -299,12 +288,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 int pipeline = (useOldAiming) ? 0 : 2; //sets pipeline to correct one based on current mode(0 = aiming, 2 = localization)
                 limelight.pipelineSwitch(pipeline);
             }
-            /*if(delay(2000)&&autoLocalize){
+            if(delay(30000)&&autoLocalize){
                 if(relocalize()){
                     gamepad2.rumbleBlips(1);
                     setTime();
                 }
-            }*/
+            }
             if(gamepad2.dpadDownWasPressed()){
                 boolean isLocalized = relocalize();
                 if(isLocalized){
