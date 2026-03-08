@@ -101,7 +101,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         shooting = false;
         isAimed = false;
         useOldAiming = false;
-        autoLocalize = false;
+        autoLocalize = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(2);
@@ -175,7 +175,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             rpm = tps * 60 / 28;
             rpm2 = tps2 * 60 / 28;
 
-            //telemetry.addData("Automatically Localizing:", autoLocalize);
+            telemetry.addData("Automatically Localizing:", autoLocalize);
             telemetry.addData("RPM1",rpm);
             telemetry.addData("RPM2", rpm2);
             telemetry.addData("Target RPM",targetRPM);
@@ -299,14 +299,14 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 int pipeline = (useOldAiming) ? 0 : 2; //sets pipeline to correct one based on current mode(0 = aiming, 2 = localization)
                 limelight.pipelineSwitch(pipeline);
             }
-            /*if(delay(2000)&&autoLocalize){
-                if(relocalize()){
-                    gamepad2.rumbleBlips(1);
+            if(delay(2000)&&autoLocalize){
+                if(relocalize(false)){
+                    //gamepad2.rumbleBlips(1);
                     setTime();
                 }
-            }*/
+            }
             if(gamepad2.dpadDownWasPressed()){
-                boolean isLocalized = relocalize();
+                boolean isLocalized = relocalize(true);
                 if(isLocalized){
                     gamepad2.rumbleBlips(3);
                     gamepad1.rumbleBlips(3);
@@ -428,10 +428,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         }
     }
 
-    private boolean relocalize() {
+    private boolean relocalize(boolean manualOverride) {
         LLResult result = limelight.getLatestResult();
-        boolean isStill = (follower.getVelocity().getXComponent()<0.025 && follower.getVelocity().getYComponent()<0.025 && follower.getAngularVelocity() < 0.025);
-        if (result != null && result.isValid() && detectTag(limelight, telemetry) > 0) {
+        boolean isStill = (Math.abs(follower.getVelocity().getXComponent())<0.025 && Math.abs(follower.getVelocity().getYComponent())<0.025 && Math.abs(follower.getAngularVelocity()) < 0.025);
+        if ((isStill||manualOverride) && result != null && result.isValid() && detectTag(limelight, telemetry) > 0) {
             Pose3D botpose = result.getBotpose();
             Pose2D ftcPose = new Pose2D(
                 DistanceUnit.METER,

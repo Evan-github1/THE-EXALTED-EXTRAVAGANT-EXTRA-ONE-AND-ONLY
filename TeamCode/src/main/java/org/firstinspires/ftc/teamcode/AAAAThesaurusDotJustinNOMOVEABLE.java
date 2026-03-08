@@ -67,6 +67,7 @@ public class AAAAThesaurusDotJustinNOMOVEABLE extends LinearOpMode implements Li
     private static PIDFController aimPID;
     private static Follower follower;
     private static Pose holdPose;
+    private long lastLocalizeTime;
 
     private double raisePosition;
 
@@ -91,7 +92,7 @@ public class AAAAThesaurusDotJustinNOMOVEABLE extends LinearOpMode implements Li
         shooting = false;
         isAimed = false;
         useOldAiming = false;
-        autoLocalize = false;
+        autoLocalize = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(2);
@@ -135,6 +136,7 @@ public class AAAAThesaurusDotJustinNOMOVEABLE extends LinearOpMode implements Li
         follower.startTeleopDrive(false);
 
         fires.primaryPos();
+        lastLocalizeTime = System.currentTimeMillis();
 
         while (opModeIsActive()) {
             /*final double MAX_BORDER = 141.5;
@@ -167,7 +169,7 @@ public class AAAAThesaurusDotJustinNOMOVEABLE extends LinearOpMode implements Li
             rpm = tps * 60 / 28;
             rpm2 = tps2 * 60 / 28;
 
-            //telemetry.addData("Automatically Localizing:", autoLocalize);
+            telemetry.addData("Automatically Localizing:", autoLocalize);
             telemetry.addData("RPM1",rpm);
             telemetry.addData("RPM2", rpm2);
             telemetry.addData("Target RPM",targetRPM);
@@ -291,12 +293,12 @@ public class AAAAThesaurusDotJustinNOMOVEABLE extends LinearOpMode implements Li
                 int pipeline = (useOldAiming) ? 0 : 2; //sets pipeline to correct one based on current mode(0 = aiming, 2 = localization)
                 limelight.pipelineSwitch(pipeline);
             }
-            /*if(delay(2000)&&autoLocalize){
+            if((System.currentTimeMillis()-lastLocalizeTime)>2000 && autoLocalize){
                 if(relocalize()){
-                    gamepad2.rumbleBlips(1);
-                    setTime();
+                    //gamepad2.rumbleBlips(1);
                 }
-            }*/
+            }
+
             if(gamepad2.dpadDownWasPressed()){
                 boolean isLocalized = relocalize();
                 if(isLocalized){
