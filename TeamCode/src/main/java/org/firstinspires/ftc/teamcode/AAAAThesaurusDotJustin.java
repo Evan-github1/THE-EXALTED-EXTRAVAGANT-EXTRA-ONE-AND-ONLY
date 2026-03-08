@@ -316,6 +316,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }
             if(gamepad2.guideWasPressed()){
                 gamepad2.rumbleBlips(3);
+                autoLocalize = false;
                 if(AutoConfig.isRed){
                     follower.setPose(new Pose(8.25,robotLength()/2,-(Math.PI/2)));
                 } else{
