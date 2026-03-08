@@ -3,15 +3,16 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // TODO: inherit this class to be able to drive
 public abstract class Movable extends LinearOpMode implements LimelightTags,LimelightColor {
-    static protected DcMotor FLW;
-    static protected DcMotor BLW;
-    static protected DcMotor FRW;
-    static protected DcMotor BRW;
+    static protected DcMotorEx FLW;
+    static protected DcMotorEx BLW;
+    static protected DcMotorEx FRW;
+    static protected DcMotorEx BRW;
     static protected long time;
 
     static protected double angle, desVol, vx, vy, v1, v2, max;
@@ -21,10 +22,10 @@ public abstract class Movable extends LinearOpMode implements LimelightTags,Lime
     @Override
     public void runOpMode() throws InterruptedException {
         time = System.currentTimeMillis();
-        FLW = hardwareMap.get(DcMotor.class, "FLW");
-        BLW = hardwareMap.get(DcMotor.class, "BLW");
-        FRW = hardwareMap.get(DcMotor.class, "FRW");
-        BRW = hardwareMap.get(DcMotor.class, "BRW");
+        FLW = hardwareMap.get(DcMotorEx.class, "FLW");
+        BLW = hardwareMap.get(DcMotorEx.class, "BLW");
+        FRW = hardwareMap.get(DcMotorEx.class, "FRW");
+        BRW = hardwareMap.get(DcMotorEx.class, "BRW");
         motorPowerClose = .5185;
         motorPowerFar = .888;
 
