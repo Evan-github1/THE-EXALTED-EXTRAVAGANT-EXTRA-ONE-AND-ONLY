@@ -20,7 +20,7 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -40,8 +40,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 
 @TeleOp
-@Disabled
-public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implements LimelightTags {
+public class AAAAThesaurusDotJustinNOMOVEABLE extends LinearOpMode implements LimelightTags {
 
     private static DcMotor intakeMotor, transferMotor;
     private static DcMotorEx launcherMotor1, launcherMotor2;
@@ -72,7 +71,7 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
     private double raisePosition;
 
     public void runOpMode() throws InterruptedException {
-        super.runOpMode();
+        //super.runOpMode();
 
         raisePosition = 0;
 
@@ -92,7 +91,7 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
         shooting = false;
         isAimed = false;
         useOldAiming = false;
-        autoLocalize = true;
+        autoLocalize = false;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(2);
@@ -112,10 +111,12 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
         );
         AutoConfig.lastAutoEndPose = null;
 
+        /*
         FLW.setDirection(DcMotor.Direction.FORWARD);
         BLW.setDirection(DcMotor.Direction.FORWARD);
         FRW.setDirection(DcMotor.Direction.REVERSE);
         BRW.setDirection(DcMotor.Direction.REVERSE);
+         */
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         transferMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -128,7 +129,7 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
         launcherMotor2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER,pidfCoefficients);
 
 
-        enableEncoders();
+        //enableEncoders();
 
         waitForStart();
         follower.startTeleopDrive(false);
@@ -166,7 +167,7 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
             rpm = tps * 60 / 28;
             rpm2 = tps2 * 60 / 28;
 
-            telemetry.addData("Automatically Localizing:", autoLocalize);
+            //telemetry.addData("Automatically Localizing:", autoLocalize);
             telemetry.addData("RPM1",rpm);
             telemetry.addData("RPM2", rpm2);
             telemetry.addData("Target RPM",targetRPM);
@@ -180,16 +181,16 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
             }
 
             if(gamepad1.dpad_up) {
-                moveWheels(0,0.25f);
+                robotDrive(0,0.25,0,false);
                 isAimed = false;
             }else if(gamepad1.dpad_down){
-                moveWheels(0,-0.25f);
+                robotDrive(0,-0.25,0,false);
                 isAimed = false;
             }else if(gamepad1.dpad_left){
-                moveWheels(0.25f,0);
+                robotDrive(-0.25,0,0,false);
                 isAimed = false;
             }else if(gamepad1.dpad_right){
-                moveWheels(-0.25f,0);
+                robotDrive(0.25,0,0,false);
                 isAimed = false;
             }else {
                 if(!useOldAiming) {
@@ -290,12 +291,12 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
                 int pipeline = (useOldAiming) ? 0 : 2; //sets pipeline to correct one based on current mode(0 = aiming, 2 = localization)
                 limelight.pipelineSwitch(pipeline);
             }
-            if(delay(1000)&&autoLocalize){
+            /*if(delay(2000)&&autoLocalize){
                 if(relocalize()){
                     gamepad2.rumbleBlips(1);
                     setTime();
                 }
-            }
+            }*/
             if(gamepad2.dpadDownWasPressed()){
                 boolean isLocalized = relocalize();
                 if(isLocalized){
@@ -411,20 +412,18 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
 
 
 
-            telemetry.addData("FLW encoder",FLW.getCurrentPosition());
-            telemetry.addData("FRW encoder",FRW.getCurrentPosition());
-            telemetry.addData("BLW encoder",BLW.getCurrentPosition());
-            telemetry.addData("BRW encoder",BRW.getCurrentPosition());
+            //telemetry.addData("FLW encoder",FLW.getCurrentPosition());
+            //telemetry.addData("FRW encoder",FRW.getCurrentPosition());
+            //telemetry.addData("BLW encoder",BLW.getCurrentPosition());
+            //telemetry.addData("BRW encoder",BRW.getCurrentPosition());
             telemetry.update();
         }
     }
 
     private boolean relocalize() {
         LLResult result = limelight.getLatestResult();
-        //double fastestWheel = Math.max(Math.max(Math.abs(FLW.getVelocity()),Math.abs(FRW.getVelocity())),Math.max(Math.abs(BLW.getVelocity()),Math.abs(BRW.getVelocity())));
-        //boolean isStill = fastestWheel < 50;
-        boolean isStill = true;
-        if (isStill && result != null && result.isValid() && detectTag(limelight, telemetry) > 0) {
+        boolean isStill = (follower.getVelocity().getXComponent()<0.025 && follower.getVelocity().getYComponent()<0.025 && follower.getAngularVelocity() < 0.025);
+        if (result != null && result.isValid() && detectTag(limelight, telemetry) > 0) {
             Pose3D botpose = result.getBotpose();
             Pose2D ftcPose = new Pose2D(
                 DistanceUnit.METER,
@@ -470,10 +469,11 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
             smoothedError = smoothedError*k;
             telemetry.addData(""+currentError,smoothedError);
             if(adjustMotor) {
-                FLW.setPower(-smoothedError);
-                FRW.setPower(smoothedError);
-                BRW.setPower(smoothedError);
-                BLW.setPower(-smoothedError);
+                //FLW.setPower(-smoothedError);
+                //FRW.setPower(smoothedError);
+                //BRW.setPower(smoothedError);
+               // BLW.setPower(-smoothedError);
+                follower.setTeleOpDrive(0,0,smoothedError);
                 return 0.0;
             }
             return smoothedError;
@@ -554,16 +554,6 @@ public class AAAAThesaurusDotJustinAUTOLOCALIZEUNTESTED extends Movable implemen
 
     @Override
     public void tag24() {
-
-    }
-
-    @Override
-    public void green() {
-
-    }
-
-    @Override
-    public void purple() {
 
     }
 }
