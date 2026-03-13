@@ -50,7 +50,7 @@ public interface LimelightTags {
         List<LLResultTypes.FiducialResult> results;
         LLResult result = limelight.getLatestResult();
 
-        if (result.isValid()) {
+        if (result != null && result.isValid()) {
             results = result.getFiducialResults();
             return results;
         }
@@ -61,7 +61,7 @@ public interface LimelightTags {
 
     default double getTA(Limelight3A limelight) {
         LLResult result = limelight.getLatestResult();
-        if (result.isValid()) {
+        if (result != null && result.isValid()) {
             return result.getTa();
         }
         return Double.NaN;
@@ -69,7 +69,7 @@ public interface LimelightTags {
 
     default double getTX(Limelight3A limelight) {
         LLResult result = limelight.getLatestResult();
-        if (result.isValid()) {
+        if (result != null && result.isValid()) {
             return result.getTx();
         }
         return Double.NaN;
@@ -77,7 +77,7 @@ public interface LimelightTags {
 
     default double getTY(Limelight3A limelight) {
         LLResult result = limelight.getLatestResult();
-        if (result.isValid()) {
+        if (result != null && result.isValid()) {
             return result.getTy();
         }
         return Double.NaN;

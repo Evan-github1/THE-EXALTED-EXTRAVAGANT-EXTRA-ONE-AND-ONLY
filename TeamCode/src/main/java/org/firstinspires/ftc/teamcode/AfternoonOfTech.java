@@ -1,25 +1,18 @@
-package org.firstinspires.ftc.teamcode.Bluebots;
-import android.graphics.Color;
-
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
+package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.RobotFunctions.ChamberState;
 import org.firstinspires.ftc.teamcode.RobotFunctions.ColorSensing;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Colors;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
-import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
-@TeleOp
-public class MaliceAndCondescensionCRISTINE extends Movable implements LimelightTags { // robot #22335
 
-    private static Limelight3A limelight;
+@TeleOp
+public class AfternoonOfTech extends Movable {
+
     private static DcMotorEx swivelTurretMotor;
     private static DcMotor intakeMotor;
     private static DcMotorEx outtakeMotor;
@@ -28,16 +21,13 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static DoubleSwitchedServo gateways;
     private static Servo wiperL, wiperR;
     private static DoubleSwitchedServo wipersL, wipersR;
-    private static int targetedID;
     private static double targetVelocity;
     private static Servo hoodServo;
 
     private static Servo standL, standR;
     private static DoubleSwitchedServo standsL, standsR;
 
-
     private static ColorSensing colorSensing;
-    private static int motifID;
 
     private static ChamberState leftState;
     private static ChamberState rightState;
@@ -45,12 +35,11 @@ public class MaliceAndCondescensionCRISTINE extends Movable implements Limelight
     private static Colors leftStoredColor;
     private static Colors rightStoredColor;
 
-    private static volatile boolean sweep;
     private static volatile boolean moveLeft;
-/*
-hood to bumpers (not triggers)
-steering on right stick
- */
+    /*
+    hood to bumpers (not triggers)
+    steering on right stick
+     */
     private static final int TURRET_LIMIT_LEFT = -300;
     private static final int TURRET_LIMIT_RIGHT = 300;
     private static int currentPipeline = -1;
@@ -63,10 +52,6 @@ steering on right stick
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
         prevSmooth = 0;
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.start();
-        limelight.pipelineSwitch(3); // motif mode
-        targetedID = 20;
 
         swivelTurretMotor = hardwareMap.get(DcMotorEx.class, "swivelTurret");
 
@@ -112,11 +97,7 @@ steering on right stick
         leftState = ChamberState.EMPTY;
         rightState = ChamberState.EMPTY;
 
-        motifID = -1;
         outtakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        sweep = false;
-        moveLeft = true;
 
         waitForStart();
 
@@ -137,130 +118,13 @@ steering on right stick
 
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
-            telemetry.addData("Camera is targetting", targetedID);
 
             omnidirectionalMovement(gamepad1.left_stick_x, gamepad1.left_stick_y);
             turn();
 
-            int id = detectTag(limelight, telemetry);
-
-            int desiredPipeline;
-
-            if (motifID == -1) {
-                desiredPipeline = 3; // motif mode
-            } else {
-                desiredPipeline = 0; // targeting mode
-            }
-
-            if (desiredPipeline != currentPipeline) {
-                limelight.pipelineSwitch(desiredPipeline);
-                currentPipeline = desiredPipeline;
-            }
-            if (motifID == -1 && (id == 21 || id == 22 || id == 23)) {
-                motifID = id;
-            }
-
-            telemetry.addData("Motif ID: ", motifID);
-            telemetry.addLine("Detected ID: " + id);
-
-            if (gamepad1.leftStickButtonWasPressed()) {
-                sweep = !sweep;
-            }
-
             final double POWER = .1;
-            telemetry.addData("Sweep", sweep);
-            if (sweep) {
-                if (moveLeft) {
-                    swivelTurretMotor.setPower(-POWER);
-                } else {
-                    swivelTurretMotor.setPower(POWER);
-                }
-
-                if (swivelTurretMotor.getCurrentPosition() <= TURRET_LIMIT_LEFT) {
-                    moveLeft = false;
-                } else if (swivelTurretMotor.getCurrentPosition() >= TURRET_LIMIT_RIGHT) {
-                    moveLeft = true;
-                }
-            }
-
-            if (!sweep) {
-                if (gamepad1.dpad_right && swivelTurretMotor.getCurrentPosition() <= TURRET_LIMIT_RIGHT) {
-                    swivelTurretMotor.setPower(POWER);
-                } else if (gamepad1.dpad_left && swivelTurretMotor.getCurrentPosition() >= TURRET_LIMIT_LEFT) {
-                    swivelTurretMotor.setPower(-POWER);
-                } else {
-                    swivelTurretMotor.setPower(0);
-                }
-            }
 
             telemetry.addData("Turret Rotate Encoder", swivelTurretMotor.getCurrentPosition());
-
-            if (id == targetedID) {
-                telemetry.addLine("I see the targeted ID!");
-                sweep = false;
-                double tx = getTX(limelight);
-
-                if (Double.isNaN(tx)) {
-                    swivelTurretMotor.setPower(0);
-                    light.setPosition(.277);
-                } else {
-                    if (tx <= -3) {
-                        swivelTurretMotor.setPower(-POWER * 1.75);
-                    } else if (tx >= 3) {
-                        swivelTurretMotor.setPower(POWER * 1.75);
-                    } else if (tx <= -1) {
-                        swivelTurretMotor.setPower(-POWER);
-                    } else if (tx >= 1) {
-                        swivelTurretMotor.setPower(POWER);
-                    } else {
-                        swivelTurretMotor.setPower(0);
-                    }
-
-                    if (tx > -3 && tx < 3) {
-                        light.setPosition(.444);
-                    } else {
-                        light.setPosition(.277);
-                    }
-                }
-            } else {
-                light.setPosition(.277);
-            }
-
-            /*
-            chat
-
-            if (id == targetedID) {
-                sweep = false;
-
-                double tx = getTX(limelight);   // horizontal offset from Limelight
-                double normalized = tx / 25.0;  // adjust divisor based on your max TX range
-
-                double k = 0.8;                 // overall sensitivity — tune this
-                double power = k * Math.pow(normalized, 3);  // CUBIC
-
-                // Deadband to prevent jitter at center
-                if (Math.abs(tx) < 0.5) {
-                    power = 0;
-                    light.setPosition(.444);  // centered indicator
-                } else {
-                    light.setPosition(.277);
-                }
-
-                swivelTurretMotor.setPower(power);
-            } else {
-                light.setPosition(.277);
-            }
-            */
-
-//            if (id == targetedID) {
-//                double tx = getTX(limelight);
-//                telemetry.addLine("I see the targeted ID at tx = " +tx);
-//                sweep = false;
-//                double smoothedInput = alpha * tx + (1 - alpha) * prevSmooth;
-//                telemetry.addLine("Smoothed input value: "+smoothedInput);
-//                swivelTurretMotor.setPower(smoothedInput);
-//                prevSmooth = smoothedInput;
-//            }
 
             if (gamepad1.b && delay()) {
                 standsR.quickSwitch();
@@ -290,15 +154,6 @@ steering on right stick
                 hoodServo.setPosition(clampHoodPosition(hoodServo.getPosition() + .01));
             }
             telemetry.addData("Hood Position", hoodServo.getPosition());
-
-            if (gamepad1.options && delay()) {
-                if (targetedID == 20) {
-                    targetedID = 24;
-                } else if (targetedID == 24) {
-                    targetedID = 20;
-                }
-                time = System.currentTimeMillis();
-            }
 
             if (gamepad1.dpad_up && targetVelocity < 4200 && delay(50)) {
                 targetVelocity += 50;
@@ -395,28 +250,11 @@ steering on right stick
         };
         gatewayServo.setPosition(.495);
         new Thread(() -> {
-            if (motifID == 21 || motifID == 22 || motifID == 23) {
-                Colors[] motif = MOTIFS[motifID - 21];
-                for (int i = 0; i < motif.length; i++) {
-                    if (leftStoredColor == motif[i]) {
-                        liftLeftWiperNT();
-                    } else if (rightStoredColor == motif[i]) {
-                        liftRightWiperNT();
-                    } else if (leftStoredColor != Colors.UNKNOWN) {
-                        liftLeftWiperNT();
-                    } else if (rightStoredColor != Colors.UNKNOWN) {
-                        liftRightWiperNT();
-                    }
-                    sleep(300);
-                }
-            } else {
-                // shoot whatever it sees
-                for (int i = 1; i <= 3; i++) {
-                    if (leftStoredColor != Colors.UNKNOWN) {
-                        liftLeftWiperNT();
-                    } else if (rightStoredColor != Colors.UNKNOWN) {
-                        liftRightWiperNT();
-                    }
+            for (int i = 1; i <= 3; i++) {
+                if (leftStoredColor != Colors.UNKNOWN) {
+                    liftLeftWiperNT();
+                } else if (rightStoredColor != Colors.UNKNOWN) {
+                    liftRightWiperNT();
                 }
             }
         }).start();
@@ -475,19 +313,6 @@ steering on right stick
     private double clampHoodPosition(double requestedPosition) {
         return Math.max(0, Math.min(0.8, requestedPosition));
     }
-
-    @Override
-    public void tag20() {}
-    @Override
-    public void tag21() {}
-    @Override
-    public void tag22() {}
-    @Override
-    public void tag23() {}
-    @Override
-    public void tag24() {}
-    @Override
-    public void nothing() {}
 
     @Override
     protected void turn() {
