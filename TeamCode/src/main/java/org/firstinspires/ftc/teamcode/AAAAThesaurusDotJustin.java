@@ -100,8 +100,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(2);
-        motorPowerClose = 2500;
-        motorPowerFar = 3750; //from 4500
+        motorPowerClose = 2300;
+        motorPowerFar = 3350; //from 4500
         targetRPM = motorPowerFar;
         P = 50;
         FClose = 16.8;
@@ -184,7 +184,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             lt2.setPosition(raisePosition);
 
             // RPM scaling
-            targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-300;
+            if(gamepad1.left_trigger > 0.5) targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-300;
 
 
             follower.update();

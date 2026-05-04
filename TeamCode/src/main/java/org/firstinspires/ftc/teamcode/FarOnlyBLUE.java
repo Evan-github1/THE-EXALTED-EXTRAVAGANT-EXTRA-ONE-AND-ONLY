@@ -8,7 +8,9 @@ import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
 import static org.firstinspires.ftc.teamcode.AutoConfig.*;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -80,7 +82,15 @@ public class FarOnlyBLUE extends Movable {
         iterations = 0;
         launcherMotor1.setPIDFCoefficients(RUN_USING_ENCODER,pidfCoefficients);
         launcherMotor2.setPIDFCoefficients(RUN_USING_ENCODER,pidfCoefficients);
+
+        Path scorePreload = new Path(new BezierLine(BLUE_FAR_START,BLUE_FAR_SCORE));
+        scorePreload.setLinearHeadingInterpolation(BLUE_FAR_START.getHeading(),BLUE_FAR_SCORE.getHeading(),0.8);
+
+
+
+
     }
+
 
     @Override
     public void green() {
