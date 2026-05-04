@@ -184,7 +184,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             lt2.setPosition(raisePosition);
 
             // RPM scaling
-            targetRPM = motorPowerClose + t * (motorPowerFar - motorPowerClose);
+            targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-300;
 
 
             follower.update();

@@ -42,7 +42,6 @@ public class DoomAndDisgust_PEDROBLUECLOSE extends Movable {
     private static double pastError;
     private static boolean followerActive;
 
-
     private PathChain scorePreload, goToLeavePose;
 
     public void runOpMode() throws InterruptedException{
