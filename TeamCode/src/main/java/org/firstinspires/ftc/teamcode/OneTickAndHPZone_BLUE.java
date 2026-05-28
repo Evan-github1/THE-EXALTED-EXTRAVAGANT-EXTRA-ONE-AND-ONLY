@@ -88,7 +88,7 @@ public class OneTickAndHPZone_BLUE extends Movable {
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(BLUE_BALL3_END, BLUE_FAR_CLEAR2, BLUE_FAR_CLEAR))
+                .addPath(new BezierCurve(BLUE_BALL3_END, BLUE_READY_CLEAR, BLUE_CLEAR))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 

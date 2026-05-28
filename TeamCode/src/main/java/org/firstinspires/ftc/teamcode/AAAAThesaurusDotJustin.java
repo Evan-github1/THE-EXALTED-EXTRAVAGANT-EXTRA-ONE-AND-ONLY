@@ -219,7 +219,23 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }else if(gamepad1.dpad_right){
                 moveWheels(-0.25f,0);
                 isAimed = false;
+            }else if(gamepad2.right_trigger > .5){
+                if (follower.getVelocity().getMagnitude() < 0.1 && follower.getAngularVelocity() < 0.1) {
+                    try {
+                        if (iterations == 0) {
+                            pastError = 0;
+                            LeBotsEyes(pastError, true);
+                        } else {
+                            pastError = LeBotsEyes(pastError, false);
+                            LeBotsEyes(pastError, true);
+
+                        }
+                        iterations++;
+                    } catch (Exception ignored) {
+                    }
+                }
             }else {
+                iterations = 0;
                 isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger>0.5);
             }
 
@@ -269,6 +285,22 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     follower.setPose(new Pose(8.25,robotLength()/2,-(Math.PI/2)));
                 } else{
                     follower.setPose(new Pose(144-8.25,robotLength()/2,-(Math.PI/2)));
+                }
+            }
+            if(gamepad2.right_trigger > .5){
+                if (follower.getVelocity().getMagnitude() < 0.1 && follower.getAngularVelocity() < 0.1) {
+                    try {
+                        if (iterations == 0) {
+                            pastError = 0;
+                            LeBotsEyes(pastError, true);
+                        } else {
+                            pastError = LeBotsEyes(pastError, false);
+                            LeBotsEyes(pastError, true);
+
+                        }
+                        iterations++;
+                    } catch (Exception ignored) {
+                    }
                 }
             }
             if(gamepad1.guideWasPressed()){

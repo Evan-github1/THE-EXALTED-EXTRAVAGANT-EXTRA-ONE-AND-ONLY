@@ -60,8 +60,8 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         follower = createFollower(hardwareMap);
-        motorPowerClose = 2300;
-        motorPowerFar = 3400; //from 4800
+        motorPowerClose = 2200;
+        motorPowerFar = 3050; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);
@@ -102,12 +102,12 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_CLEAR,BLUE_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(BLUE_FAR_CLEAR.getHeading(),BLUE_CLOSE_SCORE.getHeading())
+                .addPath(new BezierLine(BLUE_CLEAR,BLUE_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(BLUE_CLEAR.getHeading(),BLUE_CLOSE_SCORE.getHeading())
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(BLUE_BALL3_END, BLUE_FAR_CLEAR2, BLUE_FAR_CLEAR))
+                .addPath(new BezierCurve(BLUE_BALL3_END, BLUE_READY_CLEAR, BLUE_CLEAR))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 

@@ -60,8 +60,8 @@ public class DoomAndDisgust_PEDROREDCLOSE extends Movable {
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         fork = hardwareMap.get(Servo.class,"FORK");
         follower = createFollower(hardwareMap);
-        motorPowerClose = 2500;
-        motorPowerFar = 3900; //from 4800
+        motorPowerClose = 2200;
+        motorPowerFar = 3050; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);

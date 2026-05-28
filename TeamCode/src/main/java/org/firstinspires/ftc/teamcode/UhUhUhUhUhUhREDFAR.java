@@ -2,14 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
-import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
-import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
 import static org.firstinspires.ftc.teamcode.AutoConfig.*;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -61,8 +58,8 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         follower = createFollower(hardwareMap);
-        motorPowerClose = 2300;
-        motorPowerFar = 3400; //from 4800
+        motorPowerClose = 2200;
+        motorPowerFar = 3050; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);
@@ -103,12 +100,12 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                 .build();
 
         PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_CLEAR,RED_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(RED_FAR_CLEAR.getHeading(),RED_CLOSE_SCORE.getHeading())
+                .addPath(new BezierLine(RED_CLEAR,RED_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(RED_CLEAR.getHeading(),RED_CLOSE_SCORE.getHeading())
                 .build();
 
         PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(RED_BALL3_END, RED_FAR_CLEAR2, RED_FAR_CLEAR))
+                .addPath(new BezierCurve(RED_BALL3_END, RED_READY_CLEAR, RED_CLEAR))
                 .setConstantHeadingInterpolation(0)
                 .build();
 

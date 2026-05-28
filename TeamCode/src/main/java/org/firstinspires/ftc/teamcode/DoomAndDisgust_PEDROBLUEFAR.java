@@ -62,8 +62,8 @@ public class DoomAndDisgust_PEDROBLUEFAR extends Movable {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         follower = createFollower(hardwareMap);
-        motorPowerClose = 2500;
-        motorPowerFar = 3750; //from 4800
+        motorPowerClose = 2200;
+        motorPowerFar = 3050; //from 4800
         followerActive = true;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.pipelineSwitch(0);
@@ -133,17 +133,17 @@ public class DoomAndDisgust_PEDROBLUEFAR extends Movable {
                 .build();
 
         scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(BLUE_FAR_CLEAR, BLUE_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(BLUE_FAR_CLEAR.getHeading(),BLUE_CLOSE_SCORE.getHeading())
+                .addPath(new BezierLine(BLUE_CLEAR, BLUE_CLOSE_SCORE))
+                .setLinearHeadingInterpolation(BLUE_CLEAR.getHeading(),BLUE_CLOSE_SCORE.getHeading())
                 .build();
 
         clearClassifier1 = follower.pathBuilder()
-                .addPath(new BezierCurve(BLUE_BALL3_END,BLUE_BALL3_START,DOOM_BLUE_FAR_CLEAR_READY))
+                .addPath(new BezierCurve(BLUE_BALL3_END,BLUE_BALL3_START,BLUE_READY_CLEAR))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
         clearClassifier2 = follower.pathBuilder()
-                .addPath(new BezierLine(DOOM_BLUE_FAR_CLEAR_READY,BLUE_FAR_CLEAR))
+                .addPath(new BezierLine(BLUE_READY_CLEAR,BLUE_CLEAR))
                 .setConstantHeadingInterpolation(Math.PI)
                 .build();
 
