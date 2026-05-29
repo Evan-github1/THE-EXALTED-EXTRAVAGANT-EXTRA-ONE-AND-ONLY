@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.createFollower;
+import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotLength;
+import static org.firstinspires.ftc.teamcode.PedroPathing.Constants.robotWidth;
 import static org.firstinspires.ftc.teamcode.AutoConfig.*;
 
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -22,8 +26,7 @@ import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.Movable;
 
 @Autonomous
-public class UhUhUhUhUhUhREDFAR extends Movable {
-
+public class GoodFarAuto_RED extends Movable {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
     private static DcMotorEx intakeMotor, launcherMotor1, launcherMotor2,transferMotor;
@@ -31,8 +34,6 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
     private static Servo lt2;
     private static Servo fire;
     private static DoubleSwitchedServo fires;
-    private static Servo fork;
-    private static DoubleSwitchedServo forks;
     private Follower follower;
     private int iterations;
     private static Limelight3A limelight;
@@ -41,9 +42,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
     private static PIDFCoefficients pidfCoefficients;
     private static double pastError;
     private boolean followerActive;
-
-
-
+    private static PIDFController aimPID;
 
     public void runOpMode() throws InterruptedException{
 
@@ -66,6 +65,7 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
         limelight.start();
         limelight.pipelineSwitch(0);
         targetRPM = motorPowerFar;
+        aimPID = new PIDFController(new com.pedropathing.control.PIDFCoefficients(1.2,0,0.05,0.025));
         P = 50;
         FClose = 16.8;
         FFar = 15.8;
@@ -89,41 +89,6 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                 .setLinearHeadingInterpolation(RED_FAR_START.getHeading(),RED_FAR_SCORE.getHeading())
                 .build();
 
-        PathChain goToPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_SCORE,RED_BALL3_START))
-                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(),RED_BALL3_START.getHeading())
-                .build();
-
-        PathChain grabPickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_BALL3_START,RED_BALL3_END))
-                .setLinearHeadingInterpolation(RED_BALL3_START.getHeading(),RED_BALL3_END.getHeading())
-                .build();
-
-        PathChain scorePickup3 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_CLEAR,RED_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(RED_CLEAR.getHeading(),RED_CLOSE_SCORE.getHeading())
-                .build();
-
-        PathChain clearClassifier = follower.pathBuilder()
-                .addPath(new BezierCurve(RED_BALL3_END, RED_READY_CLEAR, RED_CLEAR))
-                .setConstantHeadingInterpolation(0)
-                .build();
-
-        PathChain goToPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_SCORE,RED_BALL2_START))
-                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(),RED_BALL2_START.getHeading())
-                .build();
-
-        PathChain grabPickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_BALL2_START,RED_BALL2_END))
-                .setLinearHeadingInterpolation(RED_BALL2_START.getHeading(),RED_BALL2_END.getHeading())
-                .build();
-
-        PathChain scorePickup2 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_BALL2_END,RED_CLOSE_SCORE))
-                .setLinearHeadingInterpolation(RED_BALL2_END.getHeading(),RED_CLOSE_SCORE.getHeading())
-                .build();
-
         PathChain goToPickup1 = follower.pathBuilder()
                 .addPath(new BezierLine(RED_FAR_SCORE,RED_BALL1_START))
                 .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(),RED_BALL1_START.getHeading())
@@ -140,18 +105,23 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                 .build();
 
         PathChain getCorner = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_SCORE, RED_FAR_CORNER1))
-                .setLinearHeadingInterpolation(RED_FAR_SCORE.getHeading(), RED_FAR_CORNER1.getHeading())
+                .addPath(new BezierCurve(RED_FAR_SCORE, RED_FAR_CORNER1,RED_FAR_CORNER2))
+                .setTangentHeadingInterpolation()
                 .build();
 
-        PathChain scoreCorner1 = follower.pathBuilder()
+        PathChain scoreCorner = follower.pathBuilder()
                 .addPath(new BezierLine(RED_FAR_CORNER2,RED_FAR_SCORE))
                 .setLinearHeadingInterpolation(RED_FAR_CORNER2.getHeading(), RED_FAR_SCORE.getHeading())
                 .build();
 
-        PathChain getCorner2 = follower.pathBuilder()
-                .addPath(new BezierLine(RED_FAR_CORNER1,RED_FAR_CORNER2))
-                .setLinearHeadingInterpolation(RED_FAR_CORNER1.getHeading(),RED_FAR_CORNER2.getHeading())
+        PathChain getLandingZone = follower.pathBuilder()
+                .addPath(new BezierCurve(RED_FAR_SCORE,GET_LANDING_ZONE_RED1,GET_LANDING_ZONE_RED2))
+                .setTangentHeadingInterpolation()
+                .build();
+
+        PathChain scoreLandingZone = follower.pathBuilder()
+                .addPath(new BezierLine(GET_LANDING_ZONE_RED2,RED_FAR_SCORE))
+                .setLinearHeadingInterpolation(GET_LANDING_ZONE_RED2.getHeading(), RED_FAR_SCORE.getHeading())
                 .build();
 
         follower.setStartingPose(RED_FAR_START);
@@ -246,226 +216,81 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
                             followerActive = true;
                             fires.primaryPos();
                             transferMotor.setPower(0);
-                            launcherMotor1.setVelocity(motorPowerClose / 60 * 28);
-                            launcherMotor2.setVelocity(motorPowerClose / 60 * 28);
-                            launcherMotor1.setPIDFCoefficients(RUN_USING_ENCODER,
-                                    new PIDFCoefficients(P,0,0,FClose));
-                            launcherMotor2.setPIDFCoefficients(RUN_USING_ENCODER,
-                                    new PIDFCoefficients(P,0,0,FClose));
-                            lt1.setPosition(.25);
-                            lt2.setPosition(.25); //.37 for far, .25 for close
-                            follower.followPath(goToPickup3);
-                            pathState++;
-                            actionTimer.resetTimer();
-                        }
-                    }
-                    break;
-
-                case 2:
-                    if(!follower.isBusy()){
-                        follower.followPath(grabPickup3);
-                        pathState++;
-                    }
-                    actionTimer.resetTimer();
-                    break;
-
-                case 3:
-                    if(!follower.isBusy()){
-                        follower.followPath(clearClassifier);
-                        pathState++;
-                    }
-                    actionTimer.resetTimer();
-                    break;
-                case 4:
-                    if(!follower.isBusy()){
-                        follower.followPath(scorePickup3);
-                        pathState++;
-                    }
-                    actionTimer.resetTimer();
-                    break;
-                case 5:
-                    if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 2) {
-                            try {
-                                if (iterations == 0) {
-                                    pastError = 0;
-                                }
-                                pastError = LeBotsEyes(pastError, false);
-                                LeBotsEyes(pastError, true);
-                                iterations++;
-                            }catch(Exception ignored){};
-                        }else {
-                            FLW.setPower(0);
-                            FRW.setPower(0);
-                            BRW.setPower(0);
-                            BLW.setPower(0);
-                            followerActive = false;
-                            iterations = 0;
-                            transferMotor.setPower(1);
-                            fires.secondaryPos();
-                            disablePower();
-                            sleep(700);
-                            followerActive = true;
-                            fires.primaryPos();
-                            transferMotor.setPower(0);
-                            follower.followPath(goToPickup2);
-                            pathState++;
-                            actionTimer.resetTimer();
-                        }
-                    }
-                    break;
-
-                case 6:
-                    if(!follower.isBusy()){
-                        follower.followPath(grabPickup2);
-                        pathState++;
-                    }
-                    actionTimer.resetTimer();
-                    break;
-                case 7:
-                    if(!follower.isBusy()){
-                        follower.followPath(scorePickup2);
-                        pathState++;
-                    }
-                    actionTimer.resetTimer();
-                    break;
-                case 8:
-                    if(!follower.isBusy()){
-                        if(actionTimer.getElapsedTimeSeconds() < 2) {
-                            try {
-                                if (iterations == 0) {
-                                    pastError = 0;
-                                }
-                                pastError = LeBotsEyes(pastError, false);
-                                LeBotsEyes(pastError, true);
-                                iterations++;
-                            }catch(Exception ignored){};
-                        }else {
-                            FLW.setPower(0);
-                            FRW.setPower(0);
-                            BRW.setPower(0);
-                            BLW.setPower(0);
-                            followerActive = false;
-                            iterations = 0;
-                            transferMotor.setPower(1);
-                            fires.secondaryPos();
-                            disablePower();
-                            sleep(700);
-                            followerActive = true;
-                            fires.primaryPos();
-                            transferMotor.setPower(0);
-                            launcherMotor1.setVelocity(motorPowerFar / 60 * 28);
-                            launcherMotor2.setVelocity(motorPowerFar / 60 * 28);
-                            launcherMotor1.setPIDFCoefficients(RUN_USING_ENCODER,new PIDFCoefficients(P,0,0.01,FFar));
-                            launcherMotor2.setPIDFCoefficients(RUN_USING_ENCODER,new PIDFCoefficients(P,0,0.01,FFar));
-                            lt1.setPosition(.37);
-                            lt2.setPosition(.37); //.37 for far, .25 for close
                             follower.followPath(goToPickup1);
                             pathState++;
                             actionTimer.resetTimer();
                         }
                     }
                     break;
-                case 9:
+                case 2:
                     if(!follower.isBusy()){
                         follower.followPath(grabPickup1);
                         pathState++;
                     }
                     actionTimer.resetTimer();
                     break;
-                case 10:
+                case 3:
                     if(!follower.isBusy()){
                         follower.followPath(scorePickup1);
                         pathState++;
                     }
                     actionTimer.resetTimer();
                     break;
-                case 11:
-                    if(!follower.isBusy()){
-                        if(actionTimer.getElapsedTimeSeconds() < 2) {
-                            try {
-                                if (iterations == 0) {
-                                    pastError = 0;
-                                }
-                                pastError = LeBotsEyes(pastError, false);
-                                LeBotsEyes(pastError, true);
-                                iterations++;
-                            }catch(Exception ignored){};
-                        }else {
-                            FLW.setPower(0);
-                            FRW.setPower(0);
-                            BRW.setPower(0);
-                            BLW.setPower(0);
-                            followerActive = false;
-                            iterations = 0;
-                            transferMotor.setPower(1);
-                            fires.secondaryPos();
-                            disablePower();
-                            sleep(700);
-                            followerActive = true;
-                            fires.primaryPos();
-                            transferMotor.setPower(0);
-                            follower.followPath(getCorner);
-                            pathState++;
-                            actionTimer.resetTimer();
-                        }
+                case 4:
+                    if (!follower.isBusy() && autoAim()) {
+                        FLW.setPower(0);
+                        FRW.setPower(0);
+                        BRW.setPower(0);
+                        BLW.setPower(0);
+                        followerActive = false;
+                        iterations = 0;
+                        transferMotor.setPower(1);
+                        fires.secondaryPos();
+                        disablePower();
+                        sleep(700);
+                        followerActive = true;
+                        fires.primaryPos();
+                        transferMotor.setPower(0);
+                        follower.followPath(getCorner);
+                        pathState++;
+                        actionTimer.resetTimer();
                     }
                     break;
-                case 12:
-                    if(!follower.isBusy()){
-                        follower.followPath(getCorner2);
+                case 5:
+                    if (!follower.isBusy() || follower.isRobotStuck()) {
+                        follower.followPath(scoreCorner);
                         pathState++;
                     }
                     actionTimer.resetTimer();
                     break;
-                case 13:
-                    if(!follower.isBusy()){
-                        follower.followPath(scoreCorner1);
+                case 6:
+                    if (!follower.isBusy() && autoAim()) {
+                        FLW.setPower(0);
+                        FRW.setPower(0);
+                        BRW.setPower(0);
+                        BLW.setPower(0);
+                        followerActive = false;
+                        iterations = 0;
+                        transferMotor.setPower(1);
+                        fires.secondaryPos();
+                        disablePower();
+                        sleep(700);
+                        followerActive = true;
+                        fires.primaryPos();
+                        transferMotor.setPower(0);
+                        follower.followPath(getLandingZone);
                         pathState++;
+                        actionTimer.resetTimer();
+                    }
+                    break;
+                case 7:
+                    if(!follower.isBusy()){
+                        follower.followPath(scoreLandingZone);
+                        pathState = 4;
                     }
                     actionTimer.resetTimer();
-                    break;
-                case 14:
-                    if(!follower.isBusy()){
-                        if(actionTimer.getElapsedTimeSeconds() < 2) {
-                            try {
-                                if (iterations == 0) {
-                                    pastError = 0;
-                                }
-                                pastError = LeBotsEyes(pastError, false);
-                                LeBotsEyes(pastError, true);
-                                iterations++;
-                            }catch(Exception ignored){};
-                        }else {
-                            FLW.setPower(0);
-                            FRW.setPower(0);
-                            BRW.setPower(0);
-                            BLW.setPower(0);
-                            followerActive = false;
-                            iterations = 0;
-                            transferMotor.setPower(1);
-                            fires.secondaryPos();
-                            disablePower();
-                            sleep(700);
-                            followerActive = true;
-                            fires.primaryPos();
-                            transferMotor.setPower(0);
-                            follower.followPath(goToPickup1);
-                            pathState++;
-                            actionTimer.resetTimer();
-                        }
-                    }
-                    break;
-
-                case 15:
-                    if(!follower.isBusy()){
-                        AutoConfig.isRed = true;
-                        AutoConfig.lastAutoEndPose = follower.getPose();
-                        breaked = true;
-                    }
                     break;
             }
-            if(breaked) break;
         }
 
     }
@@ -495,6 +320,38 @@ public class UhUhUhUhUhUhREDFAR extends Movable {
             return 0;
         }
 
+    }
+
+    private boolean autoAim() {
+        double turn;
+        double error = 100000;
+        double goalX;
+        double goalY = 140;
+        if(AutoConfig.isRed){
+            goalX=141.5;
+        } else{
+            goalX=7;//for better aiming?
+        }
+        //calculate angle from robot to target, add pi to get angle robot needs to face to aim at target (since launcher is on back of robot)
+        double targetAngle = Math.atan2(goalY - follower.getPose().getY(), goalX - follower.getPose().getX()) + Math.PI;
+
+        //calculate error between target angle and current angle
+        error = targetAngle - follower.getPose().getHeading();
+
+        //convert error to range [-pi, pi] so that robot turns the shortest distance to target
+        while(error>Math.PI){error-=2*Math.PI;}
+        while(error<-Math.PI){error+=2*Math.PI;}
+
+        //run PID
+        aimPID.updateError(error);
+        turn = aimPID.run();
+        //drive wheels
+        follower.startTeleopDrive();
+        follower.setTeleOpDrive(0,0,turn);
+
+        //isAimed check basically
+        //checks for is within 0.05 degrees of target angle and not rotating too fast
+        return Math.abs(error) < Math.toRadians(1) && Math.abs(follower.getAngularVelocity()) < Math.toRadians(0.5);
     }
 
 

@@ -153,7 +153,7 @@ public class UhUhUhUhUhUhBLUEFAR extends Movable {
 
         PathChain getCorner2 = follower.pathBuilder()
                 .addPath(new BezierLine(BLUE_FAR_CORNER1,BLUE_FAR_CORNER2))
-                .setConstantHeadingInterpolation(BLUE_FAR_CORNER1.getHeading())
+                .setLinearHeadingInterpolation(BLUE_FAR_CORNER1.getHeading(),BLUE_FAR_CORNER2.getHeading())
                 .build();
 
         follower.setStartingPose(BLUE_FAR_START);

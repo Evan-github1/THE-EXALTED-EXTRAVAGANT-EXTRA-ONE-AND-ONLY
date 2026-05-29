@@ -287,22 +287,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     follower.setPose(new Pose(144-8.25,robotLength()/2,-(Math.PI/2)));
                 }
             }
-            if(gamepad2.right_trigger > .5){
-                if (follower.getVelocity().getMagnitude() < 0.1 && follower.getAngularVelocity() < 0.1) {
-                    try {
-                        if (iterations == 0) {
-                            pastError = 0;
-                            LeBotsEyes(pastError, true);
-                        } else {
-                            pastError = LeBotsEyes(pastError, false);
-                            LeBotsEyes(pastError, true);
-
-                        }
-                        iterations++;
-                    } catch (Exception ignored) {
-                    }
-                }
-            }
             if(gamepad1.guideWasPressed()){
                 if(AutoConfig.isRed){
                     if(!follower.isBusy()) {
@@ -409,7 +393,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     }
     private boolean relocalize() {
         LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
+        if (result != null && result.isValid() && follower.getVelocity().getMagnitude() < 0.1 && Math.abs(follower.getAngularVelocity()) < 0.1) {
             Pose3D botpose = result.getBotpose();
             Pose2D ftcPose = new Pose2D(
                 DistanceUnit.METER,

@@ -14,7 +14,7 @@ public class AutoConfig {
     public static Pose lastAutoEndPose = null;
 
     public static boolean isRed = true; // Set by auto, read by teleop to determine alliance color for teleop. Assume red alliance.
-    private static Pose RED_OFFSET = new Pose(0,-6,0);
+    private static Pose RED_OFFSET = new Pose(0,-3,0);
 
 
     //-- Blue Alliance Stuff ----
@@ -46,7 +46,7 @@ public class AutoConfig {
 
     // ── UHUH RED FAR only ─────────────────────────────────────────────
     public static final Pose RED_FAR_CLEAR2 = new Pose(118, 67, 0);
-    public static final Pose RED_FAR_CORNER1         = new Pose(141.5 - robotWidth()/2, 30 + robotLength()/2, Math.toRadians(-90));
+    public static final Pose RED_FAR_CORNER1         = new Pose(141.5 - robotWidth()/2 - 5, 40 + robotLength()/2, Math.toRadians(-90));
     public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2, 2 + robotLength()/2 + 3, Math.toRadians(-90));
 
     public static final Pose RED_FAR_CORNER_DIRECT   = new Pose(141.5-robotWidth()/2,robotLength()/2,Math.toRadians(0));
@@ -87,4 +87,9 @@ public class AutoConfig {
     public static final Pose DOOM_RED_CLOSE_START     = DOOM_BLUE_CLOSE_START.mirror().plus(RED_OFFSET);
     public static final Pose DOOM_RED_CLOSE_SCORE     = DOOM_BLUE_CLOSE_SCORE.mirror().plus(RED_OFFSET);
     public static final Pose DOOM_RED_CLOSE_LEAVE     = DOOM_BLUE_CLOSE_LEAVE.mirror().plus(RED_OFFSET);
+
+    public static final Pose GET_LANDING_ZONE_BLUE1 = new Pose(2+robotWidth()/2, 2+robotLength()/2, Math.PI/2);
+    public static final Pose GET_LANDING_ZONE_BLUE2 = new Pose(2+robotWidth()/2,40,Math.PI/2);
+    public static final Pose GET_LANDING_ZONE_RED1 = GET_LANDING_ZONE_BLUE1.mirror();
+    public static final Pose GET_LANDING_ZONE_RED2 = GET_LANDING_ZONE_BLUE2.mirror();
 }
