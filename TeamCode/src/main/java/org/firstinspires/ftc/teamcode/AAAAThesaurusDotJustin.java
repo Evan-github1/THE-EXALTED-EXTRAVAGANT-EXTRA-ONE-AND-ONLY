@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.RobotFunctions.DoubleSwitchedServo;
 import org.firstinspires.ftc.teamcode.RobotFunctions.HeadingPID;
 import org.firstinspires.ftc.teamcode.RobotFunctions.LimelightTags;
@@ -68,13 +69,17 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static boolean tracking;
     private static double pastError;
     private static int iterations;
+    private int universalOffset;
     private static double motorPowerFar, motorPowerClose;
     private static double rpm, rpm2, tps, tps2, targetRPM, P, FClose, FFar, currentTargetRPM;
     private static PIDFCoefficients pidfCoefficients;
     private static PIDFController aimPID;
     private static Follower follower;
     private static Pose holdPose;
-
+    private long zrPressedTime;
+    private long zrHeldMillis;
+    private boolean zrPressed;
+    private double zrOffset;
     private double raisePosition;
 
     public void runOpMode() throws InterruptedException {
@@ -95,16 +100,20 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
         launcherMotor1 = hardwareMap.get(DcMotorEx.class,"LAU1");
         launcherMotor2 = hardwareMap.get(DcMotorEx.class,"LAU2");
         loading = false;
+        universalOffset = 0;
         shooting = false;
         isAimed = false;
+        zrOffset = 0;
         limelight = hardwareMap.get(Limelight3A.class,"limelight");
         limelight.start();
         limelight.pipelineSwitch(2);
-        motorPowerClose = 2300;
-        motorPowerFar = 3350; //from 4500
+        motorPowerClose = 2500;
+        if(!AutoConfig.isRed) motorPowerClose = 2300;
+        motorPowerFar = 3500; //from 4500
         targetRPM = motorPowerFar;
         P = 50;
         FClose = 16.8;
+        zrHeldMillis = 0;
         FFar = 15.8;
         pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
         aimPID = new PIDFController(new com.pedropathing.control.PIDFCoefficients(1.2,0,0.05,0.025));
@@ -177,14 +186,28 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
 
             // No clamping
             double t = (distFromGoal - closeDist) / (farDist - closeDist);
-
-            // Servo scaling
-            raisePosition = 0.25 + t * (0.37 - 0.25);
-            lt1.setPosition(raisePosition);
-            lt2.setPosition(raisePosition);
-
-            // RPM scaling
-            if(gamepad1.left_trigger > 0.5) targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-300;
+            if(gamepad1.right_trigger > 0.5){
+                if(!zrPressed){
+                    zrPressedTime = System.currentTimeMillis();
+                }
+                zrHeldMillis = System.currentTimeMillis() -  zrPressedTime;
+                zrOffset = Math.max(0,.06 * (zrHeldMillis - 200));
+                zrPressed = true;
+                targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-300 + universalOffset + zrOffset;
+                telemetry.addData("ZrOffset",zrOffset);
+                telemetry.addData("Target RPM",targetRPM);
+            }else{
+                zrPressed = false;
+                zrOffset = 0;
+                zrHeldMillis = 0;
+            }
+            if(gamepad1.left_trigger > 0.5){
+                // Servo scaling
+                raisePosition = 0.25 + t * (0.37 - 0.25);
+                lt1.setPosition(raisePosition);
+                lt2.setPosition(raisePosition);
+                targetRPM = (motorPowerClose + t * (motorPowerFar - motorPowerClose))-300 + universalOffset;
+            }
 
 
             follower.update();
@@ -196,12 +219,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             rpm = tps * 60 / 28;
             rpm2 = tps2 * 60 / 28;
 
-            telemetry.addData("RPM1",rpm);
-            telemetry.addData("RPM2", rpm2);
-            telemetry.addData("Target RPM",targetRPM);
-            telemetry.addData("Position", follower.getPose().getX() + " " + follower.getPose().getY());
-            telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
-            telemetry.addData("Power",launcherMotor1.getPower());
+            telemetry.addData("Universal offset",universalOffset);
 
             if(!follower.isBusy()&&!follower.isTeleopDrive()){
                 follower.startTeleopDrive(true);
@@ -220,19 +238,17 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 moveWheels(-0.25f,0);
                 isAimed = false;
             }else if(gamepad2.right_trigger > .5){
-                if (follower.getVelocity().getMagnitude() < 0.1 && follower.getAngularVelocity() < 0.1) {
-                    try {
-                        if (iterations == 0) {
-                            pastError = 0;
-                            LeBotsEyes(pastError, true);
-                        } else {
-                            pastError = LeBotsEyes(pastError, false);
-                            LeBotsEyes(pastError, true);
+                try {
+                    if (iterations == 0) {
+                        pastError = 0;
+                        LeBotsEyes(pastError, true);
+                    } else {
+                        pastError = LeBotsEyes(pastError, false);
+                        LeBotsEyes(pastError, true);
 
-                        }
-                        iterations++;
-                    } catch (Exception ignored) {
                     }
+                    iterations++;
+                } catch (Exception ignored) {
                 }
             }else {
                 iterations = 0;
@@ -249,6 +265,13 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             } else{
                 indL.setPosition(0.611);
                 indR.setPosition(0.611);
+            }
+
+            if(gamepad2.rightBumperWasPressed()){
+                universalOffset+=25;
+            }
+            if(gamepad2.leftBumperWasPressed()){
+                universalOffset-=25;
             }
 
             if (gamepad1.yWasPressed()) {
@@ -272,6 +295,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             }
             if(gamepad2.dpadUpWasPressed()){
                 AutoConfig.isRed = !AutoConfig.isRed;
+                if(!AutoConfig.isRed) motorPowerClose = 2400;
+                else motorPowerClose = 2500;
             }
             if(gamepad2.dpadDownWasPressed()){
                 boolean isLocalized = relocalize();
@@ -313,6 +338,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }
             }
 
+
+
             if(gamepad1.xWasPressed()){
                 shooting = !shooting;
                 setTime();
@@ -323,7 +350,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     new Thread(() -> {
                         lt1.setPosition(.25);//from .25
                         lt2.setPosition(.25);
-                        targetRPM = motorPowerClose;
+                        targetRPM = motorPowerClose + universalOffset;
                         pidfCoefficients = new PIDFCoefficients(P,0,0,FClose);
                         launcherMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
                         launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
@@ -338,7 +365,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                     new Thread(() -> {
                         lt1.setPosition(.37);
                         lt2.setPosition(.37);
-                        targetRPM = motorPowerFar;
+                        targetRPM = motorPowerFar + universalOffset;
                         pidfCoefficients = new PIDFCoefficients(P,0,0,FFar);
                         launcherMotor1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
                         launcherMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,pidfCoefficients);
@@ -354,16 +381,6 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             if(gamepad1.right_trigger > 0.5 /*&& delay(1600)*/ && !fires.isSecondaryPos()){
                 transferMotor.setPower(1);
                 fires.secondaryPos();
-                /*new Thread(() -> {
-                    fires.secondaryPos();
-                    try {
-                        Thread.sleep(1500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    fires.primaryPos();
-                }).start();*/
-
             }
             if(gamepad1.right_trigger <= 0.5 && fires.isSecondaryPos()){
                 transferMotor.setPower(0);
@@ -381,19 +398,12 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 launcherMotor2.setVelocity(0);
             }
 
-
-
-
-            telemetry.addData("FLW encoder",FLW.getCurrentPosition());
-            telemetry.addData("FRW encoder",FRW.getCurrentPosition());
-            telemetry.addData("BLW encoder",BLW.getCurrentPosition());
-            telemetry.addData("BRW encoder",BRW.getCurrentPosition());
             telemetry.update();
         }
     }
     private boolean relocalize() {
         LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid() && follower.getVelocity().getMagnitude() < 0.1 && Math.abs(follower.getAngularVelocity()) < 0.1) {
+        if (result != null && result.isValid() /*&& follower.getVelocity().getMagnitude() < 0.1 && Math.abs(follower.getAngularVelocity()) < 0.1*/) {
             Pose3D botpose = result.getBotpose();
             Pose2D ftcPose = new Pose2D(
                 DistanceUnit.METER,

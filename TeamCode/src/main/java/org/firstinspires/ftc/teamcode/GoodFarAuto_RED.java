@@ -143,9 +143,7 @@ public class GoodFarAuto_RED extends Movable {
 
         while (opModeIsActive()) {
 
-            if(followerActive) {
-                follower.update();
-            }
+            follower.update();
             AutoConfig.lastAutoEndPose = follower.getPose();
             telemetry.addData("Elapsed time:",actionTimer.getElapsedTimeSeconds());
             telemetry.addLine(""+pathState);
@@ -187,13 +185,13 @@ public class GoodFarAuto_RED extends Movable {
                     if(!follower.isBusy()){
                         follower.followPath(scorePreload);
                         pathState++;
+                        actionTimer.resetTimer();
                     }
-                    actionTimer.resetTimer();
                     break;
 
                 case 1:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 2) {
+                        if(actionTimer.getElapsedTimeSeconds() < 3) {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
@@ -201,8 +199,8 @@ public class GoodFarAuto_RED extends Movable {
                                 pastError = LeBotsEyes(pastError, false);
                                 LeBotsEyes(pastError, true);
                                 iterations++;
-                            }catch(Exception ignored){};
-                        }else {
+                            } catch(Exception ignored){}
+                        } else {
                             FLW.setPower(0);
                             FRW.setPower(0);
                             BRW.setPower(0);
@@ -222,73 +220,61 @@ public class GoodFarAuto_RED extends Movable {
                         }
                     }
                     break;
+
                 case 2:
                     if(!follower.isBusy()){
                         follower.followPath(grabPickup1);
                         pathState++;
+                        actionTimer.resetTimer();
                     }
-                    actionTimer.resetTimer();
                     break;
+
                 case 3:
                     if(!follower.isBusy()){
                         follower.followPath(scorePickup1);
                         pathState++;
-                    }
-                    actionTimer.resetTimer();
-                    break;
-                case 4:
-                    if (!follower.isBusy() && autoAim()) {
-                        FLW.setPower(0);
-                        FRW.setPower(0);
-                        BRW.setPower(0);
-                        BLW.setPower(0);
-                        followerActive = false;
-                        iterations = 0;
-                        transferMotor.setPower(1);
-                        fires.secondaryPos();
-                        disablePower();
-                        sleep(700);
-                        followerActive = true;
-                        fires.primaryPos();
-                        transferMotor.setPower(0);
-                        follower.followPath(getCorner);
-                        pathState++;
                         actionTimer.resetTimer();
                     }
                     break;
+
+                case 4:
+                    if (!follower.isBusy()) {
+                        if(actionTimer.getElapsedTimeSeconds() < 3) {
+                            try {
+                                if (iterations == 0) {
+                                    pastError = 0;
+                                }
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
+                                iterations++;
+                            } catch(Exception ignored){}
+                        } else {
+                            FLW.setPower(0);
+                            FRW.setPower(0);
+                            BRW.setPower(0);
+                            BLW.setPower(0);
+                            followerActive = false;
+                            iterations = 0;
+                            transferMotor.setPower(1);
+                            fires.secondaryPos();
+                            disablePower();
+                            sleep(700);
+                            followerActive = true;
+                            fires.primaryPos();
+                            transferMotor.setPower(0);
+                            follower.followPath(getCorner);
+                            pathState++;
+                            actionTimer.resetTimer();
+                        }
+                    }
+                    break;
+
                 case 5:
                     if (!follower.isBusy() || follower.isRobotStuck()) {
                         follower.followPath(scoreCorner);
-                        pathState++;
-                    }
-                    actionTimer.resetTimer();
-                    break;
-                case 6:
-                    if (!follower.isBusy() && autoAim()) {
-                        FLW.setPower(0);
-                        FRW.setPower(0);
-                        BRW.setPower(0);
-                        BLW.setPower(0);
-                        followerActive = false;
-                        iterations = 0;
-                        transferMotor.setPower(1);
-                        fires.secondaryPos();
-                        disablePower();
-                        sleep(700);
-                        followerActive = true;
-                        fires.primaryPos();
-                        transferMotor.setPower(0);
-                        follower.followPath(getLandingZone);
-                        pathState++;
+                        pathState = 4;
                         actionTimer.resetTimer();
                     }
-                    break;
-                case 7:
-                    if(!follower.isBusy()){
-                        follower.followPath(scoreLandingZone);
-                        pathState = 4;
-                    }
-                    actionTimer.resetTimer();
                     break;
             }
         }
@@ -328,7 +314,7 @@ public class GoodFarAuto_RED extends Movable {
         double goalX;
         double goalY = 140;
         if(AutoConfig.isRed){
-            goalX=141.5;
+            goalX=140;
         } else{
             goalX=7;//for better aiming?
         }
@@ -345,13 +331,14 @@ public class GoodFarAuto_RED extends Movable {
         //run PID
         aimPID.updateError(error);
         turn = aimPID.run();
+        if(Math.abs(error) < Math.toRadians(1)){
+            turn = 0;
+        }
         //drive wheels
-        follower.startTeleopDrive();
         follower.setTeleOpDrive(0,0,turn);
-
         //isAimed check basically
         //checks for is within 0.05 degrees of target angle and not rotating too fast
-        return Math.abs(error) < Math.toRadians(1) && Math.abs(follower.getAngularVelocity()) < Math.toRadians(0.5);
+        return Math.abs(error) < Math.toRadians(1.5) && Math.abs(follower.getAngularVelocity()) < Math.toRadians(1.5);
     }
 
 

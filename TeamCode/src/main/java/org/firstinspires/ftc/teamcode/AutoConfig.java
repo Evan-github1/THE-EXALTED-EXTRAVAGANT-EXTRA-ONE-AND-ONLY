@@ -47,7 +47,7 @@ public class AutoConfig {
     // ── UHUH RED FAR only ─────────────────────────────────────────────
     public static final Pose RED_FAR_CLEAR2 = new Pose(118, 67, 0);
     public static final Pose RED_FAR_CORNER1         = new Pose(141.5 - robotWidth()/2 - 5, 40 + robotLength()/2, Math.toRadians(-90));
-    public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2, 2 + robotLength()/2 + 3, Math.toRadians(-90));
+    public static final Pose RED_FAR_CORNER2         = new Pose(141.5 - robotWidth()/2, robotLength()/2 + 2, Math.toRadians(-90));
 
     public static final Pose RED_FAR_CORNER_DIRECT   = new Pose(141.5-robotWidth()/2,robotLength()/2,Math.toRadians(0));
 
@@ -80,7 +80,7 @@ public class AutoConfig {
     public static final Pose BLUE_FAR_CORNER2        = RED_FAR_CORNER2.mirror().minus(RED_OFFSET);
     public static final Pose BLUE_FAR_CORNER_DIRECT  = RED_FAR_CORNER_DIRECT.mirror().minus(RED_OFFSET);
     // ── DOOM BLUE CLOSE (DoomAndDisgust_PEDROBLUECLOSE) ───────────────
-    public static final Pose DOOM_BLUE_CLOSE_START    = new Pose(48, 144 - robotLength()/2, Math.PI/2);
+    public static final Pose DOOM_BLUE_CLOSE_START    = new Pose(24 + robotWidth() / 2, 144 - 10, Math.PI/2);
     public static final Pose DOOM_BLUE_CLOSE_SCORE    = new Pose(60, 144 - 60, -Math.PI/4);
     public static final Pose DOOM_BLUE_CLOSE_LEAVE    = new Pose(12, 144 - 48, 0);
     // ── DOOM RED CLOSE (DoomAndDisgust_PEDROREDCLOSE) ─────────────────
@@ -89,7 +89,7 @@ public class AutoConfig {
     public static final Pose DOOM_RED_CLOSE_LEAVE     = DOOM_BLUE_CLOSE_LEAVE.mirror().plus(RED_OFFSET);
 
     public static final Pose GET_LANDING_ZONE_BLUE1 = new Pose(2+robotWidth()/2, 2+robotLength()/2, Math.PI/2);
-    public static final Pose GET_LANDING_ZONE_BLUE2 = new Pose(2+robotWidth()/2,40,Math.PI/2);
+    public static final Pose GET_LANDING_ZONE_BLUE2 = new Pose(robotWidth()/2,40,Math.PI/2);
     public static final Pose GET_LANDING_ZONE_RED1 = GET_LANDING_ZONE_BLUE1.mirror();
     public static final Pose GET_LANDING_ZONE_RED2 = GET_LANDING_ZONE_BLUE2.mirror();
 }
