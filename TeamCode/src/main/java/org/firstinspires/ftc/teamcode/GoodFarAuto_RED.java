@@ -184,7 +184,7 @@ public class GoodFarAuto_RED extends Movable {
              */
             switch (pathState) {
                 case 0:
-                    if(!follower.isBusy()){
+                    if (!follower.isBusy()) {
                         follower.followPath(scorePreload);
                         pathState++;
                     }
@@ -193,7 +193,7 @@ public class GoodFarAuto_RED extends Movable {
 
                 case 1:
                     if (!follower.isBusy()) {
-                        if(actionTimer.getElapsedTimeSeconds() < 2) {
+                        if (actionTimer.getElapsedTimeSeconds() < 2) {
                             try {
                                 if (iterations == 0) {
                                     pastError = 0;
@@ -201,8 +201,10 @@ public class GoodFarAuto_RED extends Movable {
                                 pastError = LeBotsEyes(pastError, false);
                                 LeBotsEyes(pastError, true);
                                 iterations++;
-                            }catch(Exception ignored){};
-                        }else {
+                            } catch (Exception ignored) {
+                            }
+                            ;
+                        } else {
                             FLW.setPower(0);
                             FRW.setPower(0);
                             BRW.setPower(0);
@@ -223,14 +225,14 @@ public class GoodFarAuto_RED extends Movable {
                     }
                     break;
                 case 2:
-                    if(!follower.isBusy()){
+                    if (!follower.isBusy()) {
                         follower.followPath(grabPickup1);
                         pathState++;
                     }
                     actionTimer.resetTimer();
                     break;
                 case 3:
-                    if(!follower.isBusy()){
+                    if (!follower.isBusy()) {
                         follower.followPath(scorePickup1);
                         pathState++;
                     }
@@ -284,7 +286,7 @@ public class GoodFarAuto_RED extends Movable {
                     }
                     break;
                 case 7:
-                    if(!follower.isBusy()){
+                    if (!follower.isBusy()) {
                         follower.followPath(scoreLandingZone);
                         pathState = 4;
                     }

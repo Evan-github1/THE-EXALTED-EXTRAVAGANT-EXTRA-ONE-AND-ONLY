@@ -75,10 +75,18 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
     private static Follower follower;
     private static Pose holdPose;
 
+    private Pose parkPose;
+    private boolean xHoldActive;
+    private boolean wasXDown;
+
     private double raisePosition;
 
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
+
+        parkPose = BLUE_PARK;
+        xHoldActive = false;
+        wasXDown = false;
 
         raisePosition = 0;
 
@@ -203,40 +211,62 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("Angle",Math.toDegrees(follower.getPose().getHeading()));
             telemetry.addData("Power",launcherMotor1.getPower());
 
-            if(!follower.isBusy()&&!follower.isTeleopDrive()){
+            boolean xDown = gamepad1.x;
+            parkPose = AutoConfig.isRed ? RED_PARK : BLUE_PARK;
+
+            if (xDown && !wasXDown && !follower.isBusy()) {
+                follower.followPath(follower.pathBuilder()
+                        .addPath(new BezierLine(follower.getPose(), parkPose))
+                        .setLinearHeadingInterpolation(follower.getHeading(), parkPose.getHeading())
+                        .setConstraints(new PathConstraints(0.995, 300))
+                        .build());
+                xHoldActive = true;
+            }
+
+            if (!xDown && wasXDown && xHoldActive) {
+                xHoldActive = false;
                 follower.startTeleopDrive(true);
             }
 
-            if(gamepad1.dpad_up) {
-                moveWheels(0,0.25f);
-                isAimed = false;
-            }else if(gamepad1.dpad_down){
-                moveWheels(0,-0.25f);
-                isAimed = false;
-            }else if(gamepad1.dpad_left){
-                moveWheels(0.25f,0);
-                isAimed = false;
-            }else if(gamepad1.dpad_right){
-                moveWheels(-0.25f,0);
-                isAimed = false;
-            }else if(gamepad2.right_trigger > .5){
-                if (follower.getVelocity().getMagnitude() < 0.1 && follower.getAngularVelocity() < 0.1) {
-                    try {
-                        if (iterations == 0) {
-                            pastError = 0;
-                            LeBotsEyes(pastError, true);
-                        } else {
-                            pastError = LeBotsEyes(pastError, false);
-                            LeBotsEyes(pastError, true);
+            if(!xHoldActive && !follower.isBusy()&&!follower.isTeleopDrive()){
+                follower.startTeleopDrive(true);
+            }
 
+            if (!xHoldActive) {
+                if(gamepad1.dpad_up) {
+                    moveWheels(0,0.25f);
+                    isAimed = false;
+                }else if(gamepad1.dpad_down){
+                    moveWheels(0,-0.25f);
+                    isAimed = false;
+                }else if(gamepad1.dpad_left){
+                    moveWheels(0.25f,0);
+                    isAimed = false;
+                }else if(gamepad1.dpad_right){
+                    moveWheels(-0.25f,0);
+                    isAimed = false;
+                }else if(gamepad2.right_trigger > .5){
+                    if (follower.getVelocity().getMagnitude() < 0.1 && follower.getAngularVelocity() < 0.1) {
+                        try {
+                            if (iterations == 0) {
+                                pastError = 0;
+                                LeBotsEyes(pastError, true);
+                            } else {
+                                pastError = LeBotsEyes(pastError, false);
+                                LeBotsEyes(pastError, true);
+
+                            }
+                            iterations++;
+                        } catch (Exception ignored) {
                         }
-                        iterations++;
-                    } catch (Exception ignored) {
                     }
+                }else {
+                    iterations = 0;
+                    isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger>0.5);
                 }
-            }else {
+            } else {
                 iterations = 0;
-                isAimed = robotDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_trigger>0.5);
+                isAimed = false;
             }
 
 
@@ -313,7 +343,7 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 }
             }
 
-            if(gamepad1.xWasPressed()){
+            if(gamepad2.aWasPressed()){
                 shooting = !shooting;
                 setTime();
             }
@@ -381,6 +411,8 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
                 launcherMotor2.setVelocity(0);
             }
 
+            wasXDown = xDown;
+
 
 
 
@@ -390,6 +422,10 @@ public class AAAAThesaurusDotJustin extends Movable implements LimelightTags {
             telemetry.addData("BRW encoder",BRW.getCurrentPosition());
             telemetry.update();
         }
+    }
+
+    private void park() {
+
     }
     private boolean relocalize() {
         LLResult result = limelight.getLatestResult();
